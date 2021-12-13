@@ -14,10 +14,12 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.coolfly.demo.utils.ImageUtils;
@@ -31,6 +33,7 @@ import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.Uart5Rx;
 import com.wuadam.aoalibrary.AccessoryHelper;
 import com.wuadam.aoalibrary.AccessoryListener;
+import com.wuadam.aoalibrary.AoaSwitch;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
@@ -61,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShot;
     private Button btnStartRecord;
     private Button btnStopRecord;
+    private SwitchCompat swAoa;
+    private SwitchCompat swFpv;
 
     private boolean isMapMini = true;
 
@@ -102,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
         btnShot = findViewById(R.id.btn_shot);
         btnStartRecord = findViewById(R.id.btn_start_record);
         btnStopRecord = findViewById(R.id.btn_stop_record);
+        swAoa = findViewById(R.id.sw_aoa);
+        swFpv = findViewById(R.id.sw_fpv);
 
         accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
         accessoryHelper.addListener(accessoryListener);
@@ -119,6 +126,64 @@ public class MainActivity extends AppCompatActivity {
         h264Saver = new H264Saver(path);
 
         permissionHelper = new PermissionHelper(this);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AoaSwitch.AoaMode aoaMode = AoaSwitch.getMode();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (aoaMode) {
+
+                            case USB_FPVOFF:
+                                swAoa.setChecked(false);
+                                swFpv.setChecked(false);
+                                break;
+                            case USB_FPVON:
+                                swAoa.setChecked(false);
+                                swFpv.setChecked(true);
+                                break;
+                            case AOA_FPVOFF:
+                                swAoa.setChecked(true);
+                                swFpv.setChecked(false);
+                                break;
+                            case AOA_FPVON:
+                                swAoa.setChecked(true);
+                                swFpv.setChecked(true);
+                                break;
+                            case UNKNOWN:
+                                break;
+                        }
+
+
+                        swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AoaSwitch.switchUsb(b);
+                                    }
+                                }).start();
+                            }
+                        });
+
+                        swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AoaSwitch.switchFpv(b);
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override
