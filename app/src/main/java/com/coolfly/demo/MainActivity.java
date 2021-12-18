@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         arlinkListen = new ArlinkListen();
         arlinkListen.setListener(arlinkDataListener);
         protocolHelper = ProtocolHelper.getInstance();
+        protocolHelper.addListener(protocolListener);
         mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SURFACE_VIEW, null, surface, null);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
@@ -200,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         accessoryHelper.onResume();
+        protocolHelper.onResume();
         permissionHelper.onResume();
     }
 
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         accessoryHelper.onPause();
+        protocolHelper.onPause();
     }
 
     @Override
@@ -214,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         accessoryHelper.removeListener(accessoryListener);
         accessoryHelper.onDestroy();
-        protocolHelper.onDestroy();
         protocolHelper.removeListener(protocolListener);
+        protocolHelper.onDestroy();
         ffListenerManager.removeListener();
         h264Saver.stop();
         FFJNI.stop();
@@ -334,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseCoolflyPacket packet) {
+            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 if (deviceInfo.skyGround == 1) {
@@ -349,6 +353,12 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null && data.length > 0) {
                     // todo
                     //  handle data (such as mavlink packages bytes) read from plane
+
+                    final StringBuilder stringBuilder = new StringBuilder(data.length);
+                    for (int i = 0; i<data.length; i++) {
+                        stringBuilder.append(String.format("%02X ", data[i]));
+                    }
+                    Log.d(TAG, "onReadMav: " + stringBuilder.toString());
                 }
             }
         }
@@ -370,6 +380,12 @@ public class MainActivity extends AppCompatActivity {
     private void writeDataToPlane(byte[] data, int length) {
         if (accessoryHelper.getAccesoryStateMonitored() == AccessoryHelper.AccessoryConnected) {
             protocolHelper.sendUart5Tx(data, length);
+
+            final StringBuilder stringBuilder = new StringBuilder(data.length);
+            for (int i = 0; i<data.length; i++) {
+                stringBuilder.append(String.format("%02X ", data[i]));
+            }
+            Log.d(TAG, "onWriteMav: " + stringBuilder.toString());
         }
     }
 
