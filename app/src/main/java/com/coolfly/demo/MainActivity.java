@@ -327,11 +327,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-        @Override
-        public void onNeedWrite(byte[] data) {
-            accessoryHelper.ArlinkWriteData(data);
-        }
     };
 
     private ProtocolListener protocolListener = new ProtocolListener() {
