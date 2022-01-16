@@ -28,6 +28,8 @@ import com.coolfly.station.listen.ArlinkDataListener;
 import com.coolfly.station.listen.ArlinkListen;
 import com.coolfly.station.prorocol.ProtocolHelper;
 import com.coolfly.station.prorocol.ProtocolListener;
+import com.coolfly.station.prorocol.UpgradeHelper;
+import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.Uart5Rx;
@@ -42,6 +44,8 @@ import com.wuadam.medialibrary.H264Saver;
 import com.wuadam.medialibrary.MediaHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private final boolean NEED_SAVE_H264 = false;
     private H264Saver h264Saver;
     private PermissionHelper permissionHelper;
+    private UpgradeHelper upgradeHelper;
 
     private SurfaceView surface;
     private TextView tvBitrateVideo;
@@ -66,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnStopRecord;
     private SwitchCompat swAoa;
     private SwitchCompat swFpv;
+    private Button btnUpgradeGrd;
+    private Button btnUpgradeSky;
+    private TextView tvUpdateProcess;
 
     private boolean isMapMini = true;
 
@@ -109,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
         btnStopRecord = findViewById(R.id.btn_stop_record);
         swAoa = findViewById(R.id.sw_aoa);
         swFpv = findViewById(R.id.sw_fpv);
+        btnUpgradeGrd = findViewById(R.id.btn_upgrade_grd);
+        btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
+        tvUpdateProcess = findViewById(R.id.tv_update_process);
 
         accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
         accessoryHelper.addListener(accessoryListener);
@@ -284,7 +295,54 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == btnStopRecord) {
             FFJNI.stopRecord();
             // 在回调里面toast和保存到相册
+        } else if (view == btnUpgradeGrd) {
+            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
+                Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                FileInputStream fis = getUpgradeFis();
+                if (fis != null) {
+                    upgradeHelper = new UpgradeHelper(fis);
+                    upgradeHelper.setListener(upgradeListener);
+                    upgradeHelper.startUpgradeApp(false);
+                    btnUpgradeGrd.setEnabled(false);
+                    btnUpgradeSky.setEnabled(false);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else if (view == btnUpgradeSky) {
+            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
+                Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                FileInputStream fis = getUpgradeFis();
+                if (fis != null) {
+                    upgradeHelper = new UpgradeHelper(fis);
+                    upgradeHelper.setListener(upgradeListener);
+                    upgradeHelper.startUpgradeApp(true);
+                    btnUpgradeGrd.setEnabled(false);
+                    btnUpgradeSky.setEnabled(false);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private FileInputStream getUpgradeFis() throws FileNotFoundException {
+        String pathDir = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String filePath = pathDir + "/Arlink.bin";
+        File file = new File(filePath);
+        if ((!file.isFile()) || (!file.exists())) {
+            Toast.makeText(MainActivity.this, "Arlink.bin not found !!!", Toast.LENGTH_SHORT).show();
+            File fileDir = new File(pathDir);
+            fileDir.mkdirs();
+            return null;
+        }
+        return new FileInputStream(file);
     }
 
     private AccessoryListener accessoryListener = new AccessoryListener() {
@@ -354,6 +412,10 @@ public class MainActivity extends AppCompatActivity {
                         stringBuilder.append(String.format("%02X ", data[i]));
                     }
                     Log.d(TAG, "onReadMav: " + stringBuilder.toString());
+                }
+            } else if (packet instanceof ACK) {
+                if (upgradeHelper != null) {
+                    upgradeHelper.onAck();
                 }
             }
         }
@@ -436,6 +498,39 @@ public class MainActivity extends AppCompatActivity {
                     tvBitrateVideo.setText(readable);
                 }
             });
+        }
+    };
+
+    private UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
+        @Override
+        public void onStart() {
+            tvUpdateProcess.setText("start");
+        }
+
+        @Override
+        public void onProcess(int curFrame, int totalFrame) {
+            tvUpdateProcess.setText(curFrame + " / " + totalFrame);
+        }
+
+        @Override
+        public void onComplete() {
+            tvUpdateProcess.setText("complete");
+            btnUpgradeGrd.setEnabled(true);
+            btnUpgradeSky.setEnabled(true);
+        }
+
+        @Override
+        public void onFail() {
+            tvUpdateProcess.setText("fail");
+            btnUpgradeGrd.setEnabled(true);
+            btnUpgradeSky.setEnabled(true);
+        }
+
+        @Override
+        public void onWrite(byte[] data) {
+            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
+                accessoryHelper.ArlinkWriteData(data);
+            }
         }
     };
 
