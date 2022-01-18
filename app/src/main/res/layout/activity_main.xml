@@ -31,6 +31,7 @@
         tools:text="13 M/S" />
 
     <ScrollView
+        android:id="@+id/sv_operate"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:translationZ="4px"
@@ -105,6 +106,155 @@
                 tools:text="50/66" />
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:translationZ="4px"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#00000000"
+            android:gravity="right"
+            android:text="VT:  "
+            android:textColor="#0000FF"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_VT"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#A0323232"
+            android:gravity="left"
+            android:text=" "
+            android:textColor="#7CFC00"
+            android:textSize="10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#00000000"
+            android:gravity="right"
+            android:text="Score: "
+            android:textColor="#0000FF"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_VT_Score"
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="10dip"
+            android:background="#A0323232"
+            android:gravity="center"
+            android:text=" "
+            android:textColor="#7CFC00"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dip"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/setting_hd_icon" />
+
+        <ImageView
+            android:id="@+id/image_VT_Score"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fpv_topbar_signal_level_0" />
+
+        <TextView
+            android:layout_width="1dip"
+            android:layout_height="3dip"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="2dip"
+            android:background="#A0323232"
+            android:gravity="left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#00000000"
+            android:gravity="right"
+            android:text="RC:  "
+            android:textColor="#0000FF"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_RC"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#A0323232"
+            android:gravity="left"
+            android:text=" "
+            android:textColor="#7CFC00"
+            android:textSize="10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="#00000000"
+            android:gravity="right"
+            android:text="Score: "
+            android:textColor="#0000FF"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_RC_Score"
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="2dip"
+            android:background="#A0323232"
+            android:gravity="center"
+            android:text=" "
+            android:textColor="#7CFC00"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/setting_rc_icon" />
+
+        <ImageView
+            android:id="@+id/image_RC_Score"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fpv_topbar_signal_level_0" />
+
+        <TextView
+            android:id="@+id/tv_osd_locked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="DisConnect"
+            android:textColor="#FF0000"
+            android:textSize="10sp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/widget_map"

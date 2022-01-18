@@ -3,6 +3,7 @@ package com.coolfly.demo;
 import static com.wuadam.aoalibrary.AccessoryHelper.USB_CONNECTED;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.Uart5Rx;
+import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AccessoryHelper;
 import com.wuadam.aoalibrary.AccessoryListener;
 import com.wuadam.aoalibrary.AoaSwitch;
@@ -47,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -74,6 +78,14 @@ public class MainActivity extends AppCompatActivity {
     private Button btnUpgradeGrd;
     private Button btnUpgradeSky;
     private TextView tvUpdateProcess;
+
+    private TextView tvVT = null;
+    private TextView tvRC = null;
+    private TextView tvRcScore = null;
+    private TextView tvVtScore = null;
+    private ImageView imageVT = null;
+    private ImageView imageRC = null;
+    private TextView tvOSDLocked = null;
 
     private boolean isMapMini = true;
 
@@ -120,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
         btnUpgradeGrd = findViewById(R.id.btn_upgrade_grd);
         btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
         tvUpdateProcess = findViewById(R.id.tv_update_process);
+
+        tvVT = (TextView)findViewById(R.id.tv_VT);
+        tvRC = (TextView)findViewById(R.id.tv_RC);
+        tvRcScore = (TextView)findViewById(R.id.tv_RC_Score);
+        tvVtScore = (TextView)findViewById(R.id.tv_VT_Score);
+        imageVT = (ImageView)findViewById(R.id.image_VT_Score);
+        imageRC = (ImageView)findViewById(R.id.image_RC_Score);
+        tvOSDLocked = (TextView)findViewById(R.id.tv_osd_locked);
 
         accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
         accessoryHelper.addListener(accessoryListener);
@@ -387,15 +407,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private DeviceInfo arlinkDevice = new DeviceInfo();
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseCoolflyPacket packet) {
             Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
+                arlinkDevice = deviceInfo;
                 if (deviceInfo.skyGround == 1) {
                     protocolHelper.startUart5PassThrough();
                     Log.d(TAG, "startUart5PassThrough");
+
+                    // todo
+                    //  (optional) query osd info
+                    protocolHelper.startQueryWirelessInfo();
                 } else {
                     Log.d(TAG, "deviceInfo.skyGround != 1");
                     protocolHelper.resetUart5PassThrough();
@@ -413,6 +439,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Log.d(TAG, "onReadMav: " + stringBuilder.toString());
                 }
+            } else if (packet instanceof WirelessInfo) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        renderWirelessInfo((WirelessInfo) packet);
+                    }
+                });
             } else if (packet instanceof ACK) {
                 if (upgradeHelper != null) {
                     upgradeHelper.onAck();
@@ -444,6 +477,200 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.d(TAG, "onWriteMav: " + stringBuilder.toString());
         }
+    }
+
+    private void renderWirelessInfo(WirelessInfo wirelessOSD) {
+        String modulation = "";
+        if (wirelessOSD.lockStatus == 0x00) {
+            tvOSDLocked.setTextColor(Color.RED);
+            tvOSDLocked.setText("DisConnect");
+        } else {
+            tvOSDLocked.setTextColor(Color.parseColor("#7CFC00"));
+            tvOSDLocked.setText("Connected");
+        }
+
+
+        DecimalFormat format = new DecimalFormat("##0.000");
+        String strSkySNR = format.format(wirelessOSD.skySNR);
+        tvRC.setText("SNR:     "+ strSkySNR + " dB\n");
+        if (wirelessOSD.lockStatus == 0x00) {
+            tvRC.setText("SNR:      --- dB\n");
+            tvRC.append("Power0: ---\n");
+            tvRC.append("Power1: ---\n");
+
+            tvRC.append("Energy0: --- dBm \n");
+            tvRC.append("Energy1: --- dBm \n");
+
+            tvRC.append("E_rate:    --- ");
+        }
+        else {
+            tvRC.append("Power0: " + wirelessOSD.skyAgcVal[0] + "\n");
+            tvRC.append("Power1: " + wirelessOSD.skyAgcVal[1] + "\n");
+
+
+            int dBand = arlinkDevice.band;
+            if (dBand == 1) {
+                tvRC.append("Energy0: " + (1 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
+                tvRC.append("Energy1: " + (1 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
+            } else if (dBand == 2) {
+                tvRC.append("Energy0: " + (9 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
+                tvRC.append("Energy1: " + (9 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
+            } else {
+                tvRC.append("Energy0: --- dBm \n");
+                tvRC.append("Energy1: --- dBm \n");
+            }
+
+            tvRC.append("E_rate:    " + (100 - wirelessOSD.rcLock));
+        }
+
+
+        switch (wirelessOSD.modulationMode) {
+            case 0x00:
+                modulation += "BPSK ";
+                break;
+            case 0x01:
+                modulation += "QPSK ";
+                break;
+            case 0x02:
+                modulation += "16QAM ";
+                break;
+            case 0x03:
+                modulation += "64QAM ";
+                break;
+            default:
+                break;
+        }
+
+        if (wirelessOSD.codeRate == 0x00)
+            modulation += "1/2";
+        else if (wirelessOSD.codeRate == 0x01)
+            modulation += "2/3";
+
+
+        if (wirelessOSD.lockStatus == 0x00) {
+
+            //tvVT.setText("SNR0:     --- dB\n");
+            tvVT.setText("SNR:     --- dB\n");
+
+            tvVT.append("Power0:   --- \n");
+            tvVT.append("Power1:   --- \n");
+
+            tvVT.append("Energy0: --- dBm \n");
+            tvVT.append("Energy1: --- dBm \n");
+            tvVT.append("MCS:   "  + "--- \n");
+            tvVT.append("E_rate:    " + "--- ");
+
+        } else {
+            //tvVT.setText("SNR0:     " + format.format(wirelessOSD.snrValue[0]) + " dB\n");
+            tvVT.setText("SNR:     " + format.format(wirelessOSD.snrValue[1]) + " dB\n");
+            tvVT.append("Power0:   " + wirelessOSD.agcValue[0] + "\n");
+            tvVT.append("Power1:   " + wirelessOSD.agcValue[1] + "\n");
+
+
+            int dBand = arlinkDevice.band;
+            if (dBand == 1) {
+                tvVT.append("Energy0: " + (1 - wirelessOSD.agcValue[0]) + " dBm\n");
+                tvVT.append("Energy1: " + (1 - wirelessOSD.agcValue[1]) + " dBm\n");
+            } else if (dBand == 2){
+
+                tvVT.append("Energy0: " + (9 - wirelessOSD.agcValue[0]) + " dBm\n");
+                tvVT.append("Energy1: " + (9 - wirelessOSD.agcValue[1]) + " dBm\n");
+            } else {
+                tvVT.append("Energy0: --- dBm \n");
+                tvVT.append("Energy1: --- dBm \n");
+            }
+
+            tvVT.append("MCS:   "  + modulation + "\n");
+            tvVT.append("E_rate:    " + wirelessOSD.errCnt);
+
+        }
+
+        int rcScore = 0;
+        int vtScore = 0;
+
+        float VtSnr = wirelessOSD.snrValue[1];
+
+        vtScore = (int)(3.52 * VtSnr + 19.057);
+
+        if (vtScore > 100)
+            vtScore = 100;
+
+        if (wirelessOSD.errCnt >= 55) {
+            vtScore -= 55;
+        } else if (wirelessOSD.errCnt >= 50 && wirelessOSD.errCnt < 55) {
+            vtScore -= 50;
+        } else if (wirelessOSD.errCnt >= 45 && wirelessOSD.errCnt < 50) {
+            vtScore -= 40;
+        } else if (wirelessOSD.errCnt >= 40 && wirelessOSD.errCnt < 45) {
+            vtScore -= 40;
+        } else if (wirelessOSD.errCnt >= 35 && wirelessOSD.errCnt < 40) {
+            vtScore -= 30;
+        } else if (wirelessOSD.errCnt >= 30 && wirelessOSD.errCnt < 35) {
+            vtScore -= 30;
+        } else if (wirelessOSD.errCnt >= 25 && wirelessOSD.errCnt < 30) {
+            vtScore -= 20;
+        } else if (wirelessOSD.errCnt >= 20 && wirelessOSD.errCnt < 25) {
+            vtScore -= 20;
+        } else if (wirelessOSD.errCnt >= 15 && wirelessOSD.errCnt < 20) {
+            vtScore -= 10;
+        } else if (wirelessOSD.errCnt >= 10 && wirelessOSD.errCnt < 15) {
+            vtScore -= 10;
+        } else if (wirelessOSD.errCnt >= 5 && wirelessOSD.errCnt < 10) {
+            vtScore -= 5;
+        } else if (wirelessOSD.errCnt > 0 && wirelessOSD.errCnt < 5) {
+            vtScore -= 2;
+        }
+
+        if (vtScore <= 0)
+            vtScore = 2;
+
+        if (vtScore >= 75) {
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
+        } else if (vtScore >= 55) {
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
+        } else if (vtScore >= 35) {
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
+        }  else if (vtScore >= 15) {
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
+        } else if (vtScore > 0 && vtScore < 10) {
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
+        }
+
+        if (wirelessOSD.lockStatus == 0x00)
+            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
+
+
+        float RcSnr = wirelessOSD.skySNR;
+        rcScore = (int)(wirelessOSD.rcLock * (7.7 * RcSnr + 27) / 100);
+
+        if (wirelessOSD.lockStatus == 0x00) {
+            rcScore = 0;
+            vtScore = 0;
+        }
+
+        if (rcScore < 0)
+            rcScore = 2;
+
+        if (rcScore > 100)
+            rcScore = 100;
+
+        if (rcScore >= 75) {
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
+        } else if (rcScore >= 55) {
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
+        } else if (rcScore >= 30) {
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
+        }  else if (rcScore >= 15) {
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
+        } else if (rcScore >= 0 && rcScore < 15) {
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
+        }
+
+        if (wirelessOSD.lockStatus == 0x00)
+            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
+
+        tvRcScore.setText("" + rcScore);
+        tvVtScore.setText("" + vtScore);
     }
 
     private FFListener ffListener = new FFListener() {
