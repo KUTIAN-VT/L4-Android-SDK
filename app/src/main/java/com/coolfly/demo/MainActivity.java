@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
             FFJNI.stopRecord();
             // 在回调里面toast和保存到相册
         } else if (view == btnUpgradeGrd) {
-            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
+            if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else if (view == btnUpgradeSky) {
-            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
+            if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
