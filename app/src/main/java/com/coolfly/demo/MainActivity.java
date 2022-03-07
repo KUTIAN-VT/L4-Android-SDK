@@ -3,10 +3,13 @@ package com.coolfly.demo;
 import static com.wuadam.aoalibrary.AccessoryHelper.USB_CONNECTED;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceView;
@@ -20,10 +23,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
 import com.coolfly.station.listen.ArlinkDataListener;
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShot;
     private Button btnStartRecord;
     private Button btnStopRecord;
+    private SwitchCompat swHwDecode;
     private SwitchCompat swAoa;
     private SwitchCompat swFpv;
     private Button btnUpgradeGrd;
@@ -127,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         btnShot = findViewById(R.id.btn_shot);
         btnStartRecord = findViewById(R.id.btn_start_record);
         btnStopRecord = findViewById(R.id.btn_stop_record);
+        swHwDecode = findViewById(R.id.sw_hw_decode);
         swAoa = findViewById(R.id.sw_aoa);
         swFpv = findViewById(R.id.sw_fpv);
         btnUpgradeGrd = findViewById(R.id.btn_upgrade_grd);
@@ -216,6 +223,26 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+
+        // Get whether hardware decoding now (default value is true)
+        swHwDecode.setChecked(FFJNI.isHwDecode());
+        swHwDecode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putBoolean(Constants.PREF_IS_HW_DECODE, isChecked);
+                editor.apply();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                }).setCancelable(false).show();
+            }
+        });
     }
 
     @Override
