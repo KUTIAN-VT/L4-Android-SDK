@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShot;
     private Button btnStartRecord;
     private Button btnStopRecord;
+    private Button btnHwDecoder;
     private SwitchCompat swHwDecode;
     private SwitchCompat swAoa;
     private SwitchCompat swFpv;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         btnShot = findViewById(R.id.btn_shot);
         btnStartRecord = findViewById(R.id.btn_start_record);
         btnStopRecord = findViewById(R.id.btn_stop_record);
+        btnHwDecoder = findViewById(R.id.btn_hw_decoder);
         swHwDecode = findViewById(R.id.sw_hw_decode);
         swAoa = findViewById(R.id.sw_aoa);
         swFpv = findViewById(R.id.sw_fpv);
@@ -342,6 +344,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == btnStopRecord) {
             FFJNI.stopRecord();
             // 在回调里面toast和保存到相册
+        } else if (view == btnHwDecoder) {
+            String info = FFJNI.avcodecinfo();
+            Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
+            Log.d("codec info", info);
         } else if (view == btnUpgradeGrd) {
             if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
