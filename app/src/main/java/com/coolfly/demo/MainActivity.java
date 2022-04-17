@@ -2,11 +2,14 @@ package com.coolfly.demo;
 
 import static com.wuadam.aoalibrary.AccessoryHelper.USB_CONNECTED;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -52,9 +55,9 @@ import com.wuadam.medialibrary.H264Saver;
 import com.wuadam.medialibrary.MediaHelper;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -106,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
 
     private int videoWidgetWidth;
     private int videoWidgetHeight;
+
+    private final int REQ_OTA_GRD = 1;
+    private final int REQ_OTA_SKY = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -353,29 +359,34 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
-            try {
-                FileInputStream fis = getUpgradeFis();
-                if (fis != null) {
-                    upgradeHelper = new UpgradeHelper(fis);
-                    upgradeHelper.setListener(upgradeListener);
-                    upgradeHelper.startUpgradeApp(false);
-                    btnUpgradeGrd.setEnabled(false);
-                    btnUpgradeSky.setEnabled(false);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            getUpgradeFis(REQ_OTA_GRD);
         } else if (view == btnUpgradeSky) {
             if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
+            getUpgradeFis(REQ_OTA_SKY);
+        }
+    }
+
+    private void getUpgradeFis(int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/octet-stream"); //设置bin后缀名
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            Uri uri = data.getData();
             try {
-                FileInputStream fis = getUpgradeFis();
+                InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
                     upgradeHelper = new UpgradeHelper(fis);
                     upgradeHelper.setListener(upgradeListener);
-                    upgradeHelper.startUpgradeApp(true);
+                    upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
                     btnUpgradeGrd.setEnabled(false);
                     btnUpgradeSky.setEnabled(false);
                 }
@@ -385,18 +396,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private FileInputStream getUpgradeFis() throws FileNotFoundException {
-        String pathDir = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        String filePath = pathDir + "/Arlink.bin";
-        File file = new File(filePath);
-        if ((!file.isFile()) || (!file.exists())) {
-            Toast.makeText(MainActivity.this, "Arlink.bin not found !!!", Toast.LENGTH_SHORT).show();
-            File fileDir = new File(pathDir);
-            fileDir.mkdirs();
-            return null;
-        }
-        return new FileInputStream(file);
-    }
 
     private AccessoryListener accessoryListener = new AccessoryListener() {
         @Override
