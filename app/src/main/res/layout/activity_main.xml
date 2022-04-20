@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@android:color/white"
-                android:text="AOA模式" />
+                android:text="图传通信" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_fpv"

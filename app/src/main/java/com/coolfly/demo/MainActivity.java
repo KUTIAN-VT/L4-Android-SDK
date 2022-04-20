@@ -43,6 +43,7 @@ import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.Uart5Rx;
+import com.coolfly.station.prorocol.bean.UpgradeResult;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AccessoryHelper;
 import com.wuadam.aoalibrary.AccessoryListener;
@@ -482,6 +483,10 @@ public class MainActivity extends AppCompatActivity {
                 if (upgradeHelper != null) {
                     upgradeHelper.onAck();
                 }
+            } else if (packet instanceof UpgradeResult) {
+                if (upgradeHelper != null) {
+                    upgradeHelper.onUpgradeResult();
+                }
             }
         }
 
@@ -763,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
     private UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
         @Override
         public void onStart() {
-            tvUpdateProcess.setText("start");
+            tvUpdateProcess.setText("升级开始");
         }
 
         @Override
@@ -772,15 +777,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onFlashing() {
+            tvUpdateProcess.setText("更新中");
+        }
+
+        @Override
         public void onComplete() {
-            tvUpdateProcess.setText("complete");
+            tvUpdateProcess.setText("完成");
             btnUpgradeGrd.setEnabled(true);
             btnUpgradeSky.setEnabled(true);
         }
 
         @Override
         public void onFail() {
-            tvUpdateProcess.setText("fail");
+            tvUpdateProcess.setText("失败");
             btnUpgradeGrd.setEnabled(true);
             btnUpgradeSky.setEnabled(true);
         }
