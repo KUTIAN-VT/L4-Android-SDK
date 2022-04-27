@@ -16,13 +16,17 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,12 +81,14 @@ public class MainActivity extends AppCompatActivity {
     private UpgradeHelper upgradeHelper;
 
     private SurfaceView surface;
+    private TextureView texture;
     private TextView tvBitrateVideo;
     private TextView widgetMap;
     private Button btnShot;
     private Button btnStartRecord;
     private Button btnStopRecord;
     private Button btnHwDecoder;
+    private Spinner spDecodeMode;
     private SwitchCompat swHwDecode;
     private SwitchCompat swAoa;
     private SwitchCompat swFpv;
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvOSDLocked = null;
 
     private boolean isMapMini = true;
+
+    private int decodeMode;
 
     private int mapWidgetHeight;
     private int mapWidgetWidth;
@@ -136,12 +144,14 @@ public class MainActivity extends AppCompatActivity {
         videoWidgetHeight = (int) (videoWidgetWidth / MediaHelper.VIDEO_ASPECT);
 
         surface = findViewById(R.id.surface);
+        texture = findViewById(R.id.texture);
         tvBitrateVideo = findViewById(R.id.tv_bitrate_video);
         widgetMap = findViewById(R.id.widget_map);
         btnShot = findViewById(R.id.btn_shot);
         btnStartRecord = findViewById(R.id.btn_start_record);
         btnStopRecord = findViewById(R.id.btn_stop_record);
         btnHwDecoder = findViewById(R.id.btn_hw_decoder);
+        spDecodeMode = findViewById(R.id.sp_decode_mode);
         swHwDecode = findViewById(R.id.sw_hw_decode);
         swAoa = findViewById(R.id.sw_aoa);
         swFpv = findViewById(R.id.sw_fpv);
@@ -149,13 +159,64 @@ public class MainActivity extends AppCompatActivity {
         btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
         tvUpdateProcess = findViewById(R.id.tv_update_process);
 
-        tvVT = (TextView)findViewById(R.id.tv_VT);
-        tvRC = (TextView)findViewById(R.id.tv_RC);
-        tvRcScore = (TextView)findViewById(R.id.tv_RC_Score);
-        tvVtScore = (TextView)findViewById(R.id.tv_VT_Score);
-        imageVT = (ImageView)findViewById(R.id.image_VT_Score);
-        imageRC = (ImageView)findViewById(R.id.image_RC_Score);
-        tvOSDLocked = (TextView)findViewById(R.id.tv_osd_locked);
+        tvVT = findViewById(R.id.tv_VT);
+        tvRC = findViewById(R.id.tv_RC);
+        tvRcScore = findViewById(R.id.tv_RC_Score);
+        tvVtScore = findViewById(R.id.tv_VT_Score);
+        imageVT = findViewById(R.id.image_VT_Score);
+        imageRC = findViewById(R.id.image_RC_Score);
+        tvOSDLocked = findViewById(R.id.tv_osd_locked);
+
+        // decode mode start
+        // 0. FFmpeg with hw/sw decoder, render in SurfaceView
+        // 1. MediaCodec with hw decoder, render in SurfaceView
+        // 2. MediaCodec with hw decoder, render in TextureView
+        String[] decodeModeArr = new String[]{"FFmpeg-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
+        ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
+        decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        spDecodeMode.setAdapter(decodeModeAdapter);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FFMPEG_SURFACE);
+        spDecodeMode.setSelection(decodeMode);
+        if (decodeMode != Constants.DECODE_MODE_FFMPEG_SURFACE) {
+            btnShot.setVisibility(View.GONE);
+            btnStartRecord.setVisibility(View.GONE);
+            btnStopRecord.setVisibility(View.GONE);
+            btnHwDecoder.setVisibility(View.GONE);
+            swHwDecode.setVisibility(View.GONE);
+        }
+        if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
+            surface.setVisibility(View.GONE);
+        } else {
+            texture.setVisibility(View.GONE);
+        }
+
+        spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != decodeMode) {
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt(Constants.PREF_DECODE_MODE, position);
+                    editor.apply();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("使用非FFmpeg方式解码，将失去拍照录像功能。APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    }).setCancelable(false).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        // decode mode ends
 
         accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
         accessoryHelper.addListener(accessoryListener);
@@ -163,7 +224,18 @@ public class MainActivity extends AppCompatActivity {
         arlinkListen.setListener(arlinkDataListener);
         protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
-        mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SURFACE_VIEW, null, surface, null);
+
+        switch (decodeMode) {
+            case Constants.DECODE_MODE_FFMPEG_SURFACE:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SURFACE_VIEW, null, surface, null);
+                break;
+            case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.SURFACE_VIEW, null, surface, null);
+                break;
+            case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.TEXTURE_VIEW, texture, null, null);
+                break;
+        }
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
@@ -299,12 +371,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        if (view == surface && !isMapMini) {
+        if ((view == surface || view == texture) && !isMapMini) {
             // 地图缩小，视频变大
             //reorder widgets
-//            rootView.removeView(surface);
-//            rootView.addView(surface, 0);
-            surface.setTranslationZ(1);
+            if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
+                texture.setTranslationZ(1);
+            } else {
+                surface.setTranslationZ(1);
+            }
 
             //resize widgets
             resizeMap(false);
@@ -315,9 +389,11 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == widgetMap && isMapMini) {
             // 地图变大，视频缩小
             //reorder widgets
-//            rootView.removeView(surface);
-//            rootView.addView(surface, rootView.indexOfChild(widgetMap) + 1);
-            surface.setTranslationZ(4);
+            if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
+                texture.setTranslationZ(4);
+            } else {
+                surface.setTranslationZ(4);
+            }
 
             //resize widgets
             resizeMap(true);
@@ -816,14 +892,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resizeVideo(boolean isEnlarge) {
-        if (isEnlarge) {
-            // enlarge
-            ResizeAnimation enlargeAnimation = new ResizeAnimation(true, surface, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
-            surface.startAnimation(enlargeAnimation);
+        if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
+            if (isEnlarge) {
+                // enlarge
+                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, texture, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
+                texture.startAnimation(enlargeAnimation);
+            } else {
+                // shrink
+                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, texture, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
+                texture.startAnimation(shrinkAnimation);
+            }
         } else {
-            // shrink
-            ResizeAnimation shrinkAnimation = new ResizeAnimation(false, surface, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
-            surface.startAnimation(shrinkAnimation);
+            if (isEnlarge) {
+                // enlarge
+                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, surface, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
+                surface.startAnimation(enlargeAnimation);
+            } else {
+                // shrink
+                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, surface, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
+                surface.startAnimation(shrinkAnimation);
+            }
         }
     }
 

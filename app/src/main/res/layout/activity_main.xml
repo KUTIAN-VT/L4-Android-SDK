@@ -19,6 +19,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:onClick="onClick"
+        android:translationZ="1px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_bitrate_video"
         android:layout_width="wrap_content"
@@ -47,36 +58,42 @@
             <Button
                 android:id="@+id/btn_shot"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="拍照" />
 
             <Button
                 android:id="@+id/btn_start_record"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="开始录像" />
 
             <Button
                 android:id="@+id/btn_stop_record"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="停止录像" />
 
             <Button
                 android:id="@+id/btn_hw_decoder"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="编解码器" />
+
+            <Spinner
+                android:id="@+id/sp_decode_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_hw_decode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="@android:color/white"
                 android:text="硬解码" />
 
@@ -84,7 +101,7 @@
                 android:id="@+id/sw_aoa"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:background="@android:color/white"
                 android:text="图传通信" />
 
@@ -92,7 +109,7 @@
                 android:id="@+id/sw_fpv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:background="@android:color/white"
                 android:text="图传电源" />
 
@@ -100,7 +117,7 @@
                 android:id="@+id/tv_update_process"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:background="@android:color/white"
                 android:onClick="onClick"
                 android:text="升级进度"
@@ -110,14 +127,14 @@
             <Button
                 android:id="@+id/btn_upgrade_grd"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="升级地面端" />
 
             <Button
                 android:id="@+id/btn_upgrade_sky"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="升级天空端" />
         </LinearLayout>

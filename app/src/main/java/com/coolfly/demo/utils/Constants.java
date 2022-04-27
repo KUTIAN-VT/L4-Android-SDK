@@ -7,4 +7,9 @@ package com.coolfly.demo.utils;
  */
 public class Constants {
     public static final String PREF_IS_HW_DECODE = "PREF_IS_HW_DECODE";
+    public static final String PREF_DECODE_MODE = "PREF_DECODE_MODE";
+
+    public static final int DECODE_MODE_FFMPEG_SURFACE = 0;
+    public static final int DECODE_MODE_MEDIACODEC_SURFACE = 1;
+    public static final int DECODE_MODE_MEDIACODEC_TEXTURE = 2;
 }
