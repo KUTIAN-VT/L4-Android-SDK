@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
@@ -247,63 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
         permissionHelper = new PermissionHelper(this);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AoaSwitch.AoaMode aoaMode = AoaSwitch.getMode();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        switch (aoaMode) {
-
-                            case USB_FPVOFF:
-                                swAoa.setChecked(false);
-                                swFpv.setChecked(false);
-                                break;
-                            case USB_FPVON:
-                                swAoa.setChecked(false);
-                                swFpv.setChecked(true);
-                                break;
-                            case AOA_FPVOFF:
-                                swAoa.setChecked(true);
-                                swFpv.setChecked(false);
-                                break;
-                            case AOA_FPVON:
-                                swAoa.setChecked(true);
-                                swFpv.setChecked(true);
-                                break;
-                            case UNKNOWN:
-                                break;
-                        }
-
-
-                        swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AoaSwitch.switchUsb(b);
-                                    }
-                                }).start();
-                            }
-                        });
-
-                        swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AoaSwitch.switchFpv(b);
-                                    }
-                                }).start();
-                            }
-                        });
-                    }
-                });
-            }
-        }).start();
+        readAoa();
 
         // Get whether hardware decoding now (default value is true)
         swHwDecode.setChecked(FFJNI.isHwDecode());
@@ -368,6 +313,14 @@ public class MainActivity extends AppCompatActivity {
                                            String[] permissions, int[] paramArrayOfInt) {
         super.onRequestPermissionsResult(requestCode, permissions, paramArrayOfInt);
         permissionHelper.onRequestPermissionsResult(requestCode, permissions, paramArrayOfInt);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_F1) {
+            readAoa();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void onClick(View view) {
@@ -444,6 +397,69 @@ public class MainActivity extends AppCompatActivity {
             }
             getUpgradeFis(REQ_OTA_SKY);
         }
+    }
+
+    private void readAoa() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AoaSwitch.AoaMode aoaMode = AoaSwitch.getMode();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        swAoa.setOnCheckedChangeListener(null);
+                        swFpv.setOnCheckedChangeListener(null);
+
+                        switch (aoaMode) {
+
+                            case USB_FPVOFF:
+                                swAoa.setChecked(false);
+                                swFpv.setChecked(false);
+                                break;
+                            case USB_FPVON:
+                                swAoa.setChecked(false);
+                                swFpv.setChecked(true);
+                                break;
+                            case AOA_FPVOFF:
+                                swAoa.setChecked(true);
+                                swFpv.setChecked(false);
+                                break;
+                            case AOA_FPVON:
+                                swAoa.setChecked(true);
+                                swFpv.setChecked(true);
+                                break;
+                            case UNKNOWN:
+                                break;
+                        }
+
+
+                        swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AoaSwitch.switchUsb(b);
+                                    }
+                                }).start();
+                            }
+                        });
+
+                        swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AoaSwitch.switchFpv(b);
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
     }
 
     private void getUpgradeFis(int requestCode) {
