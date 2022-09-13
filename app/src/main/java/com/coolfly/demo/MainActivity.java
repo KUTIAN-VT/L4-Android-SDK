@@ -47,8 +47,7 @@ import com.coolfly.station.prorocol.UpgradeHelper;
 import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
-import com.coolfly.station.prorocol.bean.Uart5Rx;
-import com.coolfly.station.prorocol.bean.UpgradeResult;
+import com.coolfly.station.prorocol.bean.UartRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AccessoryHelper;
 import com.wuadam.aoalibrary.AccessoryListener;
@@ -502,7 +501,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDisconnect() {
             bitRateHelperVideo.stop();
-            protocolHelper.resetUart5PassThrough();
+            protocolHelper.resetSkyUart3PassThrough();
+            protocolHelper.resetSkyUart1PassThrough();
+            protocolHelper.resetGndUart3PassThrough();
         }
 
         @Override
@@ -541,28 +542,37 @@ public class MainActivity extends AppCompatActivity {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 arlinkDevice = deviceInfo;
                 if (deviceInfo.skyGround == 1) {
-                    protocolHelper.startUart5PassThrough();
-                    Log.d(TAG, "startUart5PassThrough");
+                    protocolHelper.startSkyUart3PassThrough();
+                    Log.d(TAG, "startSkyUart3PassThrough");
+                    protocolHelper.startSkyUart1PassThrough();
+                    Log.d(TAG, "startSkyUart1PassThrough");
+                    protocolHelper.startGndUart3PassThrough();
+                    Log.d(TAG, "startGndUart3PassThrough");
 
                     // todo
                     //  (optional) query osd info
                     protocolHelper.startQueryWirelessInfo();
                 } else {
                     Log.d(TAG, "deviceInfo.skyGround != 1");
-                    protocolHelper.resetUart5PassThrough();
-                    Log.d(TAG, "resetUart5PassThrough");
+
+                    protocolHelper.startSkyUart3PassThrough();
+                    Log.d(TAG, "startSkyUart3PassThrough");
+                    protocolHelper.startSkyUart1PassThrough();
+                    Log.d(TAG, "startSkyUart1PassThrough");
+                    protocolHelper.startGndUart3PassThrough();
+                    Log.d(TAG, "startGndUart3PassThrough");
                 }
-            } else if (packet instanceof Uart5Rx) {
-                byte[] data = ((Uart5Rx) packet).data;
+            } else if (packet instanceof UartRx) {
+                byte[] data = ((UartRx) packet).data;
                 if (data != null && data.length > 0) {
                     // todo
-                    //  handle data (such as mavlink packages bytes) read from plane
+                    //  handle data (such as mavlink packages bytes) read through uart bypass (SkyUart1Rx/SkyUart3Rx/GndUart3Rx)
 
                     final StringBuilder stringBuilder = new StringBuilder(data.length);
                     for (int i = 0; i<data.length; i++) {
                         stringBuilder.append(String.format("%02X ", data[i]));
                     }
-                    Log.d(TAG, "onReadMav: " + stringBuilder.toString());
+                    Log.d(TAG, "onRead " + packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
                 }
             } else if (packet instanceof WirelessInfo) {
                 runOnUiThread(new Runnable() {
@@ -573,11 +583,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             } else if (packet instanceof ACK) {
                 if (upgradeHelper != null) {
-                    upgradeHelper.onAck();
-                }
-            } else if (packet instanceof UpgradeResult) {
-                if (upgradeHelper != null) {
-                    upgradeHelper.onUpgradeResult();
+                    upgradeHelper.onAck((ACK) packet);
                 }
             }
         }
@@ -590,21 +596,36 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private enum UART{
+        SkyUart1, SkyUart3, GndUart3;
+    }
+
     /**
      * todo
-     *  call this method to send data (such as mavlink packages bytes) to plane
+     *  call this method to send data (such as mavlink packages bytes) through uart bypass (SkyUart1/SkyUart3/GndUart3)
      * @param data
      * @param length
      */
-    private void writeDataToPlane(byte[] data, int length) {
+    private void writeDataToUart(UART uart, byte[] data, int length) {
         if (accessoryHelper.getAccesoryStateMonitored() == AccessoryHelper.AccessoryConnected) {
-            protocolHelper.sendUart5Tx(data, length);
+            switch (uart) {
+
+                case SkyUart1:
+                    protocolHelper.sendSkyUart1Tx(data, length);
+                    break;
+                case SkyUart3:
+                    protocolHelper.sendSkyUart3Tx(data, length);
+                    break;
+                case GndUart3:
+                    protocolHelper.sendGndUart3Tx(data, length);
+                    break;
+            }
 
             final StringBuilder stringBuilder = new StringBuilder(data.length);
             for (int i = 0; i<data.length; i++) {
                 stringBuilder.append(String.format("%02X ", data[i]));
             }
-            Log.d(TAG, "onWriteMav: " + stringBuilder.toString());
+            Log.d(TAG, "onWrite " + uart + ": " + stringBuilder.toString());
         }
     }
 
@@ -866,6 +887,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onProcess(int curFrame, int totalFrame) {
             tvUpdateProcess.setText(curFrame + " / " + totalFrame);
+        }
+
+        @Override
+        public void onResend(int i, int i1) {
+
         }
 
         @Override
