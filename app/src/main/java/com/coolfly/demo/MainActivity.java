@@ -171,15 +171,15 @@ public class MainActivity extends AppCompatActivity {
         // 0. FFmpeg with hw/sw decoder, render in SurfaceView
         // 1. MediaCodec with hw decoder, render in SurfaceView
         // 2. MediaCodec with hw decoder, render in TextureView
-        String[] decodeModeArr = new String[]{"FFmpeg-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
+        String[] decodeModeArr = new String[]{"FFmpeg-GL-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
         spDecodeMode.setAdapter(decodeModeAdapter);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FFMPEG_SURFACE);
+        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_GL_SURFACE);
         spDecodeMode.setSelection(decodeMode);
-        if (decodeMode != Constants.DECODE_MODE_FFMPEG_SURFACE) {
+        if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE) {
             btnShot.setVisibility(View.GONE);
             btnStartRecord.setVisibility(View.GONE);
             btnStopRecord.setVisibility(View.GONE);
@@ -226,14 +226,14 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.addListener(protocolListener);
 
         switch (decodeMode) {
-            case Constants.DECODE_MODE_FFMPEG_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SURFACE_VIEW, null, surface, null);
+            case Constants.DECODE_MODE_FF_GL_SURFACE:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, 1);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.SURFACE_VIEW, null, surface, null);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, 1);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.TEXTURE_VIEW, texture, null, null);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, 1);
                 break;
         }
 
@@ -825,7 +825,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FFListener ffListener = new FFListener() {
         @Override
-        public void onShotFrame(String path, boolean success) {
+        public void onShotFrame(String path, boolean success, long handler) {
             Toast.makeText(MainActivity.this, success? "拍照成功": "拍照失败", Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
@@ -838,7 +838,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onRecordVideo(String path, boolean success) {
+        public void onRecordVideo(String path, boolean success, long handler) {
             Toast.makeText(MainActivity.this, success? "录像成功": "录像失败", Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
@@ -851,7 +851,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSpsPps(byte[] sps, byte[] pps) {
+        public void onSpsPps(byte[] sps, byte[] pps, long handler) {
             StringBuilder stringBuilder = new StringBuilder(sps.length);
             for (int i = 0; i<sps.length; i++) {
                 stringBuilder.append(String.format("%02X ", sps[i]));
@@ -890,8 +890,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onResend(int i, int i1) {
-
+        public void onResend(int curFrame, int totalFrame) {
+            tvUpdateProcess.setText("重发: " + curFrame + " / " + totalFrame);
         }
 
         @Override
