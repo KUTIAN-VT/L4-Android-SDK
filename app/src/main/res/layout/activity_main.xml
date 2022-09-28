@@ -141,6 +141,7 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/ll_osd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -305,4 +306,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_uart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/holo_green_light"
+        android:translationZ="1px"
+        app:layout_constraintLeft_toRightOf="@+id/sv_operate"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_osd"
+        tools:text="data" />
 </androidx.constraintlayout.widget.ConstraintLayout>

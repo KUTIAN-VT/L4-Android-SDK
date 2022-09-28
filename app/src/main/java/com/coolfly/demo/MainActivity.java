@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageVT = null;
     private ImageView imageRC = null;
     private TextView tvOSDLocked = null;
+    private TextView tvUart;
 
     private boolean isMapMini = true;
 
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         imageVT = findViewById(R.id.image_VT_Score);
         imageRC = findViewById(R.id.image_RC_Score);
         tvOSDLocked = findViewById(R.id.tv_osd_locked);
+        tvUart = findViewById(R.id.tv_uart);
 
         // decode mode start
         // 0. FFmpeg with hw/sw decoder, render in SurfaceView
@@ -562,6 +564,10 @@ public class MainActivity extends AppCompatActivity {
                     protocolHelper.startGndUart3PassThrough();
                     Log.d(TAG, "startGndUart3PassThrough");
                 }
+
+//                // Mock SkyUart3Rx
+//                byte[] aa = {(byte) 0xFF, 0x5A, (byte) 0x87, 0x00, 0x01, 0x00, 0x05, 0x00, (byte) 0xA4, 0x01, 0x12, 0x34, 0x56, 0x78, (byte) 0x90};
+//                protocolHelper.parseData(aa, aa.length);
             } else if (packet instanceof UartRx) {
                 byte[] data = ((UartRx) packet).data;
                 if (data != null && data.length > 0) {
@@ -573,6 +579,13 @@ public class MainActivity extends AppCompatActivity {
                         stringBuilder.append(String.format("%02X ", data[i]));
                     }
                     Log.d(TAG, "onRead " + packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvUart.setText(packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
+                        }
+                    });
                 }
             } else if (packet instanceof WirelessInfo) {
                 runOnUiThread(new Runnable() {
