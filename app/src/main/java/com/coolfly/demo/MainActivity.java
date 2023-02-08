@@ -123,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
     private final int REQ_OTA_GRD = 1;
     private final int REQ_OTA_SKY = 2;
 
+    // support 5 channels, from 1 to 5
+    private final int DECODE_CHANNEL = 1;
+    // support 2 channels, from 0 to 1
+    private final int STREAM_CHANNEL = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,19 +228,20 @@ public class MainActivity extends AppCompatActivity {
         accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
         accessoryHelper.addListener(accessoryListener);
         arlinkListen = new ArlinkListen();
-        arlinkListen.setListener(arlinkDataListener);
+        arlinkListen.setControlListener(arlinkDataListener);
+        arlinkListen.setStreamListener(STREAM_CHANNEL, arlinkDataListener);
         protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
 
         switch (decodeMode) {
             case Constants.DECODE_MODE_FF_GL_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, 1);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, 1);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, 1);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL);
                 break;
         }
 
@@ -306,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.onDestroy();
         ffListenerManager.removeListener();
         h264Saver.stop();
-        FFJNI.stop();
+        FFJNI.stop(DECODE_CHANNEL);
     }
 
     @Override
@@ -363,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
             try {
                 file.createNewFile();
-                FFJNI.shotFrame(file.getAbsolutePath());
+                FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -374,12 +380,12 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".mp4");
             try {
                 file.createNewFile();
-                FFJNI.startRecordVideo(file.getAbsolutePath());
+                FFJNI.startRecordVideo(file.getAbsolutePath(), DECODE_CHANNEL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (view == btnStopRecord) {
-            FFJNI.stopRecord();
+            FFJNI.stopRecord(DECODE_CHANNEL);
             // 在回调里面toast和保存到相册
         } else if (view == btnHwDecoder) {
             String info = FFJNI.avcodecinfo();
@@ -523,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onStreamData(int channel, byte[] data, int length) {
-            if (channel == 1) {
+            if (channel == STREAM_CHANNEL) {
                 bitRateHelperVideo.receive(length);
                 mediaHelper.offerData(data, length);
                 if (NEED_SAVE_H264) {
@@ -838,7 +844,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FFListener ffListener = new FFListener() {
         @Override
-        public void onShotFrame(String path, boolean success, long handler) {
+        public void onShotFrame(String path, boolean success, int handler) {
             Toast.makeText(MainActivity.this, success? "拍照成功": "拍照失败", Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
@@ -851,7 +857,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onRecordVideo(String path, boolean success, long handler) {
+        public void onRecordVideo(String path, boolean success, int handler) {
             Toast.makeText(MainActivity.this, success? "录像成功": "录像失败", Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
@@ -864,7 +870,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSpsPps(byte[] sps, byte[] pps, long handler) {
+        public void onSpsPps(byte[] sps, byte[] pps, int handler) {
             StringBuilder stringBuilder = new StringBuilder(sps.length);
             for (int i = 0; i<sps.length; i++) {
                 stringBuilder.append(String.format("%02X ", sps[i]));

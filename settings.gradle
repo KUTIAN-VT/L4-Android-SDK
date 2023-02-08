@@ -15,3 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CoolDemo"
 include ':app'
+include ':coollibrary:aoa'
+include ':coollibrary:cf'
+include ':coollibrary:ff'
+include ':coollibrary:media'

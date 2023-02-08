@@ -3,14 +3,15 @@ plugins {
 }
 
 android {
+    namespace 'com.coolfly.demo'
     compileSdk 32
 
     defaultConfig {
         applicationId "com.coolfly.demo"
         minSdk 23
         targetSdk 32
-        versionCode 11
-        versionName "1.7.1"
+        versionCode 12
+        versionName "1.8.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,14 +22,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'com.coolfly.demo'
 }
 
 dependencies {
-    implementation files('./libs/aoalibrary.aar')
-    implementation files('./libs/fflibrary.aar')
-    implementation files('./libs/cflibrary.aar')
-    implementation files('./libs/medialibrary.aar')
+    implementation project(path: ':coollibrary:aoa')
+    implementation project(path: ':coollibrary:cf')
+    implementation project(path: ':coollibrary:ff')
+    implementation project(path: ':coollibrary:media')
 
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
