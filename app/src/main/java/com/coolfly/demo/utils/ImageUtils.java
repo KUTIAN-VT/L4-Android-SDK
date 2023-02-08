@@ -49,15 +49,23 @@ public final class ImageUtils {
             return destFile;
         } else {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
-            contentValues.put(MediaStore.Images.Media.MIME_TYPE, isVideo? "video/*": "image/*");
             Uri contentUri;
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            if (isVideo) {
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else {
+                    contentUri = MediaStore.Video.Media.INTERNAL_CONTENT_URI;
+                }
             } else {
-                contentUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else {
+                    contentUri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
+                }
             }
-            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_DCIM + "/" + safeDirName);
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, isVideo? "video/*": "image/*");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM + "/" + safeDirName);
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
             Uri uri = Utils.getApp().getContentResolver().insert(contentUri, contentValues);
             if (uri == null) {
