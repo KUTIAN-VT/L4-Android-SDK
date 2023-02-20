@@ -25,10 +25,10 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':coollibrary:aoa')
-    implementation project(path: ':coollibrary:cf')
-    implementation project(path: ':coollibrary:ff')
-    implementation project(path: ':coollibrary:media')
+    implementation project(path: ':fflibrary')
+    implementation project(path: ':cflibrary')
+    implementation project(path: ':aoalibrary')
+    implementation project(path: ':medialibrary')
 
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
