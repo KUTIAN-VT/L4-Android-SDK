@@ -1,6 +1,5 @@
 package com.coolfly.demo;
 
-import static com.wuadam.aoalibrary.AccessoryHelper.USB_CONNECTED;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,9 +48,11 @@ import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.UartRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
-import com.wuadam.aoalibrary.AccessoryHelper;
-import com.wuadam.aoalibrary.AccessoryListener;
 import com.wuadam.aoalibrary.AoaSwitch;
+import com.wuadam.aoalibrary.accessory.AccessoryHelper;
+import com.wuadam.aoalibrary.accessory.AccessoryListener;
+import com.wuadam.aoalibrary.host.UsbDeviceHelper;
+import com.wuadam.aoalibrary.host.UsbDeviceListener;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private AccessoryHelper accessoryHelper;
     private ArlinkListen arlinkListen;
+    private UsbDeviceHelper usbDeviceHelper;
     private ProtocolHelper protocolHelper;
     private MediaHelper mediaHelper;
     private FFListenerManager ffListenerManager;
@@ -230,6 +232,10 @@ public class MainActivity extends AppCompatActivity {
         arlinkListen = new ArlinkListen();
         arlinkListen.setControlListener(arlinkDataListener);
         arlinkListen.setStreamListener(STREAM_CHANNEL, arlinkDataListener);
+
+        usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
+        usbDeviceHelper.addListener(usbDeviceListener);
+
         protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
 
@@ -292,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         accessoryHelper.onResume();
+        usbDeviceHelper.onResume();
         protocolHelper.onResume();
         permissionHelper.onResume();
     }
@@ -308,6 +315,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         accessoryHelper.removeListener(accessoryListener);
         accessoryHelper.onDestroy();
+        usbDeviceHelper.removeListener(usbDeviceListener);
+        usbDeviceHelper.onDestroy();
         protocolHelper.removeListener(protocolListener);
         protocolHelper.onDestroy();
         ffListenerManager.removeListener();
@@ -392,13 +401,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
             Log.d("codec info", info);
         } else if (view == btnUpgradeGrd) {
-            if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
+            if (AccessoryHelper.UsbStatus != AccessoryHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_GRD);
         } else if (view == btnUpgradeSky) {
-            if (AccessoryHelper.UsbStatus != USB_CONNECTED) {
+            if (AccessoryHelper.UsbStatus != AccessoryHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -541,6 +550,37 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
+        @Override
+        public void onDisconnect() {
+            bitRateHelperVideo.stop();
+            protocolHelper.resetSkyUart3PassThrough();
+            protocolHelper.resetSkyUart1PassThrough();
+            protocolHelper.resetGndUart3PassThrough();
+        }
+
+        @Override
+        public void onVideoData(byte[] data, int length) {
+            bitRateHelperVideo.receive(length);
+            mediaHelper.offerData(data, length);
+            if (NEED_SAVE_H264) {
+                byte[] buffer = new byte[length];
+                System.arraycopy(data, 0, buffer, 0, length);
+                h264Saver.writeVideoSampleData(buffer);
+            }
+        }
+
+        @Override
+        public void onAudioData(byte[] data, int length) {
+
+        }
+
+        @Override
+        public void onCtrlData(byte[] data, int length) {
+            protocolHelper.parseData(data, length);
+        }
+    };
+
     private DeviceInfo arlinkDevice = new DeviceInfo();
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
@@ -609,8 +649,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onWrite(byte[] data) {
-            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
-                accessoryHelper.ArlinkWriteData(data);
+            if (AccessoryHelper.UsbStatus == AccessoryHelper.USB_CONNECTED) {
+                accessoryHelper.writeData(data);
+            } else if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
+                usbDeviceHelper.writeData(data);
             }
         }
     };
@@ -934,8 +976,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onWrite(byte[] data) {
-            if (AccessoryHelper.UsbStatus == USB_CONNECTED) {
-                accessoryHelper.ArlinkWriteData(data);
+            if (AccessoryHelper.UsbStatus == AccessoryHelper.USB_CONNECTED) {
+                accessoryHelper.writeData(data);
+            } else if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
+                usbDeviceHelper.writeData(data);
             }
         }
     };
