@@ -6,15 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.PixelCopy;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
@@ -60,6 +65,8 @@ import com.wuadam.medialibrary.BitRateHelper;
 import com.wuadam.medialibrary.H264Saver;
 import com.wuadam.medialibrary.MediaHelper;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -180,15 +187,15 @@ public class MainActivity extends AppCompatActivity {
         // 0. FFmpeg with hw/sw decoder, render in SurfaceView
         // 1. MediaCodec with hw decoder, render in SurfaceView
         // 2. MediaCodec with hw decoder, render in TextureView
-        String[] decodeModeArr = new String[]{"FFmpeg-GL-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
+        String[] decodeModeArr = new String[]{"FFmpeg-SurfaceView", "FFmpeg-GL-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
         spDecodeMode.setAdapter(decodeModeAdapter);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_GL_SURFACE);
+        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
         spDecodeMode.setSelection(decodeMode);
-        if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE) {
+        if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
             btnShot.setVisibility(View.GONE);
             btnStartRecord.setVisibility(View.GONE);
             btnStopRecord.setVisibility(View.GONE);
@@ -240,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.addListener(protocolListener);
 
         switch (decodeMode) {
+            case Constants.DECODE_MODE_FF_SURFACE:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, null, surface, null, null, DECODE_CHANNEL);
+                break;
             case Constants.DECODE_MODE_FF_GL_SURFACE:
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, DECODE_CHANNEL);
                 break;
@@ -372,15 +382,53 @@ public class MainActivity extends AppCompatActivity {
             isMapMini = false;
         }
         else if (view == btnShot) {
-            String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
-            File fileDir = new File(path);
-            fileDir.mkdirs();
-            File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
-            try {
-                file.createNewFile();
-                FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.FF_GL_SURFACE) {
+                String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
+                File fileDir = new File(path);
+                fileDir.mkdirs();
+                File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
+                try {
+                    file.createNewFile();
+                    FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE) {
+                // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
+                Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    PixelCopy.request(
+                            surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
+                                @Override
+                                public void onPixelCopyFinished(int copyResult) {
+                                    if (copyResult == PixelCopy.SUCCESS) {
+                                        Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
+                                                .show();
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                                InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+                                                ImageUtils.save2Album(
+                                                        inputStream,
+                                                        "coolfly",
+                                                        System.currentTimeMillis() + ".jpg",
+                                                        false
+                                                );
+                                            }
+                                        }).start();
+                                    } else {
+                                        Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                }
+                            }, new Handler(Looper.getMainLooper())
+                    );
+                } else {
+                    Toast.makeText(MainApplication.applicationContext, ">=N的系统版本，才可以在FF_DIRECT_SURFACE模式下拍照。请使用FF_GL_SURFACE模式", Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         } else if (view == btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
