@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private BitRateHelper bitRateHelperVideo;
     private final boolean NEED_SAVE_H264 = false;
     private H264Saver h264Saver;
+    private final boolean NEED_MOCK_VIDEO = false;
+    private VideoMock videoMock;
     private PermissionHelper permissionHelper;
     private UpgradeHelper upgradeHelper;
 
@@ -260,6 +262,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+        if (NEED_MOCK_VIDEO) {
+            videoMock = new VideoMock(mediaHelper);
+            videoMock.start();
+        }
+
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
         bitRateHelperVideo = new BitRateHelper();
@@ -329,8 +336,11 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.removeListener(protocolListener);
         protocolHelper.onDestroy();
         ffListenerManager.removeListener();
-        h264Saver.stop();
         FFJNI.stop(DECODE_CHANNEL);
+        h264Saver.stop();
+        if (videoMock != null) {
+            videoMock.destroy();
+        }
     }
 
     @Override
