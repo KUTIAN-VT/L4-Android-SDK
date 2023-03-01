@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
     private BitRateHelper bitRateHelperVideo;
     private final boolean NEED_SAVE_H264 = false;
     private H264Saver h264Saver;
-    private final boolean NEED_MOCK_VIDEO = false;
     private VideoMock videoMock;
     private PermissionHelper permissionHelper;
     private UpgradeHelper upgradeHelper;
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnStartRecord;
     private Button btnStopRecord;
     private Button btnHwDecoder;
+    private SwitchCompat swMockVideo;
     private Spinner spDecodeMode;
     private SwitchCompat swHwDecode;
     private SwitchCompat swAoa;
@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecord = findViewById(R.id.btn_start_record);
         btnStopRecord = findViewById(R.id.btn_stop_record);
         btnHwDecoder = findViewById(R.id.btn_hw_decoder);
+        swMockVideo = findViewById(R.id.sw_mock_video);
         spDecodeMode = findViewById(R.id.sp_decode_mode);
         swHwDecode = findViewById(R.id.sw_hw_decode);
         swAoa = findViewById(R.id.sw_aoa);
@@ -186,9 +187,10 @@ public class MainActivity extends AppCompatActivity {
         tvUart = findViewById(R.id.tv_uart);
 
         // decode mode start
-        // 0. FFmpeg with hw/sw decoder, render in SurfaceView
-        // 1. MediaCodec with hw decoder, render in SurfaceView
-        // 2. MediaCodec with hw decoder, render in TextureView
+        // 0. FFmpeg with hw decoder, direct render in SurfaceView
+        // 1. FFmpeg with hw/sw decoder, yuv2rgb with GL, render in SurfaceView
+        // 2. MediaCodec with hw decoder, direct render in SurfaceView
+        // 3. MediaCodec with hw decoder, direct render in TextureView
         String[] decodeModeArr = new String[]{"FFmpeg-SurfaceView", "FFmpeg-GL-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
@@ -262,11 +264,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        if (NEED_MOCK_VIDEO) {
-            videoMock = new VideoMock(mediaHelper);
-            videoMock.start();
-        }
-
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
         bitRateHelperVideo = new BitRateHelper();
@@ -296,6 +293,21 @@ public class MainActivity extends AppCompatActivity {
                         System.exit(0);
                     }
                 }).setCancelable(false).show();
+            }
+        });
+
+        swMockVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    videoMock = new VideoMock(mediaHelper);
+                    videoMock.start();
+                } else {
+                    if (videoMock != null) {
+                        videoMock.destroy();
+                        videoMock = null;
+                    }
+                }
             }
         });
     }
@@ -340,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
         h264Saver.stop();
         if (videoMock != null) {
             videoMock.destroy();
+            videoMock = null;
         }
     }
 

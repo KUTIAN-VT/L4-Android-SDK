@@ -83,6 +83,14 @@
                 android:onClick="onClick"
                 android:text="编解码器" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_mock_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/white"
+                android:text="Mock视频流" />
+
             <Spinner
                 android:id="@+id/sp_decode_mode"
                 android:layout_width="wrap_content"
