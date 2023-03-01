@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
         spDecodeMode.setSelection(decodeMode);
         if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
-            btnShot.setVisibility(View.GONE);
             btnStartRecord.setVisibility(View.GONE);
             btnStopRecord.setVisibility(View.GONE);
             btnHwDecoder.setVisibility(View.GONE);
@@ -218,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("使用非FFmpeg方式解码，将失去拍照录像功能。APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    builder.setMessage("使用非FFmpeg方式解码，将失去录像功能。APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             System.exit(0);
@@ -349,6 +348,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private void saveBitmap(Bitmap bitmap) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+                ImageUtils.save2Album(
+                        inputStream,
+                        "coolfly",
+                        System.currentTimeMillis() + ".jpg",
+                        false
+                );
+            }
+        }).start();
+    }
+
     public void onClick(View view) {
         if ((view == surface || view == texture) && !isMapMini) {
             // 地图缩小，视频变大
@@ -382,53 +398,58 @@ public class MainActivity extends AppCompatActivity {
             isMapMini = false;
         }
         else if (view == btnShot) {
-            if (mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.FF_GL_SURFACE) {
-                String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
-                File fileDir = new File(path);
-                fileDir.mkdirs();
-                File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
-                try {
-                    file.createNewFile();
-                    FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            switch (mediaHelper.getDecodeMode()) {
+                case FF_GL_SURFACE: {
+                    String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
+                    File fileDir = new File(path);
+                    fileDir.mkdirs();
+                    File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
+                    try {
+                        file.createNewFile();
+                        FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else if (mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE) {
-                // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
-                Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    PixelCopy.request(
-                            surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
-                                @Override
-                                public void onPixelCopyFinished(int copyResult) {
-                                    if (copyResult == PixelCopy.SUCCESS) {
-                                        Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
-                                                .show();
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                                                InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
-                                                ImageUtils.save2Album(
-                                                        inputStream,
-                                                        "coolfly",
-                                                        System.currentTimeMillis() + ".jpg",
-                                                        false
-                                                );
-                                            }
-                                        }).start();
-                                    } else {
-                                        Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
-                                                .show();
+                break;
+                case FF_DIRECT_SURFACE:
+                case MEDIACODEC_SURFACE: {
+                    // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
+                    Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        PixelCopy.request(
+                                surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
+                                    @Override
+                                    public void onPixelCopyFinished(int copyResult) {
+                                        if (copyResult == PixelCopy.SUCCESS) {
+                                            Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
+                                                    .show();
+                                            saveBitmap(bitmap);
+                                        } else {
+                                            Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
+                                                    .show();
+                                        }
                                     }
-                                }
-                            }, new Handler(Looper.getMainLooper())
-                    );
-                } else {
-                    Toast.makeText(MainApplication.applicationContext, ">=N的系统版本，才可以在FF_DIRECT_SURFACE模式下拍照。请使用FF_GL_SURFACE模式", Toast.LENGTH_SHORT)
-                            .show();
+                                }, new Handler(Looper.getMainLooper())
+                        );
+                    } else {
+                        Toast.makeText(MainApplication.applicationContext, ">=N的系统版本，才可以在" + mediaHelper.getDecodeMode().name() + "模式下拍照。请使用FF_GL_SURFACE模式", Toast.LENGTH_SHORT)
+                                .show();
+                    }
                 }
+                break;
+                case MEDIACODEC_TEXTURE: {
+                    Bitmap bitmap = texture.getBitmap();
+                    if (bitmap != null) {
+                        Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
+                                .show();
+                        saveBitmap(bitmap);
+                    } else {
+                        Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+                break;
             }
         } else if (view == btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
