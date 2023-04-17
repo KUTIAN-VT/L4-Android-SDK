@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,8 +63,11 @@ import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
 import com.wuadam.medialibrary.BitRateHelper;
+import com.wuadam.medialibrary.H264Extractor;
 import com.wuadam.medialibrary.H264Saver;
 import com.wuadam.medialibrary.MediaHelper;
+import com.wuadam.medialibrary.MediaListener;
+import com.wuadam.medialibrary.MuxerUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,6 +75,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private UsbDeviceHelper usbDeviceHelper;
     private ProtocolHelper protocolHelper;
     private MediaHelper mediaHelper;
+    private MuxerUtil muxerUtil;
     private FFListenerManager ffListenerManager;
     private BitRateHelper bitRateHelperVideo;
     private final boolean NEED_SAVE_H264 = false;
@@ -130,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
 
     private int videoWidgetWidth;
     private int videoWidgetHeight;
+    private MediaFormat mMediaFormat;
+    private boolean isMediaCodecPlaying = false;
+    private boolean isMediaCodecRecordFoundIFrame = false;
 
     private final int REQ_OTA_GRD = 1;
     private final int REQ_OTA_SKY = 2;
@@ -200,8 +209,6 @@ public class MainActivity extends AppCompatActivity {
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
         spDecodeMode.setSelection(decodeMode);
         if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
-            btnStartRecord.setVisibility(View.GONE);
-            btnStopRecord.setVisibility(View.GONE);
             btnHwDecoder.setVisibility(View.GONE);
             swHwDecode.setVisibility(View.GONE);
         }
@@ -263,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL);
                 break;
         }
+        mediaHelper.setListener(mediaListener);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
@@ -476,18 +484,60 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (view == btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
-            File fileDir = new File(path);
-            fileDir.mkdirs();
-            File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".mp4");
-            try {
-                file.createNewFile();
-                FFJNI.startRecordVideo(file.getAbsolutePath(), DECODE_CHANNEL);
-            } catch (IOException e) {
-                e.printStackTrace();
+            switch (mediaHelper.getDecodeMode()) {
+                case FF_GL_SURFACE:
+                case FF_DIRECT_SURFACE:
+                    File fileDir = new File(path);
+                    fileDir.mkdirs();
+                    File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".mp4");
+                    try {
+                        file.createNewFile();
+                        FFJNI.startRecordVideo(file.getAbsolutePath(), DECODE_CHANNEL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case MEDIACODEC_SURFACE:
+                case MEDIACODEC_TEXTURE: {
+                    if (muxerUtil != null) {
+                        Toast.makeText(MainApplication.applicationContext, "当前正在录制", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+                    if (isMediaCodecPlaying && mMediaFormat != null) {
+                        muxerUtil = new MuxerUtil(path);
+                        muxerUtil.addVideoTrack(mMediaFormat);
+                        muxerUtil.start();
+                    } else {
+                        Toast.makeText(MainApplication.applicationContext, "当前没有在播放", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+                break;
             }
         } else if (view == btnStopRecord) {
-            FFJNI.stopRecord(DECODE_CHANNEL);
-            // 在回调里面toast和保存到相册
+            switch (mediaHelper.getDecodeMode()) {
+                case FF_GL_SURFACE:
+                case FF_DIRECT_SURFACE:
+                    FFJNI.stopRecord(DECODE_CHANNEL);
+                    // 在回调里面toast和保存到相册
+                    break;
+                case MEDIACODEC_SURFACE:
+                case MEDIACODEC_TEXTURE: {
+                    if (muxerUtil != null) {
+                        muxerUtil.stop();
+                        final String path = muxerUtil.getFilePath();
+                        muxerUtil = null;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".mp4", true);
+                            }
+                        }).start();
+                    }
+                }
+                break;
+            }
         } else if (view == btnHwDecoder) {
             String info = FFJNI.avcodecinfo();
             Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
@@ -975,6 +1025,56 @@ public class MainActivity extends AppCompatActivity {
         tvRcScore.setText("" + rcScore);
         tvVtScore.setText("" + vtScore);
     }
+
+    private MediaListener mediaListener = new MediaListener() {
+        @Override
+        public void onConfigure(MediaFormat mediaFormat) {
+            mMediaFormat = mediaFormat;
+
+            byte[] sps = {
+                    (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x67,
+                    (byte)0x64, (byte)0x00, (byte)0x1F, (byte)0xAC, (byte)0xB4,
+                    (byte)0x02, (byte)0x80, (byte)0x2D, (byte)0xD8, (byte)0x08,
+                    (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x03, (byte)0x00,
+                    (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x1E, (byte)0x07,
+                    (byte)0x8C, (byte)0x19, (byte)0x50};
+            byte[] pps = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01,
+                    (byte)0x68, (byte)0xEF, (byte)0x32, (byte)0xC8, (byte)0xB0};
+            mMediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(sps));
+            mMediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(pps));
+        }
+
+        @Override
+        public void onStart() {
+            isMediaCodecPlaying = true;
+        }
+
+        @Override
+        public void onFrameData(H264Extractor.SyncFrame syncFrame) {
+            if (muxerUtil != null && muxerUtil.isStart()) {
+                if (!isMediaCodecRecordFoundIFrame) {
+                    if (!syncFrame.isIframe) {
+                        // First frame must be I frame
+                        return;
+                    } else {
+                        isMediaCodecRecordFoundIFrame = true;
+                    }
+                }
+                muxerUtil.writeVideoSampleData(syncFrame.byteBuffer, syncFrame.byteBuffer.capacity(), 30);
+            }
+        }
+
+        @Override
+        public void onBitRate(float bitRate) {
+
+        }
+
+        @Override
+        public void onRelease() {
+            isMediaCodecPlaying = false;
+            isMediaCodecRecordFoundIFrame = false;
+        }
+    };
 
     private FFListener ffListener = new FFListener() {
         @Override
