@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.coolfly.demo'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.coolfly.demo"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 12
-        versionName "1.9.0"
+        versionName "1.10.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
