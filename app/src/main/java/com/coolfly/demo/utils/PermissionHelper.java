@@ -27,7 +27,7 @@ public class PermissionHelper {
     /**
      * 判断是否需要检测，防止不停的弹框
      */
-    private boolean isNeedCheck = true;
+    private boolean isNeedCheck = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q;
     private String[] needPermissions = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
