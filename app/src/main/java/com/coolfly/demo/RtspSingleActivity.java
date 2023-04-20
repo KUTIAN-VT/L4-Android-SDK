@@ -3,9 +3,6 @@ package com.coolfly.demo;
 import static com.coolfly.demo.utils.Constants.PREF_RTSP_URI;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -26,6 +23,8 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
@@ -190,6 +189,38 @@ public class RtspSingleActivity extends AppCompatActivity {
                 }
                 break;
             }
+        } else if (view == btnStartRecord) {
+            String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
+            switch (mediaHelper.getDecodeMode()) {
+                case FF_SWS_SURFACE_PATH:
+                case FF_GL_SURFACE_PATH:
+                case FF_DIRECT_SURFACE_PATH:
+                    File fileDir = new File(path);
+                    fileDir.mkdirs();
+                    File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".mp4");
+                    try {
+                        file.createNewFile();
+                        FFJNI.startRecordVideo(file.getAbsolutePath(), DECODE_CHANNEL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case FF_NDK_MEDIACODEC_SURFACE_PATH:
+                    // Not supported
+                    break;
+            }
+        } else if (view == btnStopRecord) {
+            switch (mediaHelper.getDecodeMode()) {
+                case FF_SWS_SURFACE_PATH:
+                case FF_GL_SURFACE_PATH:
+                case FF_DIRECT_SURFACE_PATH:
+                    FFJNI.stopRecord(DECODE_CHANNEL);
+                    // 在回调里面toast和保存到相册
+                    break;
+                case FF_NDK_MEDIACODEC_SURFACE_PATH:
+                    // Not supported
+                    break;
+            }
         }
     }
     private FFListener ffListener = new FFListener() {
@@ -215,7 +246,6 @@ public class RtspSingleActivity extends AppCompatActivity {
         @Override
         public void onDowngradeToSwDecode(int handler) {
             tvDecodeMode.setText(R.string.decode_mode_sw);
-            Toast.makeText(MainApplication.applicationContext, MainApplication.applicationContext.getString(R.string.sw_decode, handler), Toast.LENGTH_SHORT).show();
         }
     };
 }

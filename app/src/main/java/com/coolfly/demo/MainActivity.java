@@ -71,8 +71,6 @@ import com.wuadam.medialibrary.MediaHelper;
 import com.wuadam.medialibrary.MediaListener;
 import com.wuadam.medialibrary.MuxerUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -1073,46 +1071,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private FFListener ffListener = new FFListener() {
-        @Override
-        public void onShotFrame(String path, boolean success, int handler) {
-            Toast.makeText(MainActivity.this, success? R.string.take_photo_success: R.string.take_photo_fail, Toast.LENGTH_SHORT).show();
-            if (success) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".jpg", false);
-                    }
-                }).start();
-            }
-        }
 
-        @Override
-        public void onRecordVideo(String path, boolean success, int handler) {
-            Toast.makeText(MainActivity.this, success? R.string.record_success: R.string.record_fail, Toast.LENGTH_SHORT).show();
-            if (success) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".mp4", true);
-                    }
-                }).start();
-            }
-        }
-
-        @Override
-        public void onSpsPps(byte[] sps, byte[] pps, int handler) {
-            StringBuilder stringBuilder = new StringBuilder(sps.length);
-            for (int i = 0; i<sps.length; i++) {
-                stringBuilder.append(String.format("%02X ", sps[i]));
-            }
-            Log.d(TAG, "onSpsPpsAnnexB sps: " + stringBuilder.toString());
-
-            stringBuilder = new StringBuilder(pps.length);
-            for (int i = 0; i<pps.length; i++) {
-                stringBuilder.append(String.format("%02X ", pps[i]));
-            }
-            Log.d(TAG, "onSpsPpsAnnexB pps: " + stringBuilder.toString());
-        }
     };
 
     private BitRateHelper.OnBitRateListener bitRateListenerVideo = new BitRateHelper.OnBitRateListener() {
