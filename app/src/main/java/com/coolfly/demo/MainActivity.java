@@ -26,6 +26,7 @@ import android.view.PixelCopy;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -42,6 +43,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private PermissionHelper permissionHelper;
     private UpgradeHelper upgradeHelper;
 
+    private ViewGroup rootView;
     private SurfaceView surface;
     private TextureView texture;
     private TextView tvBitrateVideo;
@@ -174,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         videoWidgetWidth = outPoint.x;
         videoWidgetHeight = (int) (videoWidgetWidth / MediaHelper.VIDEO_ASPECT);
 
+        rootView = findViewById(R.id.root_view);
         surface = findViewById(R.id.surface);
         texture = findViewById(R.id.texture);
         tvBitrateVideo = findViewById(R.id.tv_bitrate_video);
@@ -1071,7 +1075,36 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private FFListener ffListener = new FFListener() {
+        @Override
+        public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
+            if (handler == DECODE_CHANNEL) {
+                float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
+                float aspectRatioNew = ((float) width) / height;
+                if (aspectRatio > aspectRatioNew) {
+                    float realWidth = ((float) (rootView.getHeight())) * aspectRatioNew;
+                    if (isMapMini) {
+                        ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                        layoutParams.width = (int) realWidth;
+                        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                        surface.requestLayout();
+                    }
 
+                    videoWidgetWidth = (int) realWidth;
+                    videoWidgetHeight = rootView.getHeight();
+                } else {
+                    float realHeight = ((float) (rootView.getWidth())) / aspectRatioNew;
+                    if (isMapMini) {
+                        ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                        layoutParams.height = (int) realHeight;
+                        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                        surface.requestLayout();
+                    }
+
+                    videoWidgetWidth = rootView.getWidth();
+                    videoWidgetHeight = (int) realHeight;
+                }
+            }
+        }
     };
 
     private BitRateHelper.OnBitRateListener bitRateListenerVideo = new BitRateHelper.OnBitRateListener() {
@@ -1206,9 +1239,19 @@ public class MainActivity extends AppCompatActivity {
             p.bottomMargin = marginBottom;
 
             if (this.isEnlarge) {
-                p.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+                if (interpolatedTime == 1) {
+                    ConstraintSet set = new ConstraintSet();
+                    set.clone((ConstraintLayout) view.getParent());
+                    set.connect(view.getId(), ConstraintSet.TOP, R.id.root_view, ConstraintSet.TOP, 0);
+                    set.connect(view.getId(), ConstraintSet.START, R.id.root_view, ConstraintSet.START, 0);
+                    set.applyTo((ConstraintLayout) view.getParent());
+                }
             } else {
-                p.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                ConstraintSet set = new ConstraintSet();
+                set.clone((ConstraintLayout) view.getParent());
+                set.clear(view.getId(), ConstraintSet.TOP);
+                set.clear(view.getId(), ConstraintSet.START);
+                set.applyTo((ConstraintLayout) view.getParent());
             }
 
             view.requestLayout();

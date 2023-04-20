@@ -285,7 +285,7 @@ public class RtspSingleActivity extends AppCompatActivity {
     private FFListener ffListener = new FFListener() {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
-            if (handler == 5) {
+            if (handler == DECODE_CHANNEL) {
                 ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
                 float aspectRatio = ((float) fl.getWidth()) / fl.getHeight();
                 float aspectRatioNew = ((float) width) / height;
