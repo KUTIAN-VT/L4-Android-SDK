@@ -1,6 +1,8 @@
 package com.coolfly.demo;
 
 
+import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnUpgradeGrd;
     private Button btnUpgradeSky;
     private TextView tvUpdateProcess;
+    private Button btnRtsp;
 
     private TextView tvVT = null;
     private TextView tvRC = null;
@@ -143,9 +146,13 @@ public class MainActivity extends AppCompatActivity {
     private final int REQ_OTA_GRD = 1;
     private final int REQ_OTA_SKY = 2;
 
-    // support 5 channels, from 1 to 5
+    /**
+     *  support 5 channels, from 1 to 5
+     */
     private final int DECODE_CHANNEL = 1;
-    // support 2 channels, from 0 to 1
+    /**
+     * support 2 channels, from 0 to 1
+     */
     private final int STREAM_CHANNEL = 1;
 
     @Override
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpgradeGrd = findViewById(R.id.btn_upgrade_grd);
         btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
         tvUpdateProcess = findViewById(R.id.tv_update_process);
+        btnRtsp = findViewById(R.id.btn_rtsp);
 
         tvVT = findViewById(R.id.tv_VT);
         tvRC = findViewById(R.id.tv_RC);
@@ -379,22 +387,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void saveBitmap(Bitmap bitmap) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
-                ImageUtils.save2Album(
-                        inputStream,
-                        "coolfly",
-                        System.currentTimeMillis() + ".jpg",
-                        false
-                );
-            }
-        }).start();
-    }
+
 
     public void onClick(View view) {
         if ((view == surface || view == texture) && !isMapMini) {
@@ -554,6 +547,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             getUpgradeFis(REQ_OTA_SKY);
+        } else if (view == btnRtsp) {
+            Intent intent = new Intent(this, RtspSingleActivity.class);
+            startActivity(intent);
         }
     }
 

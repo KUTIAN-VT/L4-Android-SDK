@@ -4,6 +4,7 @@ import static com.blankj.utilcode.util.FileUtils.createOrExistsDir;
 
 import android.Manifest;
 import android.content.ContentValues;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,6 +20,8 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.blankj.utilcode.util.Utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -180,5 +183,20 @@ public final class ImageUtils {
         }
     }
 
-
+    public static void saveBitmap(Bitmap bitmap) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+                ImageUtils.save2Album(
+                        inputStream,
+                        "coolfly",
+                        System.currentTimeMillis() + ".jpg",
+                        false
+                );
+            }
+        }).start();
+    }
 }

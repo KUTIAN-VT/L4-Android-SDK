@@ -23,4 +23,13 @@
     <string name="ota_ing">升级中</string>
     <string name="ota_finish">升级完成</string>
     <string name="ota_fail">升级失败</string>
+
+    <string name="play">播放</string>
+    <string name="stop">停止</string>
+    <string name="url_error">视频地址错误</string>
+    <string name="surface_unavailable">初始化未完成，请重试</string>
+    <string name="sw_decode">进入软解模式 %d</string>
+    <string name="video_url">视频地址</string>
+    <string name="decode_mode_hw">硬解</string>
+    <string name="decode_mode_sw">软解</string>
 </resources>

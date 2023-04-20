@@ -23,4 +23,13 @@ Please click "Settings" - "Permissions" - open the required permissions</string>
     <string name="ota_ing">upgrading</string>
     <string name="ota_finish">Update completed</string>
     <string name="ota_fail">Upgrade failed</string>
+
+    <string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="url_error">Video url error</string>
+    <string name="surface_unavailable">Initialization not completed, please try again</string>
+    <string name="sw_decode">Enter soft decoding mode %d</string>
+    <string name="video_url">Video url</string>
+    <string name="decode_mode_hw">HW</string>
+    <string name="decode_mode_sw">SW</string>
 </resources>
