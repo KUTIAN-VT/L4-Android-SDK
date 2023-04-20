@@ -13,6 +13,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.coolfly.demo.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,11 +115,11 @@ public class PermissionHelper {
      */
     private void showMissingPermissionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("提示");
-        builder.setMessage("当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限");
+        builder.setTitle(R.string.permission_tip);
+        builder.setMessage(R.string.permission_msg);
 
         // 拒绝, 退出应用
-        builder.setNegativeButton("取消",
+        builder.setNegativeButton(R.string.permission_cancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -125,7 +127,7 @@ public class PermissionHelper {
                     }
                 });
 
-        builder.setPositiveButton("设置",
+        builder.setPositiveButton(R.string.permission_set,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

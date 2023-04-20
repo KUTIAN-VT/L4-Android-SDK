@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">CoolDemo</string>
+
+    <string name="restart_to_work">APP重启之后生效</string>
+    <string name="ok">确定</string>
+    <string name="take_photo_success">拍照成功</string>
+    <string name="take_photo_fail">拍照失败</string>
+    <string name="take_photo_tip">>=N的系统版本，才可以在%s模式下拍照。请使用FF_GL_SURFACE模式</string>
+    <string name="record_success">录像成功</string>
+    <string name="record_fail">录像失败</string>
+    <string name="record_ing">当前正在录制</string>
+    <string name="record_not_playing">当前没有在播放</string>
+
+    <string name="permission_tip">提示</string>
+    <string name="permission_msg">当前应用缺少必要权限。
+
+请点击"设置"-"权限"-打开所需权限</string>
+    <string name="permission_cancel">取消</string>
+    <string name="permission_set">设置</string>
+
+    <string name="ota_start">升级开始</string>
+    <string name="ota_resend">重发: %d / %d</string>
+    <string name="ota_ing">升级中</string>
+    <string name="ota_finish">升级完成</string>
+    <string name="ota_fail">升级失败</string>
+</resources>

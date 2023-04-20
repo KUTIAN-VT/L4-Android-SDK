@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("使用非FFmpeg方式解码，将失去录像功能。APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    builder.setMessage(R.string.restart_to_work).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             System.exit(0);
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("APP重启之后生效").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                builder.setMessage(R.string.restart_to_work).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         System.exit(0);
@@ -453,18 +453,18 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onPixelCopyFinished(int copyResult) {
                                         if (copyResult == PixelCopy.SUCCESS) {
-                                            Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
+                                            Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
                                                     .show();
                                             saveBitmap(bitmap);
                                         } else {
-                                            Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
+                                            Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
                                                     .show();
                                         }
                                     }
                                 }, new Handler(Looper.getMainLooper())
                         );
                     } else {
-                        Toast.makeText(MainApplication.applicationContext, ">=N的系统版本，才可以在" + mediaHelper.getDecodeMode().name() + "模式下拍照。请使用FF_GL_SURFACE模式", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainApplication.applicationContext, getString(R.string.take_photo_tip, mediaHelper.getDecodeMode().name()), Toast.LENGTH_SHORT)
                                 .show();
                     }
                 }
@@ -472,11 +472,11 @@ public class MainActivity extends AppCompatActivity {
                 case MEDIACODEC_TEXTURE: {
                     Bitmap bitmap = texture.getBitmap();
                     if (bitmap != null) {
-                        Toast.makeText(MainApplication.applicationContext, "拍照成功", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
                                 .show();
                         saveBitmap(bitmap);
                     } else {
-                        Toast.makeText(MainApplication.applicationContext, "拍照失败", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
                                 .show();
                     }
                 }
@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
                 case MEDIACODEC_SURFACE:
                 case MEDIACODEC_TEXTURE: {
                     if (muxerUtil != null) {
-                        Toast.makeText(MainApplication.applicationContext, "当前正在录制", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainApplication.applicationContext, R.string.record_ing, Toast.LENGTH_SHORT)
                                 .show();
                         return;
                     }
@@ -509,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
                         muxerUtil.addVideoTrack(mMediaFormat);
                         muxerUtil.start();
                     } else {
-                        Toast.makeText(MainApplication.applicationContext, "当前没有在播放", Toast.LENGTH_SHORT)
+                        Toast.makeText(MainApplication.applicationContext, R.string.record_not_playing, Toast.LENGTH_SHORT)
                                 .show();
                     }
                 }
@@ -1079,7 +1079,7 @@ public class MainActivity extends AppCompatActivity {
     private FFListener ffListener = new FFListener() {
         @Override
         public void onShotFrame(String path, boolean success, int handler) {
-            Toast.makeText(MainActivity.this, success? "拍照成功": "拍照失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, success? R.string.take_photo_success: R.string.take_photo_fail, Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
                     @Override
@@ -1092,7 +1092,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onRecordVideo(String path, boolean success, int handler) {
-            Toast.makeText(MainActivity.this, success? "录像成功": "录像失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, success? R.string.record_success: R.string.record_fail, Toast.LENGTH_SHORT).show();
             if (success) {
                 new Thread(new Runnable() {
                     @Override
@@ -1134,7 +1134,7 @@ public class MainActivity extends AppCompatActivity {
     private UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
         @Override
         public void onStart() {
-            tvUpdateProcess.setText("升级开始");
+            tvUpdateProcess.setText(R.string.ota_start);
         }
 
         @Override
@@ -1144,24 +1144,24 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onResend(int curFrame, int totalFrame) {
-            tvUpdateProcess.setText("重发: " + curFrame + " / " + totalFrame);
+            tvUpdateProcess.setText(getString(R.string.ota_resend, curFrame, totalFrame));
         }
 
         @Override
         public void onFlashing() {
-            tvUpdateProcess.setText("更新中");
+            tvUpdateProcess.setText(R.string.ota_ing);
         }
 
         @Override
         public void onComplete() {
-            tvUpdateProcess.setText("完成");
+            tvUpdateProcess.setText(R.string.ota_finish);
             btnUpgradeGrd.setEnabled(true);
             btnUpgradeSky.setEnabled(true);
         }
 
         @Override
         public void onFail() {
-            tvUpdateProcess.setText("失败");
+            tvUpdateProcess.setText(R.string.ota_fail);
             btnUpgradeGrd.setEnabled(true);
             btnUpgradeSky.setEnabled(true);
         }

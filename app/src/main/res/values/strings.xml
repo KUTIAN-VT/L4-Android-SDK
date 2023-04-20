@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">CoolDemo</string>
+
+    <string name="restart_to_work">It takes effect after restarting the APP</string>
+    <string name="ok">OK</string>
+    <string name="take_photo_success">Take pictures successfully</string>
+    <string name="take_photo_fail">Failed to take pictures</string>
+    <string name="take_photo_tip">Only system version >=N can take pictures in %s mode. Please use FF_GL_SURFACE mode</string>
+    <string name="record_success">Recorded successfully</string>
+    <string name="record_fail">Recording failed</string>
+    <string name="record_ing">Currently recording</string>
+    <string name="record_not_playing">Not currently playing</string>
+
+    <string name="permission_tip">Tip</string>
+    <string name="permission_msg">Current application lacks necessary permissions.
+
+Please click "Settings" - "Permissions" - open the required permissions</string>
+    <string name="permission_cancel">Cancel</string>
+    <string name="permission_set">Set</string>
+
+    <string name="ota_start">Upgrade started</string>
+    <string name="ota_resend">Resend: %d / %d</string>
+    <string name="ota_ing">upgrading</string>
+    <string name="ota_finish">Update completed</string>
+    <string name="ota_fail">Upgrade failed</string>
 </resources>
