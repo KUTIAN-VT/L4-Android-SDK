@@ -3,6 +3,7 @@ package com.coolfly.demo;
 import static com.coolfly.demo.utils.Constants.PREF_RTSP_URI;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -10,11 +11,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.PixelCopy;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -24,8 +28,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coolfly.demo.utils.Constants;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
@@ -52,6 +58,7 @@ public class RtspSingleActivity extends AppCompatActivity {
 
     private MediaHelper mediaHelper;
     private boolean isPlaying = false;
+    private int decodeMode;
     private FFListenerManager ffListenerManager;
     /**
      *  support 5 channels, from 1 to 5
@@ -81,8 +88,60 @@ public class RtspSingleActivity extends AppCompatActivity {
             etUri.setText(uri);
         }
 
+        // decode mode start
+        // 0. FFmpeg with hw decoder, direct render in SurfaceView
+        // 1. FFmpeg with hw/sw decoder, yuv2rgb with GL, render in SurfaceView
+        // 2. FFmpeg with sw decoder, yuv2rgb with sws_scale, render in SurfaceView
+        // 3. Find frames with FFmpeg, call MediaCodec by JNI to decode, direct render in SurfaceView
+        String[] decodeModeArr = new String[]{"FFmpeg-Direct", "FFmpeg-GL", "FFmpeg-SwDecode-SwsScale", "FFmpeg-Jni-MediaCodec"};
+        ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
+        decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        spDecodeMode.setAdapter(decodeModeAdapter);
+
+        decodeMode = sp.getInt(Constants.PREF_DECODE_MODE_RTSP, Constants.DECODE_MODE_RTSP_FF_DIRECT);
+        spDecodeMode.setSelection(decodeMode);
+
+        spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != decodeMode) {
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RtspSingleActivity.this);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt(Constants.PREF_DECODE_MODE_RTSP, position);
+                    editor.apply();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RtspSingleActivity.this);
+                    builder.setMessage(R.string.restart_to_work).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    }).setCancelable(false).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        // decode mode ends
+
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
-        mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+        switch (decodeMode) {
+            case Constants.DECODE_MODE_RTSP_FF_DIRECT:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                break;
+            case Constants.DECODE_MODE_RTSP_FF_GL:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                break;
+            case Constants.DECODE_MODE_RTSP_FF_SW_SWS:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SWS_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                break;
+            case Constants.DECODE_MODE_RTSP_FF_JNI_MEDIACODEC:
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                break;
+        }
 
         tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override
