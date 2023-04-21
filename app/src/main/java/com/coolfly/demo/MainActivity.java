@@ -174,9 +174,6 @@ public class MainActivity extends AppCompatActivity {
         deviceHeight = outPoint.y;
         deviceWidth = outPoint.x;
 
-        videoWidgetWidth = outPoint.x;
-        videoWidgetHeight = (int) (videoWidgetWidth / MediaHelper.VIDEO_ASPECT);
-
         rootView = findViewById(R.id.root_view);
         surface = findViewById(R.id.surface);
         texture = findViewById(R.id.texture);
@@ -1024,6 +1021,34 @@ public class MainActivity extends AppCompatActivity {
         tvVtScore.setText("" + vtScore);
     }
 
+    private void setVideoLayout(int videoWidth, int videoHeight) {
+        float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
+        float aspectRatioNew = ((float) videoWidth) / videoHeight;
+        if (aspectRatio > aspectRatioNew) {
+            float realWidth = ((float) (rootView.getHeight())) * aspectRatioNew;
+            if (isMapMini) {
+                ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                layoutParams.width = (int) realWidth;
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                surface.requestLayout();
+            }
+
+            videoWidgetWidth = (int) realWidth;
+            videoWidgetHeight = rootView.getHeight();
+        } else {
+            float realHeight = ((float) (rootView.getWidth())) / aspectRatioNew;
+            if (isMapMini) {
+                ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                layoutParams.height = (int) realHeight;
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                surface.requestLayout();
+            }
+
+            videoWidgetWidth = rootView.getWidth();
+            videoWidgetHeight = (int) realHeight;
+        }
+    }
+
     private MediaListener mediaListener = new MediaListener() {
         @Override
         public void onConfigure(MediaFormat mediaFormat) {
@@ -1040,6 +1065,13 @@ public class MainActivity extends AppCompatActivity {
                     (byte)0x68, (byte)0xEF, (byte)0x32, (byte)0xC8, (byte)0xB0};
             mMediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(sps));
             mMediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(pps));
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setVideoLayout(mMediaFormat.getInteger(MediaFormat.KEY_WIDTH), mMediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
+                }
+            });
         }
 
         @Override
@@ -1078,31 +1110,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {
-                float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
-                float aspectRatioNew = ((float) width) / height;
-                if (aspectRatio > aspectRatioNew) {
-                    float realWidth = ((float) (rootView.getHeight())) * aspectRatioNew;
-                    if (isMapMini) {
-                        ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
-                        layoutParams.width = (int) realWidth;
-                        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                        surface.requestLayout();
-                    }
-
-                    videoWidgetWidth = (int) realWidth;
-                    videoWidgetHeight = rootView.getHeight();
-                } else {
-                    float realHeight = ((float) (rootView.getWidth())) / aspectRatioNew;
-                    if (isMapMini) {
-                        ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
-                        layoutParams.height = (int) realHeight;
-                        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                        surface.requestLayout();
-                    }
-
-                    videoWidgetWidth = rootView.getWidth();
-                    videoWidgetHeight = (int) realHeight;
-                }
+                setVideoLayout(width, height);
             }
         }
     };
