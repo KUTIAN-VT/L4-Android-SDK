@@ -271,10 +271,14 @@ public class MainActivity extends AppCompatActivity {
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 1920, 1080, 30);
+                // other video profile
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 240, 320, 25);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 1920, 1080, 30);
+                // other video profile
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 240, 320, 25);
                 break;
         }
         mediaHelper.setListener(mediaListener);
@@ -1024,13 +1028,14 @@ public class MainActivity extends AppCompatActivity {
     private void setVideoLayout(int videoWidth, int videoHeight) {
         float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
         float aspectRatioNew = ((float) videoWidth) / videoHeight;
+        View viewToChange = mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE? texture: surface;
         if (aspectRatio > aspectRatioNew) {
             float realWidth = ((float) (rootView.getHeight())) * aspectRatioNew;
             if (isMapMini) {
-                ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
                 layoutParams.width = (int) realWidth;
                 layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                surface.requestLayout();
+                viewToChange.requestLayout();
             }
 
             videoWidgetWidth = (int) realWidth;
@@ -1038,10 +1043,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             float realHeight = ((float) (rootView.getWidth())) / aspectRatioNew;
             if (isMapMini) {
-                ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
+                ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
                 layoutParams.height = (int) realHeight;
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                surface.requestLayout();
+                viewToChange.requestLayout();
             }
 
             videoWidgetWidth = rootView.getWidth();
