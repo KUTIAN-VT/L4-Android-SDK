@@ -63,7 +63,7 @@ public class RtspSingleActivity extends AppCompatActivity {
     /**
      *  support 5 channels, from 1 to 5
      */
-    private final int DECODE_CHANNEL = 1;
+    private final int DECODE_CHANNEL = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,6 +215,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                     File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
                     try {
                         file.createNewFile();
+                        // Retrieve the result via FFListener.onShotFrame
                         FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -224,7 +225,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                 case FF_NDK_MEDIACODEC_SURFACE_PATH:
                 case FF_DIRECT_SURFACE_PATH: {
                     // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
-                    Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
+                    Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         PixelCopy.request(
                                 surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
@@ -273,8 +274,8 @@ public class RtspSingleActivity extends AppCompatActivity {
                 case FF_SWS_SURFACE_PATH:
                 case FF_GL_SURFACE_PATH:
                 case FF_DIRECT_SURFACE_PATH:
+                    // Retrieve the record result via FFListener.onRecordVideo
                     FFJNI.stopRecord(DECODE_CHANNEL);
-                    // 在回调里面toast和保存到相册
                     break;
                 case FF_NDK_MEDIACODEC_SURFACE_PATH:
                     // Not supported
@@ -299,6 +300,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                     layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 }
                 surface.requestLayout();
+                mediaHelper.updateVideoSize(width, height);
             }
         }
 

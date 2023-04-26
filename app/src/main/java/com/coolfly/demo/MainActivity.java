@@ -272,12 +272,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 1920, 1080, 30);
-                // other video profile
+                // Other video profile
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 240, 320, 25);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 1920, 1080, 30);
-                // other video profile
+                // Other video profile
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 240, 320, 25);
                 break;
         }
@@ -433,6 +433,7 @@ public class MainActivity extends AppCompatActivity {
                     File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
                     try {
                         file.createNewFile();
+                        // Retrieve the result via FFListener.onShotFrame
                         FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -442,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                 case FF_DIRECT_SURFACE:
                 case MEDIACODEC_SURFACE: {
                     // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
-                    Bitmap bitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
+                    Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         PixelCopy.request(
                                 surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
@@ -515,8 +516,8 @@ public class MainActivity extends AppCompatActivity {
             switch (mediaHelper.getDecodeMode()) {
                 case FF_GL_SURFACE:
                 case FF_DIRECT_SURFACE:
+                    // Retrieve the record result via FFListener.onRecordVideo
                     FFJNI.stopRecord(DECODE_CHANNEL);
-                    // 在回调里面toast和保存到相册
                     break;
                 case MEDIACODEC_SURFACE:
                 case MEDIACODEC_TEXTURE: {
@@ -524,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
                         muxerUtil.stop();
                         final String path = muxerUtil.getFilePath();
                         muxerUtil = null;
+                        Toast.makeText(MainActivity.this, R.string.record_success, Toast.LENGTH_SHORT).show();
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -1054,11 +1056,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // For MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE, to record H264 stream
     private MediaListener mediaListener = new MediaListener() {
         @Override
         public void onConfigure(MediaFormat mediaFormat) {
             mMediaFormat = mediaFormat;
 
+            // For MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE, to record H264 stream, you need to set SPS and PPS parameters
+            // So if you need to record, we recommend using FF_DIRECT_SURFACE or FF_GL_SURFACE
+            // TODO Use your own video parameters
             byte[] sps = {
                     (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x67,
                     (byte)0x64, (byte)0x00, (byte)0x1F, (byte)0xAC, (byte)0xB4,
@@ -1116,6 +1122,7 @@ public class MainActivity extends AppCompatActivity {
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {
                 setVideoLayout(width, height);
+                mediaHelper.updateVideoSize(width, height);
             }
         }
     };

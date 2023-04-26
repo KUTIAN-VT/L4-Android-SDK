@@ -42,6 +42,7 @@ public class MainApplication extends Application {
     }
 
     FFListener ffListener = new FFListener() {
+        // Retrieving result after calling FFJNI.shotFrame
         @Override
         public void onShotFrame(String path, boolean success, int handler) {
             Toast.makeText(applicationContext, success? R.string.take_photo_success: R.string.take_photo_fail, Toast.LENGTH_SHORT).show();
@@ -55,6 +56,7 @@ public class MainApplication extends Application {
             }
         }
 
+        // Retrieving record result after calling FFJNI.stopRecord
         @Override
         public void onRecordVideo(String path, boolean success, int handler) {
             Toast.makeText(applicationContext, success? R.string.record_success: R.string.record_fail, Toast.LENGTH_SHORT).show();
