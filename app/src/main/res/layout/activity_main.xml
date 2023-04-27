@@ -60,28 +60,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="拍照" />
+                android:text="@string/take_photo" />
 
             <Button
                 android:id="@+id/btn_start_record"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="开始录像" />
+                android:text="@string/record_start" />
 
             <Button
                 android:id="@+id/btn_stop_record"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="停止录像" />
+                android:text="@string/record_stop" />
 
             <Button
                 android:id="@+id/btn_hw_decoder"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="编解码器" />
+                android:text="@string/hw_decoders" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_mock_video"
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/white"
-                android:text="Mock视频流" />
+                android:text="@string/mock_video" />
 
             <Spinner
                 android:id="@+id/sp_decode_mode"
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/white"
-                android:text="硬解码" />
+                android:text="@string/hw_decode" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_aoa"
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/white"
-                android:text="图传通信" />
+                android:text="@string/fpv_communication" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_fpv"
@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@android:color/white"
-                android:text="图传电源" />
+                android:text="@string/fpv_power" />
 
             <TextView
                 android:id="@+id/tv_update_process"
@@ -128,7 +128,7 @@
                 android:layout_marginTop="4dp"
                 android:background="@android:color/white"
                 android:onClick="onClick"
-                android:text="升级进度"
+                android:text="@string/ota_progress"
                 android:textColor="@android:color/black"
                 tools:text="50/66" />
 
@@ -137,14 +137,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="升级地面端" />
+                android:text="@string/ota_ground" />
 
             <Button
                 android:id="@+id/btn_upgrade_sky"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="升级天空端" />
+                android:text="@string/ota_sky" />
 
             <Button
                 android:id="@+id/btn_rtsp"

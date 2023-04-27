@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name">CoolDemo</string>
 
+    <string name="take_photo">Take photo</string>
+    <string name="record_start">Start record</string>
+    <string name="record_stop">Stop record</string>
+    <string name="hw_decoders">HW Decoders</string>
+    <string name="mock_video">Mock stream</string>
+    <string name="hw_decode">HW Decode</string>
+
+    <string name="fpv_communication">FPV Communication</string>
+    <string name="fpv_power">FPV Power</string>
+    <string name="ota_ground">Ground OTA</string>
+    <string name="ota_sky">Sky OTA</string>
+
     <string name="restart_to_work">It takes effect after restarting the APP</string>
     <string name="ok">OK</string>
     <string name="take_photo_success">Take pictures successfully</string>
@@ -18,6 +30,7 @@ Please click "Settings" - "Permissions" - open the required permissions</string>
     <string name="permission_cancel">Cancel</string>
     <string name="permission_set">Set</string>
 
+    <string name="ota_progress">Upgrade Progress</string>
     <string name="ota_start">Upgrade started</string>
     <string name="ota_resend">Resend: %d / %d</string>
     <string name="ota_ing">upgrading</string>
