@@ -152,6 +152,13 @@
                 android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="RTSP" />
+
+            <Button
+                android:id="@+id/btn_rtsp_multi"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="RTSP multi" />
         </LinearLayout>
     </ScrollView>
 

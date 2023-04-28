@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnUpgradeSky;
     private TextView tvUpdateProcess;
     private Button btnRtsp;
+    private Button btnRtspMulti;
 
     private TextView tvVT = null;
     private TextView tvRC = null;
@@ -192,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
         tvUpdateProcess = findViewById(R.id.tv_update_process);
         btnRtsp = findViewById(R.id.btn_rtsp);
+        btnRtspMulti = findViewById(R.id.btn_rtsp_multi);
 
         tvVT = findViewById(R.id.tv_VT);
         tvRC = findViewById(R.id.tv_RC);
@@ -554,6 +556,9 @@ public class MainActivity extends AppCompatActivity {
             getUpgradeFis(REQ_OTA_SKY);
         } else if (view == btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
+            startActivity(intent);
+        } else if (view == btnRtspMulti) {
+            Intent intent = new Intent(this, RtspMultiActivity.class);
             startActivity(intent);
         }
     }
