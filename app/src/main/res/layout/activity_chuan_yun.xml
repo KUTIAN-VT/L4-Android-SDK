@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".ChuanYunActivity">
+
+    <LinearLayout
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="connect" />
+
+        <Button
+            android:id="@+id/btn_disconnect"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="disconnect" />
+
+        <Button
+            android:id="@+id/btn_read_status"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="read status" />
+
+        <Button
+            android:id="@+id/btn_read_sbus"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="read sbus" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_log"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:textColor="#FF66FA45"
+        android:textSize="16sp"
+        tools:text="aaa" />
+</LinearLayout>

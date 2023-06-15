@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#aoa
+-keep class com.wuadam.aoalibrary.** { *; }
+-keep class com.wuadam.aoa.** { *; }
+
+#cf
+-keep class com.coolfly.station.** { *; }
+-keep class com.wuadam.coolfly.** { *; }
+
+#ff
+-keep class com.wuadam.fflibrary.** { *; }
+-keep class com.wuadam.ff.** { *; }
+
+#media
+-keep class com.wuadam.medialibrary.** { *; }
+-keep class com.wuadam.media.** { *; }
+
+
+# Fastjson
+-dontwarn com.alibaba.fastjson.**
+-keep class com.alibaba.fastjson.** { *;}
+
+#serialport
+-keep class android.serialport.** { *; }

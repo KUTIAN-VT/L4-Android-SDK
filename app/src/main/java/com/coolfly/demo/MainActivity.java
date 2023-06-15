@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvUpdateProcess;
     private Button btnRtsp;
     private Button btnRtspMulti;
+    private Button btnChuanyun;
 
     private TextView tvVT = null;
     private TextView tvRC = null;
@@ -194,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         tvUpdateProcess = findViewById(R.id.tv_update_process);
         btnRtsp = findViewById(R.id.btn_rtsp);
         btnRtspMulti = findViewById(R.id.btn_rtsp_multi);
+        btnChuanyun = findViewById(R.id.btn_chuanyun);
 
         tvVT = findViewById(R.id.tv_VT);
         tvRC = findViewById(R.id.tv_RC);
@@ -559,6 +561,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (view == btnRtspMulti) {
             Intent intent = new Intent(this, RtspMultiActivity.class);
+            startActivity(intent);
+        } else if (view == btnChuanyun) {
+            Intent intent = new Intent(this, ChuanYunActivity.class);
             startActivity(intent);
         }
     }

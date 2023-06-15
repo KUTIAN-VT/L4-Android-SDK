@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoolDemo">
         <activity
+            android:name=".ChuanYunActivity"
+            android:exported="false" />
+        <activity
             android:name=".RtspSingleActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
