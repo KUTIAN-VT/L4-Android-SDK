@@ -5,11 +5,12 @@ import com.wuadam.medialibrary.MediaHelper;
 import java.io.InputStream;
 
 /**
- * @Description: 模拟视频流
+ * @Description: Mock video source
  * @Author: zongheng.wu
  * @Date: 2023/3/1 13:38
  */
 public class VideoMock {
+    private static final int H264_BUTTERFLY = 1, H264_AVATAR = 2, MJPEG = 3;
     private MediaHelper mediaHelper;
 
     public VideoMock(MediaHelper mediaHelper) {
@@ -23,9 +24,35 @@ public class VideoMock {
     private boolean isMockFinished = true;
 
     /**
-     * change between avatar and butterfly
+     * change mock source
      */
-    private static final boolean isMockAvatar = true;
+    private static final int MOCK_SOURCE = H264_AVATAR;
+
+    private String getMockSourceFileName() {
+        switch (MOCK_SOURCE) {
+            case H264_BUTTERFLY:
+                return "butterfly-240-320-25fps.h264";
+            case H264_AVATAR:
+                return "avatar-1920-1080-30fps.h264";
+            case MJPEG:
+                return "sample_960x540.mjpeg";
+            default:
+                return "butterfly-240-320-25fps.h264";
+        }
+    }
+
+    private int getMockSourceSleepTime() {
+        switch (MOCK_SOURCE) {
+            case H264_BUTTERFLY:
+                return 3;
+            case H264_AVATAR:
+                return 1;
+            case MJPEG:
+                return 3;
+            default:
+                return 3;
+        }
+    }
 
     public void start() {
         isMockFinished = false;
@@ -40,7 +67,7 @@ public class VideoMock {
 
                 while (!isMockFinished) {
                     try {
-                        InputStream inputStream = MainApplication.applicationContext.getAssets().open(isMockAvatar? "avatar-1920-1080-30fps.h264": "butterfly-240-320-25fps.h264");
+                        InputStream inputStream = MainApplication.applicationContext.getAssets().open(getMockSourceFileName());
                         byte[] data = new byte[1024];
                         int len = 0;
                         while ((len = inputStream.read(data)) != -1) {
@@ -50,7 +77,7 @@ public class VideoMock {
                                 mediaHelper.offerData(buffer, buffer.length);
                             }
                             try {
-                                Thread.sleep(isMockAvatar? 1: 3);
+                                Thread.sleep(getMockSourceSleepTime());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

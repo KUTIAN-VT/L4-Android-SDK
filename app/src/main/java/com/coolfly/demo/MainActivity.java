@@ -285,6 +285,8 @@ public class MainActivity extends AppCompatActivity {
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 240, 320, 25);
                 break;
         }
+        // Default value is 1024 * 1024
+        mediaHelper.setProbeSize(DECODE_CHANNEL, 1024 * 1024);
         mediaHelper.setListener(mediaListener);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
@@ -1178,8 +1180,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFail() {
-            tvUpdateProcess.setText(R.string.ota_fail);
+        public void onFail(String errMsg) {
+            tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
             btnUpgradeGrd.setEnabled(true);
             btnUpgradeSky.setEnabled(true);
         }
