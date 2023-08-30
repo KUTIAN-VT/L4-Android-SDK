@@ -1,11 +1,13 @@
 package com.coolfly.demo;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,8 +47,19 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (! sensorDevice.isConnectionAlive()) {
+                    // Show dialog for user to choose connection type
                     // SOCKET for 301, SERIAL for 201
-                    sensorDevice.onLine(SensorDevice.SOCKET);
+                    new AlertDialog.Builder(ChuanYunActivity.this)
+                            .setTitle("Choose connection type")
+                            .setItems(new String[]{"Socket for P301", "Serial for P201"}, (dialog, which) -> {
+                                if (which == 0) {
+                                    sensorDevice.onLine(SensorDevice.SOCKET);
+                                } else {
+                                    sensorDevice.onLine(SensorDevice.SERIAL);
+                                }
+                            }).create().show();
+                } else {
+                    Toast.makeText(ChuanYunActivity.this, "Already connected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
