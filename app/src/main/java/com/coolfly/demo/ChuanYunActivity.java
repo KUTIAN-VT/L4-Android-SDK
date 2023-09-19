@@ -55,8 +55,16 @@ public class ChuanYunActivity extends AppCompatActivity {
                             .setTitle("Choose connection type")
                             .setItems(new String[]{"Socket for P301", "Serial for P201"}, (dialog, which) -> {
                                 if (which == 0) {
+                                    // default: 192.168.1.100
+                                    SensorDevice.setIp("192.168.1.100");
+                                    // default: 1235
+                                    SensorDevice.setPort(1235);
                                     sensorDevice.onLine(SensorDevice.SOCKET);
                                 } else {
+                                    // default: /dev/ttyHS0
+                                    SensorDevice.setDevicePath("/dev/ttyHS0");
+                                    // default: 460800
+                                    SensorDevice.setBaudRate("460800");
                                     sensorDevice.onLine(SensorDevice.SERIAL);
                                 }
                             }).create().show();
