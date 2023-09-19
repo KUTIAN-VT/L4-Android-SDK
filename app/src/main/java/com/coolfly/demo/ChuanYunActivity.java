@@ -22,6 +22,7 @@ public class ChuanYunActivity extends AppCompatActivity {
     private Button btnDisconnect;
     private Button btnReadStatus;
     private Button btnReadSbus;
+    private Button btnWriteSbus;
     private TextView tvLog;
 
     private Handler handler;
@@ -36,6 +37,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         btnDisconnect = findViewById(R.id.btn_disconnect);
         btnReadStatus = findViewById(R.id.btn_read_status);
         btnReadSbus = findViewById(R.id.btn_read_sbus);
+        btnWriteSbus = findViewById(R.id.btn_write_sbus);
         tvLog = findViewById(R.id.tv_log);
 
         handler = new Handler(Looper.getMainLooper());
@@ -83,13 +85,36 @@ public class ChuanYunActivity extends AppCompatActivity {
         btnReadSbus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetSbus();
+                readSbus();
+            }
+        });
+
+        btnWriteSbus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeSbus();
             }
         });
     }
 
-    private void resetSbus() {
+    private void readSbus() {
         sensorDevice.readSbus();
+    }
+
+    private void writeSbus() {
+        // 以设置美国手、日本手来举例
+        new AlertDialog.Builder(ChuanYunActivity.this)
+                .setTitle("美国手、日本手")
+                .setItems(new String[]{"美国手", "日本手"}, (dialog, which) -> {
+                    Sbus sbus = new Sbus();
+                    sbus.action = 1;
+                    if (which == 0) {
+                        sbus.ch_jp_am = 0;
+                    } else {
+                        sbus.ch_jp_am = 1;
+                    }
+                    sensorDevice.writeSbus(sbus);
+                }).create().show();
     }
 
     @Override

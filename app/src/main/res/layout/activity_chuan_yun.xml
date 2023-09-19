@@ -35,6 +35,12 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="read sbus" />
+
+        <Button
+            android:id="@+id/btn_write_sbus"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="write sbus" />
     </LinearLayout>
 
     <TextView
