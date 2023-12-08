@@ -41,6 +41,12 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="write sbus" />
+
+        <Button
+            android:id="@+id/btn_pair_device"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="pair device" />
     </LinearLayout>
 
     <TextView

@@ -23,6 +23,7 @@ public class ChuanYunActivity extends AppCompatActivity {
     private Button btnReadStatus;
     private Button btnReadSbus;
     private Button btnWriteSbus;
+    private Button btnPairDevice;
     private TextView tvLog;
 
     private Handler handler;
@@ -38,6 +39,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         btnReadStatus = findViewById(R.id.btn_read_status);
         btnReadSbus = findViewById(R.id.btn_read_sbus);
         btnWriteSbus = findViewById(R.id.btn_write_sbus);
+        btnPairDevice = findViewById(R.id.btn_pair_device);
         tvLog = findViewById(R.id.tv_log);
 
         handler = new Handler(Looper.getMainLooper());
@@ -101,6 +103,13 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 writeSbus();
+            }
+        });
+
+        btnPairDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.pairDevice(0);
             }
         });
     }
