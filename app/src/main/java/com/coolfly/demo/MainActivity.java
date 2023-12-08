@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
         usbDeviceHelper.addListener(usbDeviceListener);
 
-        protocolHelper = ProtocolHelper.getInstance();
+        protocolHelper = new ProtocolHelper();
         protocolHelper.addListener(protocolListener);
 
         switch (decodeMode) {

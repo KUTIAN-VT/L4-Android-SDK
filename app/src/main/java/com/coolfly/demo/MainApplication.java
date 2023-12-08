@@ -27,7 +27,8 @@ public class MainApplication extends Application {
         super.onCreate();
         applicationContext = this;
         MediaHelper.init(this);
-        FFJNI.init();
+        // Initialize FFmpeg, true-Log output, false-No log output
+        FFJNI.init(false);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isHwDecode = sharedPreferences.getBoolean(Constants.PREF_IS_HW_DECODE, true);
