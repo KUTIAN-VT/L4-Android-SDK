@@ -61,7 +61,7 @@ public class RtspSingleActivity extends AppCompatActivity {
     private int decodeMode;
     private FFListenerManager ffListenerManager;
     /**
-     *  support 5 channels, from 1 to 5
+     *  Video decode channel, support 5 channels, from 1 to 5
      */
     private final int DECODE_CHANNEL = 2;
     @Override

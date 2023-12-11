@@ -88,18 +88,25 @@ public class MainActivity extends AppCompatActivity {
     private ArlinkListen arlinkListen;
     private UsbDeviceHelper usbDeviceHelper;
     private ProtocolHelper protocolHelper;
+    /**
+     * First video stream
+     */
     private MediaHelper mediaHelper;
+    /**
+     * Second video stream
+     */
+    private MediaHelper mediaHelper2;
     private MuxerUtil muxerUtil;
     private FFListenerManager ffListenerManager;
     private BitRateHelper bitRateHelperVideo;
     private final boolean NEED_SAVE_H264 = false;
     private H264Saver h264Saver;
-    private VideoMock videoMock;
+    private VideoMock videoMock, videoMock2;
     private PermissionHelper permissionHelper;
     private UpgradeHelper upgradeHelper;
 
     private ViewGroup rootView;
-    private SurfaceView surface;
+    private SurfaceView surface, surface2;
     private TextureView texture;
     private TextView tvBitrateVideo;
     private TextView widgetMap;
@@ -107,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnStartRecord;
     private Button btnStopRecord;
     private Button btnHwDecoder;
-    private SwitchCompat swMockVideo;
+    private SwitchCompat swMockVideo, swMockVideo2;
     private Spinner spDecodeMode;
     private SwitchCompat swHwDecode;
     private SwitchCompat swAoa;
@@ -150,13 +157,22 @@ public class MainActivity extends AppCompatActivity {
     private final int REQ_OTA_SKY = 2;
 
     /**
-     *  support 5 channels, from 1 to 5
+     *  Video decode channel 1, support 5 channels, from 1 to 5, shared between USB and RTSP
      */
     private final int DECODE_CHANNEL = 1;
     /**
-     * support 2 channels, from 0 to 1
+     * Video decode channel 2, support 5 channels, from 1 to 5, shared between USB and RTSP
+     */
+    private final int DECODE_CHANNEL2 = 2;
+
+    /**
+     * Video stream channel 1, support 2 channels, from 0 to 1, only for USB AOA mode
      */
     private final int STREAM_CHANNEL = 1;
+    /**
+     * Video stream channel 2, support 2 channels, from 0 to 1, only for USB AOA mode
+     */
+    private final int STREAM_CHANNEL2 = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
         rootView = findViewById(R.id.root_view);
         surface = findViewById(R.id.surface);
+        surface2 = findViewById(R.id.surface2);
         texture = findViewById(R.id.texture);
         tvBitrateVideo = findViewById(R.id.tv_bitrate_video);
         widgetMap = findViewById(R.id.widget_map);
@@ -186,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         btnStopRecord = findViewById(R.id.btn_stop_record);
         btnHwDecoder = findViewById(R.id.btn_hw_decoder);
         swMockVideo = findViewById(R.id.sw_mock_video);
+        swMockVideo2 = findViewById(R.id.sw_mock_video2);
         spDecodeMode = findViewById(R.id.sp_decode_mode);
         swHwDecode = findViewById(R.id.sw_hw_decode);
         swAoa = findViewById(R.id.sw_aoa);
@@ -260,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
         arlinkListen = new ArlinkListen();
         arlinkListen.setControlListener(arlinkDataListener);
         arlinkListen.setStreamListener(STREAM_CHANNEL, arlinkDataListener);
+        arlinkListen.setStreamListener(STREAM_CHANNEL2, arlinkDataListener);
 
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
         usbDeviceHelper.addListener(usbDeviceListener);
@@ -288,6 +307,10 @@ public class MainActivity extends AppCompatActivity {
         // Default value is 1024 * 1024
         mediaHelper.setProbeSize(DECODE_CHANNEL, 1024 * 1024);
         mediaHelper.setListener(mediaListener);
+
+        // Second video stream, fixed to FF_DIRECT_SURFACE mode
+        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, null, surface2, null, null, DECODE_CHANNEL2);
+        mediaHelper2.setProbeSize(DECODE_CHANNEL2, 1024 * 1024);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
@@ -335,6 +358,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        swMockVideo2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    videoMock2 = new VideoMock(mediaHelper2);
+                    videoMock2.start();
+                } else {
+                    if (videoMock2 != null) {
+                        videoMock2.destroy();
+                        videoMock2 = null;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -374,10 +412,15 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.onDestroy();
         ffListenerManager.removeListener();
         FFJNI.stop(DECODE_CHANNEL);
+        FFJNI.stop(DECODE_CHANNEL2);
         h264Saver.stop();
         if (videoMock != null) {
             videoMock.destroy();
             videoMock = null;
+        }
+        if (videoMock2 != null) {
+            videoMock2.destroy();
+            videoMock2 = null;
         }
     }
 
@@ -701,6 +744,8 @@ public class MainActivity extends AppCompatActivity {
                     System.arraycopy(data, 0, buffer, 0, length);
                     h264Saver.writeVideoSampleData(buffer);
                 }
+            } else if (channel == STREAM_CHANNEL2) {
+                mediaHelper2.offerData(data, length);
             }
         }
     };
@@ -727,7 +772,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onAudioData(byte[] data, int length) {
-
+            mediaHelper2.offerData(data, length);
         }
 
         @Override
@@ -1039,6 +1084,11 @@ public class MainActivity extends AppCompatActivity {
         tvVtScore.setText("" + vtScore);
     }
 
+    /**
+     * Change the size of the video of channel DECODE_CHANNEL
+     * @param videoWidth
+     * @param videoHeight
+     */
     private void setVideoLayout(int videoWidth, int videoHeight) {
         float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
         float aspectRatioNew = ((float) videoWidth) / videoHeight;
@@ -1065,6 +1115,30 @@ public class MainActivity extends AppCompatActivity {
 
             videoWidgetWidth = rootView.getWidth();
             videoWidgetHeight = (int) realHeight;
+        }
+    }
+
+    /**
+     * Change the size of the video of channel DECODE_CHANNEL2
+     *  @param videoWidth
+     * @param videoHeight
+     */
+    private void setVideoLayout2(int videoWidth, int videoHeight) {
+        float aspectRatio = ((float) surface2.getWidth()) / surface2.getHeight();
+        float aspectRatioNew = ((float) videoWidth) / videoHeight;
+        View viewToChange = surface2;
+        if (aspectRatio > aspectRatioNew) {
+            float realWidth = ((float) (surface2.getHeight())) * aspectRatioNew;
+            ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
+            layoutParams.width = (int) realWidth;
+            layoutParams.height = surface2.getHeight();
+            viewToChange.requestLayout();
+        } else {
+            float realHeight = ((float) (surface2.getWidth())) / aspectRatioNew;
+            ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
+            layoutParams.height = (int) realHeight;
+            layoutParams.width = surface2.getWidth();
+            viewToChange.requestLayout();
         }
     }
 
@@ -1135,6 +1209,9 @@ public class MainActivity extends AppCompatActivity {
             if (handler == DECODE_CHANNEL) {
                 setVideoLayout(width, height);
                 mediaHelper.updateVideoSize(width, height);
+            } else if (handler == DECODE_CHANNEL2) {
+                setVideoLayout2(width, height);
+                mediaHelper2.updateVideoSize(width, height);
             }
         }
     };

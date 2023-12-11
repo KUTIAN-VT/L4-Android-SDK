@@ -11,7 +11,7 @@ import java.io.InputStream;
  */
 public class VideoMock {
     private static final int H264_BUTTERFLY = 1, H264_AVATAR = 2, MJPEG = 3;
-    private MediaHelper mediaHelper;
+    private final MediaHelper mediaHelper;
 
     public VideoMock(MediaHelper mediaHelper) {
         this.mediaHelper = mediaHelper;

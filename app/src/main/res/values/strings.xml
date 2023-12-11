@@ -6,6 +6,7 @@
     <string name="record_stop">Stop record</string>
     <string name="hw_decoders">HW Decoders</string>
     <string name="mock_video">Mock stream</string>
+    <string name="mock_video2">Mock stream2</string>
     <string name="hw_decode">HW Decode</string>
 
     <string name="fpv_communication">FPV Communication</string>

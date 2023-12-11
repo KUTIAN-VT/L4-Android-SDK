@@ -91,6 +91,14 @@
                 android:background="@android:color/white"
                 android:text="@string/mock_video" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_mock_video2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/white"
+                android:text="@string/mock_video2" />
+
             <Spinner
                 android:id="@+id/sp_decode_mode"
                 android:layout_width="wrap_content"
@@ -334,6 +342,14 @@
         android:translationZ="3px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <SurfaceView
+        android:id="@+id/surface2"
+        android:layout_width="@dimen/video_2_width"
+        android:layout_height="@dimen/video_2_height"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/widget_map"
+        app:layout_constraintRight_toRightOf="@+id/widget_map" />
 
     <TextView
         android:id="@+id/tv_uart"
