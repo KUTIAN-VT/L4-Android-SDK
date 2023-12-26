@@ -47,6 +47,12 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="pair device" />
+
+        <Button
+            android:id="@+id/btn_switch_camera"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="switch camera" />
     </LinearLayout>
 
     <TextView

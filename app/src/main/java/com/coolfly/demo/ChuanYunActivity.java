@@ -24,10 +24,12 @@ public class ChuanYunActivity extends AppCompatActivity {
     private Button btnReadSbus;
     private Button btnWriteSbus;
     private Button btnPairDevice;
+    private Button btnSwitchCamera;
     private TextView tvLog;
 
     private Handler handler;
     private SensorDevice sensorDevice;
+    private int videoMode201 = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         btnReadSbus = findViewById(R.id.btn_read_sbus);
         btnWriteSbus = findViewById(R.id.btn_write_sbus);
         btnPairDevice = findViewById(R.id.btn_pair_device);
+        btnSwitchCamera = findViewById(R.id.btn_switch_camera);
         tvLog = findViewById(R.id.tv_log);
 
         handler = new Handler(Looper.getMainLooper());
@@ -110,6 +113,13 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sensorDevice.pairDevice(0);
+            }
+        });
+
+        btnSwitchCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.switch201VideoMode(videoMode201++ % 2);
             }
         });
     }
