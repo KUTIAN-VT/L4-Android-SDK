@@ -27,8 +27,12 @@ public class MainApplication extends Application {
         super.onCreate();
         applicationContext = this;
         MediaHelper.init(this);
-        // Initialize FFmpeg, true-Log output, false-No log output
-        FFJNI.init(false);
+        /*
+         * Initialize FFmpeg
+         * @param avLog true-Log output, false-No log output
+         * @param frameIPLastBytes returns the last few bytes of I frame (I in IDR and Slice) and P frame. <=0 means no return. >0 means the number of bytes returned. It is returned through onFrameIPLastBytes callback.
+         */
+        FFJNI.init(false, 0);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isHwDecode = sharedPreferences.getBoolean(Constants.PREF_IS_HW_DECODE, true);
@@ -89,6 +93,15 @@ public class MainApplication extends Application {
                 stringBuilder.append(String.format("%02X ", pps[i]));
             }
             Log.d(TAG, "onSpsPpsAnnexB pps: " + stringBuilder.toString());
+        }
+
+        @Override
+        public void onFrameIPLastBytes(byte[] result, int handler) {
+            StringBuilder stringBuilder = new StringBuilder(result.length);
+            for (int i = 0; i<result.length; i++) {
+                stringBuilder.append(String.format("%02X ", result[i]));
+            }
+            Log.d(TAG, "onFrameIPLastBytes: " + stringBuilder.toString());
         }
     };
 }
