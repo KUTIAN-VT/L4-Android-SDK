@@ -50,6 +50,7 @@ import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
 import com.coolfly.station.listen.ArlinkDataListener;
 import com.coolfly.station.listen.ArlinkListen;
+import com.coolfly.station.prorocol.CoolFly;
 import com.coolfly.station.prorocol.ProtocolHelper;
 import com.coolfly.station.prorocol.ProtocolListener;
 import com.coolfly.station.prorocol.UpgradeHelper;
@@ -77,6 +78,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -125,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRtsp;
     private Button btnRtspMulti;
     private Button btnChuanyun;
+    private TextView tvSn;
+    private TextView tvSysVersion;
 
     private TextView tvVT = null;
     private TextView tvRC = null;
@@ -214,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
         btnRtsp = findViewById(R.id.btn_rtsp);
         btnRtspMulti = findViewById(R.id.btn_rtsp_multi);
         btnChuanyun = findViewById(R.id.btn_chuanyun);
+        tvSn = findViewById(R.id.tv_sn);
+        tvSysVersion = findViewById(R.id.tv_sys_version);
 
         tvVT = findViewById(R.id.tv_VT);
         tvRC = findViewById(R.id.tv_RC);
@@ -392,6 +398,14 @@ public class MainActivity extends AppCompatActivity {
         usbDeviceHelper.onResume();
         protocolHelper.onResume();
         permissionHelper.onResume();
+
+        try {
+            tvSn.setText(String.format("RCSN: %s", CoolFly.getRCSerialNumber()));
+            tvSysVersion.setText(String.format("RCSysVer: %s", CoolFly.getRCSysVersion()));
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
