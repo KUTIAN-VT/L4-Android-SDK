@@ -403,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
             tvSn.setText(String.format("RCSN: %s", CoolFly.getRCSerialNumber()));
             tvSysVersion.setText(String.format("RCSysVer: %s", CoolFly.getRCSysVersion()));
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                 IllegalAccessException e) {
+                 IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
     }
