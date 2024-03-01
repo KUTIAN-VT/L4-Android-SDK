@@ -56,6 +56,7 @@ import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.UartRx;
+import com.coolfly.station.prorocol.bean.UsbRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AoaSwitch;
 import com.wuadam.aoalibrary.accessory.AccessoryHelper;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageVT = null;
     private ImageView imageRC = null;
     private TextView tvOSDLocked = null;
-    private TextView tvUart;
+    private TextView tvRx;
 
     private boolean isMapMini = true;
 
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         imageVT = findViewById(R.id.image_VT_Score);
         imageRC = findViewById(R.id.image_RC_Score);
         tvOSDLocked = findViewById(R.id.tv_osd_locked);
-        tvUart = findViewById(R.id.tv_uart);
+        tvRx = findViewById(R.id.tv_rx);
 
         // decode mode start
         // 0. FFmpeg with hw decoder, direct render in SurfaceView
@@ -768,7 +769,26 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvUart.setText(packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
+                            tvRx.setText(packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
+                        }
+                    });
+                }
+            } else if (packet instanceof UsbRx) {
+                byte[] data = ((UsbRx) packet).data;
+                if (data != null && data.length > 0) {
+                    // todo
+                    //  handle data (such as mavlink packages bytes) read through usb bypass
+
+                    final StringBuilder stringBuilder = new StringBuilder(data.length);
+                    for (int i = 0; i<data.length; i++) {
+                        stringBuilder.append(String.format("%02X ", data[i]));
+                    }
+                    Log.d(TAG, "onRead UsbRx: " + stringBuilder.toString());
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvRx.setText("UsbRx: " + stringBuilder.toString());
                         }
                     });
                 }
