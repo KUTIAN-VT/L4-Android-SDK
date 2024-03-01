@@ -48,8 +48,6 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
-import com.coolfly.station.listen.ArlinkDataListener;
-import com.coolfly.station.listen.ArlinkListen;
 import com.coolfly.station.prorocol.CoolFly;
 import com.coolfly.station.prorocol.ProtocolHelper;
 import com.coolfly.station.prorocol.ProtocolListener;
@@ -61,7 +59,6 @@ import com.coolfly.station.prorocol.bean.UartRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AoaSwitch;
 import com.wuadam.aoalibrary.accessory.AccessoryHelper;
-import com.wuadam.aoalibrary.accessory.AccessoryListener;
 import com.wuadam.aoalibrary.host.UsbDeviceHelper;
 import com.wuadam.aoalibrary.host.UsbDeviceListener;
 import com.wuadam.fflibrary.FFJNI;
@@ -86,8 +83,6 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private AccessoryHelper accessoryHelper;
-    private ArlinkListen arlinkListen;
     private UsbDeviceHelper usbDeviceHelper;
     private ProtocolHelper protocolHelper;
     /**
@@ -168,15 +163,6 @@ public class MainActivity extends AppCompatActivity {
      * Video decode channel 2, support 5 channels, from 1 to 5, shared between USB and RTSP
      */
     private final int DECODE_CHANNEL2 = 2;
-
-    /**
-     * Video stream channel 1, support 2 channels, from 0 to 1, only for USB AOA mode
-     */
-    private final int STREAM_CHANNEL = 1;
-    /**
-     * Video stream channel 2, support 2 channels, from 0 to 1, only for USB AOA mode
-     */
-    private final int STREAM_CHANNEL2 = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -278,13 +264,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // decode mode ends
-
-        accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), true);
-        accessoryHelper.addListener(accessoryListener);
-        arlinkListen = new ArlinkListen();
-        arlinkListen.setControlListener(arlinkDataListener);
-        arlinkListen.setStreamListener(STREAM_CHANNEL, arlinkDataListener);
-        arlinkListen.setStreamListener(STREAM_CHANNEL2, arlinkDataListener);
 
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
         usbDeviceHelper.addListener(usbDeviceListener);
@@ -394,7 +373,6 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        accessoryHelper.onResume();
         usbDeviceHelper.onResume();
         protocolHelper.onResume();
         permissionHelper.onResume();
@@ -411,15 +389,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        accessoryHelper.onPause();
         protocolHelper.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        accessoryHelper.removeListener(accessoryListener);
-        accessoryHelper.onDestroy();
         usbDeviceHelper.removeListener(usbDeviceListener);
         usbDeviceHelper.onDestroy();
         protocolHelper.removeListener(protocolListener);
@@ -717,53 +692,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private AccessoryListener accessoryListener = new AccessoryListener() {
-        @Override
-        public void onReadyToOpenConnect() {
-            // todo
-            //  if accessoryHelper = AccessoryHelper.getInstance(getApplicationContext(), false);
-            //  (the second parameter autoOpenAccessory == false)
-            //  then you need to call accessoryHelper.openAccessory(); manually here
-        }
-
-        @Override
-        public void onDisconnect() {
-            bitRateHelperVideo.stop();
-            protocolHelper.resetSkyUart3PassThrough();
-            protocolHelper.resetSkyUart1PassThrough();
-            protocolHelper.resetGndUart3PassThrough();
-        }
-
-        @Override
-        public void onData(byte[] data, int length) {
-            arlinkListen.ArlinkRxPacketDataAnalyze(data, length);
-        }
-    };
-
-    private ArlinkDataListener arlinkDataListener = new ArlinkDataListener() {
-
-        @Override
-        public void onCtrlData(byte[] data, int length) {
-            protocolHelper.parseData(data, length);
-        }
-
-        @Override
-        public void onStreamData(int channel, byte[] data, int length) {
-            if (channel == STREAM_CHANNEL) {
-                bitRateHelperVideo.receive(length);
-                mediaHelper.offerData(data, length);
-                if (NEED_SAVE_H264) {
-                    byte[] buffer = new byte[length];
-                    System.arraycopy(data, 0, buffer, 0, length);
-                    h264Saver.writeVideoSampleData(buffer);
-                }
-            } else if (channel == STREAM_CHANNEL2) {
-                mediaHelper2.offerData(data, length);
-            }
-        }
-    };
-
     private UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
         public void onDisconnect() {
@@ -863,9 +791,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onWrite(byte[] data) {
-            if (AccessoryHelper.UsbStatus == AccessoryHelper.USB_CONNECTED) {
-                accessoryHelper.writeData(data);
-            } else if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
+            if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
                 usbDeviceHelper.writeData(data);
             }
         }
@@ -882,26 +808,24 @@ public class MainActivity extends AppCompatActivity {
      * @param length
      */
     private void writeDataToUart(UART uart, byte[] data, int length) {
-        if (accessoryHelper.getAccesoryStateMonitored() == AccessoryHelper.AccessoryConnected) {
-            switch (uart) {
+        switch (uart) {
 
-                case SkyUart1:
-                    protocolHelper.sendSkyUart1Tx(data, length);
-                    break;
-                case SkyUart3:
-                    protocolHelper.sendSkyUart3Tx(data, length);
-                    break;
-                case GndUart3:
-                    protocolHelper.sendGndUart3Tx(data, length);
-                    break;
-            }
-
-            final StringBuilder stringBuilder = new StringBuilder(data.length);
-            for (int i = 0; i<data.length; i++) {
-                stringBuilder.append(String.format("%02X ", data[i]));
-            }
-            Log.d(TAG, "onWrite " + uart + ": " + stringBuilder.toString());
+            case SkyUart1:
+                protocolHelper.sendSkyUart1Tx(data, length);
+                break;
+            case SkyUart3:
+                protocolHelper.sendSkyUart3Tx(data, length);
+                break;
+            case GndUart3:
+                protocolHelper.sendGndUart3Tx(data, length);
+                break;
         }
+
+        final StringBuilder stringBuilder = new StringBuilder(data.length);
+        for (int i = 0; i<data.length; i++) {
+            stringBuilder.append(String.format("%02X ", data[i]));
+        }
+        Log.d(TAG, "onWrite " + uart + ": " + stringBuilder.toString());
     }
 
     private void renderWirelessInfo(WirelessInfo wirelessOSD) {
@@ -1279,9 +1203,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onWrite(byte[] data) {
-            if (AccessoryHelper.UsbStatus == AccessoryHelper.USB_CONNECTED) {
-                accessoryHelper.writeData(data);
-            } else if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
+            if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
                 usbDeviceHelper.writeData(data);
             }
         }
