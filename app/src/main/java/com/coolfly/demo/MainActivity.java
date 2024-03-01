@@ -699,6 +699,7 @@ public class MainActivity extends AppCompatActivity {
             protocolHelper.resetSkyUart3PassThrough();
             protocolHelper.resetSkyUart1PassThrough();
             protocolHelper.resetGndUart3PassThrough();
+            protocolHelper.resetUsbPassThrough();
         }
 
         @Override
@@ -731,26 +732,22 @@ public class MainActivity extends AppCompatActivity {
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 arlinkDevice = deviceInfo;
-                if (deviceInfo.skyGround == 1) {
-                    protocolHelper.startSkyUart3PassThrough();
-                    Log.d(TAG, "startSkyUart3PassThrough");
-                    protocolHelper.startSkyUart1PassThrough();
-                    Log.d(TAG, "startSkyUart1PassThrough");
-                    protocolHelper.startGndUart3PassThrough();
-                    Log.d(TAG, "startGndUart3PassThrough");
 
+                protocolHelper.startSkyUart3PassThrough();
+                Log.d(TAG, "startSkyUart3PassThrough");
+                protocolHelper.startSkyUart1PassThrough();
+                Log.d(TAG, "startSkyUart1PassThrough");
+                protocolHelper.startGndUart3PassThrough();
+                Log.d(TAG, "startGndUart3PassThrough");
+                protocolHelper.startUsbPassThrough();
+                Log.d(TAG, "startUsbPassThrough");
+
+                if (deviceInfo.skyGround == 1) {
                     // todo
                     //  (optional) query osd info
                     protocolHelper.startQueryWirelessInfo();
                 } else {
                     Log.d(TAG, "deviceInfo.skyGround != 1");
-
-                    protocolHelper.startSkyUart3PassThrough();
-                    Log.d(TAG, "startSkyUart3PassThrough");
-                    protocolHelper.startSkyUart1PassThrough();
-                    Log.d(TAG, "startSkyUart1PassThrough");
-                    protocolHelper.startGndUart3PassThrough();
-                    Log.d(TAG, "startGndUart3PassThrough");
                 }
 
 //                // Mock SkyUart3Rx
@@ -799,6 +796,22 @@ public class MainActivity extends AppCompatActivity {
 
     private enum UART{
         SkyUart1, SkyUart3, GndUart3;
+    }
+
+    /**
+     * todo
+     *  call this method to send data (such as mavlink packages bytes) through usb bypass
+     * @param data
+     * @param length
+     */
+    private void writeDataToUsb(byte[] data, int length) {
+        protocolHelper.sendUsbTx(data, length);
+
+        final StringBuilder stringBuilder = new StringBuilder(data.length);
+        for (int i = 0; i<data.length; i++) {
+            stringBuilder.append(String.format("%02X ", data[i]));
+        }
+        Log.d(TAG, "onWrite usb: " + stringBuilder.toString());
     }
 
     /**
