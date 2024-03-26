@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
+import com.coolfly.station.chuanyun.SensorDevice;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
@@ -44,6 +45,9 @@ public class MainApplication extends Application {
          */
         FFJNI.setHwDecode(isHwDecode);
         FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
+
+        // Show ChuanYun Log. Disable in production environment.
+        SensorDevice.setIsShowLog(true);
     }
 
     FFListener ffListener = new FFListener() {
