@@ -7,53 +7,65 @@
     android:orientation="horizontal"
     tools:context=".ChuanYunActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="120dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_connect"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="connect" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="8dp">
 
-        <Button
-            android:id="@+id/btn_disconnect"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="disconnect" />
+            <Button
+                android:id="@+id/btn_connect"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="connect" />
 
-        <Button
-            android:id="@+id/btn_read_status"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="read status" />
+            <Button
+                android:id="@+id/btn_disconnect"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="disconnect" />
 
-        <Button
-            android:id="@+id/btn_read_sbus"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="read sbus" />
+            <Button
+                android:id="@+id/btn_read_status"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read status" />
 
-        <Button
-            android:id="@+id/btn_write_sbus"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="write sbus" />
+            <Button
+                android:id="@+id/btn_read_sbus"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read sbus" />
 
-        <Button
-            android:id="@+id/btn_pair_device"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="pair device" />
+            <Button
+                android:id="@+id/btn_write_sbus"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="write sbus" />
 
-        <Button
-            android:id="@+id/btn_switch_camera"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="switch camera" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/btn_pair_device"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="pair device" />
+
+            <Button
+                android:id="@+id/btn_calibrate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="calibrate" />
+
+            <Button
+                android:id="@+id/btn_switch_camera"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="switch cam" />
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/tv_log"

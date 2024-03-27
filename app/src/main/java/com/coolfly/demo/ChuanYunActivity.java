@@ -24,6 +24,7 @@ public class ChuanYunActivity extends AppCompatActivity {
     private Button btnReadSbus;
     private Button btnWriteSbus;
     private Button btnPairDevice;
+    private Button btnCalibrate;
     private Button btnSwitchCamera;
     private TextView tvLog;
 
@@ -42,6 +43,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         btnReadSbus = findViewById(R.id.btn_read_sbus);
         btnWriteSbus = findViewById(R.id.btn_write_sbus);
         btnPairDevice = findViewById(R.id.btn_pair_device);
+        btnCalibrate = findViewById(R.id.btn_calibrate);
         btnSwitchCamera = findViewById(R.id.btn_switch_camera);
         tvLog = findViewById(R.id.tv_log);
 
@@ -116,6 +118,15 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
+        btnCalibrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calibrate calibrate = new Calibrate();
+                calibrate.cal_offset = 1;
+                sensorDevice.writeCalibrate(calibrate);
+            }
+        });
+
         btnSwitchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +186,11 @@ public class ChuanYunActivity extends AppCompatActivity {
 
         @Override
         public void onCalibrate(Calibrate calibrate) {
+//            Calibrate.cal_offset:
+//            0 : 不动作。
+//            1 : 开始校准。
+//            2 : 校准中，请勿触碰摇杆和波轮。
+//            3 : 校准完成。
             handler.post(() -> {
                 tvLog.setText("RECEIVE: " + calibrate.toString() + "\n");
             });
