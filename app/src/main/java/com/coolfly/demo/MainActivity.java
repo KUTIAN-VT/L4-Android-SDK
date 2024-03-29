@@ -59,7 +59,6 @@ import com.coolfly.station.prorocol.bean.UartRx;
 import com.coolfly.station.prorocol.bean.UsbRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AoaSwitch;
-import com.wuadam.aoalibrary.accessory.AccessoryHelper;
 import com.wuadam.aoalibrary.host.UsbDeviceHelper;
 import com.wuadam.aoalibrary.host.UsbDeviceListener;
 import com.wuadam.fflibrary.FFJNI;
@@ -580,13 +579,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
             Log.d("codec info", info);
         } else if (view == btnUpgradeGrd) {
-            if (AccessoryHelper.UsbStatus != AccessoryHelper.USB_CONNECTED) {
+            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_GRD);
         } else if (view == btnUpgradeSky) {
-            if (AccessoryHelper.UsbStatus != AccessoryHelper.USB_CONNECTED) {
+            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
