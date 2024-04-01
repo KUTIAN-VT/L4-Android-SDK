@@ -7,4 +7,11 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="Theme.CoolDemo.Fullscreen" parent="Theme.CoolDemo">
+        <item name="android:actionBarStyle">@style/Widget.Theme.CoolDemo.ActionBar.Fullscreen</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
 </resources>
