@@ -1,5 +1,6 @@
 package com.coolfly.demo;
 
+import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_1;
 import static com.coolfly.demo.utils.Constants.PREF_RTSP_URI;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
@@ -83,7 +84,7 @@ public class RtspSingleActivity extends AppCompatActivity {
 
         String packageName = MainApplication.applicationContext.getPackageName();
         SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
-        String uri = sp.getString(PREF_RTSP_URI, "rtsp://127.0.0.1:8554/main");
+        String uri = sp.getString(PREF_RTSP_URI, DEFAULT_MULTI_RTSP_URI_1);
         if (!TextUtils.isEmpty(uri)) {
             etUri.setText(uri);
         }

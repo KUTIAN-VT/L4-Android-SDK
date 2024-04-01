@@ -15,6 +15,11 @@ public class Constants {
     public static final String PREF_MULTI_RTSP_URI_2 = "PREF_MULTI_RTSP_URI_2";
     public static final String PREF_MULTI_RTSP_URI_3 = "PREF_MULTI_RTSP_URI_3";
     public static final String PREF_MULTI_RTSP_URI_4 = "PREF_MULTI_RTSP_URI_4";
+    public static final String DEFAULT_MULTI_RTSP_URI_1 = "rtsp://192.168.144.100/h265/aac/ch01/main/av_stream";
+    public static final String DEFAULT_MULTI_RTSP_URI_2 = "rtsp://192.168.144.100/h265/aac/ch03/main/av_stream";
+    public static final String DEFAULT_MULTI_RTSP_URI_3 = "rtsp://192.168.144.100/h265/aac/ch05/main/av_stream";
+    public static final String DEFAULT_MULTI_RTSP_URI_4 = "rtsp://192.168.144.100/h265/aac/ch07/main/av_stream";
+
 
     public static final int DECODE_MODE_FF_SURFACE = 0;
     public static final int DECODE_MODE_FF_GL_SURFACE = 1;

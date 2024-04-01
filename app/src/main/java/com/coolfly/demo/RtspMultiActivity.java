@@ -1,6 +1,10 @@
 package com.coolfly.demo;
 
 
+import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_1;
+import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_2;
+import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_3;
+import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_4;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_1;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_2;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_3;
@@ -112,36 +116,41 @@ public class RtspMultiActivity extends AppCompatActivity {
                 boolean isTcp = isTcp1;
                 boolean isHw = isHw1;
                 boolean isPlaying = isPlaying1;
+                String defaultUrl = DEFAULT_MULTI_RTSP_URI_1;
                 switch (selectedChannel) {
                     case DECODE_CHANNEL1:
                         prefKey = PREF_MULTI_RTSP_URI_1;
                         isTcp = isTcp1;
                         isHw = isHw1;
                         isPlaying = isPlaying1;
+                        defaultUrl = DEFAULT_MULTI_RTSP_URI_1;
                         break;
                     case DECODE_CHANNEL2:
                         prefKey = PREF_MULTI_RTSP_URI_2;
                         isTcp = isTcp2;
                         isHw = isHw2;
                         isPlaying = isPlaying2;
+                        defaultUrl = DEFAULT_MULTI_RTSP_URI_2;
                         break;
                     case DECODE_CHANNEL3:
                         prefKey = PREF_MULTI_RTSP_URI_3;
                         isTcp = isTcp3;
                         isHw = isHw3;
                         isPlaying = isPlaying3;
+                        defaultUrl = DEFAULT_MULTI_RTSP_URI_3;
                         break;
                     case DECODE_CHANNEL4:
                         prefKey = PREF_MULTI_RTSP_URI_4;
                         isTcp = isTcp4;
                         isHw = isHw4;
                         isPlaying = isPlaying4;
+                        defaultUrl = DEFAULT_MULTI_RTSP_URI_4;
                         break;
                 }
 
                 String packageName = MainApplication.applicationContext.getPackageName();
                 SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
-                String uri = sp.getString(prefKey, "rtsp://127.0.0.1:8554/main");
+                String uri = sp.getString(prefKey, defaultUrl);
                 if (!TextUtils.isEmpty(uri)) {
                     etUri.setText(uri);
                 }
