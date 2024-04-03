@@ -62,6 +62,7 @@ import com.wuadam.aoalibrary.AoaSwitch;
 import com.wuadam.aoalibrary.host.UsbDeviceHelper;
 import com.wuadam.aoalibrary.host.UsbDeviceListener;
 import com.wuadam.fflibrary.FFJNI;
+import com.wuadam.fflibrary.FormatProfile;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
 import com.wuadam.medialibrary.BitRateHelper;
@@ -273,29 +274,42 @@ public class MainActivity extends AppCompatActivity {
 
         switch (decodeMode) {
             case Constants.DECODE_MODE_FF_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, null, surface, null, null, DECODE_CHANNEL);
+                // 1. If you know video format(encoding/width/height), and if it does not change, use FormatProfile to accelerate first frame rendering
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1278, 720));
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 382, 288));
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H265, 1920, 1080));
+
+                // 2. If not, it's OK, let SDK detect video format for you
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_FF_GL_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 1920, 1080, 30);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, surface, DECODE_CHANNEL, 1920, 1080, 30);
                 // Other video profile
-//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, null, surface, null, null, DECODE_CHANNEL, 240, 320, 25);
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, surface, DECODE_CHANNEL, 240, 320, 25);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 1920, 1080, 30);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, DECODE_CHANNEL, 1920, 1080, 30);
                 // Other video profile
-//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, null, null, null, DECODE_CHANNEL, 240, 320, 25);
+//                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, DECODE_CHANNEL, 240, 320, 25);
                 break;
         }
-        // Default value is 1024 * 1024
-        mediaHelper.setProbeSize(DECODE_CHANNEL, 1024 * 1024);
+        // Default value is 1024 * 1024, when FormatProfile is not used, decrease this value to accelerate first frame rendering.
+        // But don’t set the value too small, otherwise the video format will not be parsed.
+        mediaHelper.setProbeSize(DECODE_CHANNEL, 100 * 1024);
+
+        // Only necessary for MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE modes, to record H264 stream
         mediaHelper.setListener(mediaListener);
 
-        // Second video stream, fixed to FF_DIRECT_SURFACE mode
-        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, null, surface2, null, null, DECODE_CHANNEL2);
-        mediaHelper2.setProbeSize(DECODE_CHANNEL2, 1024 * 1024);
+        // Second video stream, best practice, use FF_DIRECT_SURFACE mode, use FormatProfile to accelerate first frame rendering
+        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface2, DECODE_CHANNEL2, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
+
+        // Default value is 1024 * 1024, when FormatProfile is not used, decrease this value to accelerate first frame rendering.
+        // But don’t set the value too small, otherwise the video format will not be parsed.
+        mediaHelper2.setProbeSize(DECODE_CHANNEL2, 100 * 1024);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
@@ -1112,7 +1126,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // For MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE, to record H264 stream
+    // For MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE modes, to record H264 stream
     private MediaListener mediaListener = new MediaListener() {
         @Override
         public void onConfigure(MediaFormat mediaFormat) {

@@ -131,16 +131,16 @@ public class RtspSingleActivity extends AppCompatActivity {
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         switch (decodeMode) {
             case Constants.DECODE_MODE_RTSP_FF_DIRECT:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_GL:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE_PATH, surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_SW_SWS:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SWS_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SWS_SURFACE_PATH, surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_JNI_MEDIACODEC:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, null, surface, null, null, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, surface, DECODE_CHANNEL);
                 break;
         }
 

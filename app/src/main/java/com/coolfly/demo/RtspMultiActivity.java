@@ -178,10 +178,10 @@ public class RtspMultiActivity extends AppCompatActivity {
         }
 
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
-        mediaHelper1 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, vv1, null, null, DECODE_CHANNEL1);
-        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, vv2, null, null, DECODE_CHANNEL2);
-        mediaHelper3 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, vv3, null, null, DECODE_CHANNEL3);
-        mediaHelper4 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, null, vv4, null, null, DECODE_CHANNEL4);
+        mediaHelper1 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv1, DECODE_CHANNEL1);
+        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv2, DECODE_CHANNEL2);
+        mediaHelper3 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv3, DECODE_CHANNEL3);
+        mediaHelper4 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv4, DECODE_CHANNEL4);
 
         tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override
