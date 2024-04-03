@@ -10,7 +10,7 @@ import java.io.InputStream;
  * @Date: 2023/3/1 13:38
  */
 public class VideoMock {
-    private static final int H264_BUTTERFLY = 1, H264_AVATAR = 2, MJPEG = 3;
+    private static final int H264_BUTTERFLY = 1, H264_AVATAR = 2, MJPEG = 3, HEVC_IPCAM = 4;
     private final MediaHelper mediaHelper;
 
     public VideoMock(MediaHelper mediaHelper) {
@@ -36,6 +36,8 @@ public class VideoMock {
                 return "avatar-1920-1080-30fps.h264";
             case MJPEG:
                 return "sample_960x540.mjpeg";
+            case HEVC_IPCAM:
+                return "ipcam-1920-1080-60fps.hevc";
             default:
                 return "butterfly-240-320-25fps.h264";
         }
@@ -49,6 +51,8 @@ public class VideoMock {
                 return 1;
             case MJPEG:
                 return 3;
+            case HEVC_IPCAM:
+                return 1;
             default:
                 return 3;
         }
