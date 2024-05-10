@@ -1,0 +1,269 @@
+package com.coolfly.demo.chuanyun;
+
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.coolfly.demo.MainApplication;
+import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
+import com.coolfly.demo.chuanyun.preference.SocketPreferences;
+import com.coolfly.demo.databinding.ActivityChuanYunBinding;
+import com.coolfly.station.chuanyun.SensorDevice;
+import com.coolfly.station.chuanyun.entity.Calibrate;
+import com.coolfly.station.chuanyun.entity.PairResponse;
+import com.coolfly.station.chuanyun.entity.RFConfig2;
+import com.coolfly.station.chuanyun.entity.Sbus;
+import com.coolfly.station.chuanyun.entity.Status;
+
+public class ChuanYunActivity extends AppCompatActivity {
+    private ActivityChuanYunBinding binding;
+
+    private Handler handler;
+    private SensorDevice sensorDevice;
+    private int videoMode201 = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityChuanYunBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        handler = new Handler(Looper.getMainLooper());
+
+        sensorDevice = SensorDevice.getInstance(MainApplication.applicationContext);
+        sensorDevice.addListener(sensorDeviceListener);
+
+        binding.btnSetSocket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChuanYunActivity.this, SocketPreferences.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.btnSetSerial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChuanYunActivity.this, SerialPortPreferences.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (! sensorDevice.isConnectionAlive()) {
+                    // Show dialog for user to choose connection type
+                    // SOCKET for 301, SERIAL for 201
+                    new AlertDialog.Builder(ChuanYunActivity.this)
+                            .setTitle("Choose connection type")
+                            .setItems(new String[]{"Socket for P301", "Serial for P201"}, (dialog, which) -> {
+                                if (which == 0) {
+                                    // IP and PORT set in SocketPreferences
+                                    sensorDevice.onLine(SensorDevice.SOCKET);
+                                } else {
+                                    // PATH and BAUDRATE set in SerialPortPreferences
+                                    sensorDevice.onLine(SensorDevice.SERIAL);
+                                }
+                            }).create().show();
+                } else {
+                    Toast.makeText(ChuanYunActivity.this, "Already connected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        binding.btnDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sensorDevice.isConnectionAlive()) {
+                    sensorDevice.offLine();
+                }
+            }
+        });
+
+        binding.btnReadStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readStatus();
+            }
+        });
+
+        binding.btnReadSbus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readSbus();
+            }
+        });
+
+        binding.btnWriteSbus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeSbus();
+            }
+        });
+
+        binding.btnReadRfConfig2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readRfConfig2();
+            }
+        });
+
+        binding.btnWriteApMac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etApMac.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    writeRFConfig2(RFConfig2.ApMac(value));
+                }
+            }
+        });
+
+        binding.btnWritePower2g.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etPower2g.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    int valueInt = Integer.parseInt(value);
+                    if (valueInt >= 15 && valueInt <= 28) {
+                        writeRFConfig2(RFConfig2.Power2G(valueInt));
+                    }
+                }
+            }
+        });
+
+        binding.btnWritePower5g.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etPower5g.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    int valueInt = Integer.parseInt(value);
+                    if (valueInt >= 15 && valueInt <= 25) {
+                        writeRFConfig2(RFConfig2.Power5G(valueInt));
+                    }
+                }
+            }
+        });
+
+        binding.btnWriteBangswitch2g.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeRFConfig2(RFConfig2.BandSwitch("2G"));
+            }
+        });
+
+        binding.btnWriteBangswitch5g.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeRFConfig2(RFConfig2.BandSwitch("5G"));
+            }
+        });
+
+        binding.swBanghop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                writeRFConfig2(RFConfig2.BandHop(isChecked ? 1 : 0));
+            }
+        });
+
+        binding.btnPairDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.pairDevice(0);
+            }
+        });
+
+        binding.btnCalibrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calibrate calibrate = new Calibrate();
+                calibrate.cal_offset = 1;
+                sensorDevice.writeCalibrate(calibrate);
+            }
+        });
+
+        binding.btnSwitchCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.switch201VideoMode(videoMode201++ % 2);
+            }
+        });
+    }
+
+    private void writeSbus() {
+        // 以设置美国手、日本手来举例
+        new AlertDialog.Builder(ChuanYunActivity.this)
+                .setTitle("美国手、日本手")
+                .setItems(new String[]{"美国手", "日本手"}, (dialog, which) -> {
+                    Sbus sbus = new Sbus();
+                    sbus.action = 1;
+                    if (which == 0) {
+                        sbus.ch_jp_am = 0;
+                    } else {
+                        sbus.ch_jp_am = 1;
+                    }
+                    sensorDevice.writeSbus(sbus);
+                }).create().show();
+    }
+
+    private void writeRFConfig2(RFConfig2 rfConfig2) {
+        sensorDevice.writeRfConfig2(rfConfig2);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sensorDevice.offLine();
+        sensorDevice.removeListener(sensorDeviceListener);
+    }
+
+    private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
+        @Override
+        public void onStatus(Status status) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + status.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onPairResponse(PairResponse pairResponse) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + pairResponse.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onSbus(Sbus sbus) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + sbus.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onCalibrate(Calibrate calibrate) {
+//            Calibrate.cal_offset:
+//            0 : 不动作。
+//            1 : 开始校准。
+//            2 : 校准中，请勿触碰摇杆和波轮。
+//            3 : 校准完成。
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + calibrate.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onRfConfig2(RFConfig2 rfConfig2) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + rfConfig2.toString() + "\n");
+            });
+        }
+    };
+}

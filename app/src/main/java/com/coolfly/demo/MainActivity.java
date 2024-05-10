@@ -45,6 +45,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.coolfly.demo.chuanyun.ChuanYunActivity;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;

@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ChuanYunActivity">
+    tools:context=".chuanyun.ChuanYunActivity">
 
     <ScrollView
-        android:layout_width="120dp"
+        android:layout_width="192dp"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -17,53 +17,188 @@
             android:orientation="vertical"
             android:paddingVertical="8dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_set_socket"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Set Socket"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_set_serial"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Set Serial"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_connect"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="connect" />
+                android:text="connect"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_disconnect"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="disconnect" />
+                android:text="disconnect"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_read_status"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="read status" />
+                android:text="read status"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_read_sbus"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="read sbus" />
+                android:text="read sbus"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_write_sbus"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="write sbus" />
+                android:text="write sbus"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_read_rf_config_2"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read RFConfig2"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_ap_mac"
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content"
+                    android:hint="ApMac"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_write_ap_mac"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="write"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_power_2g"
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Power2G"
+                    android:inputType="number"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_write_power_2g"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="write"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_power_5g"
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Power5G"
+                    android:inputType="number"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_write_power_5g"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="write"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_write_bangswitch_2g"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="2G"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_write_bangswitch_5g"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="5G"
+                    android:textSize="12sp" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/sw_banghop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BandHop"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_pair_device"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="pair device" />
+                android:text="pair device"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_calibrate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="calibrate" />
+                android:text="calibrate"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btn_switch_camera"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="switch cam" />
+                android:text="switch cam"
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 

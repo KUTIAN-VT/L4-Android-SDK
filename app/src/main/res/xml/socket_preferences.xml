@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Socket setup">
+    <EditTextPreference
+        android:defaultValue="192.168.1.144"
+        android:key="SOCKET_IP"
+        android:persistent="true"
+        android:title="IP" />
+    <EditTextPreference
+        android:defaultValue="1235"
+        android:inputType="number"
+        android:key="SOCKET_PORT"
+        android:persistent="true"
+        android:title="Port" />
+</PreferenceScreen>

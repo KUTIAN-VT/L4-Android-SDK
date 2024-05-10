@@ -26,7 +26,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChuanYunActivity"
+            android:name=".chuanyun.preference.SerialPortPreferences"
+            android:exported="false"
+            android:theme="@style/Theme.CoolDemo.Preference"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".chuanyun.preference.SocketPreferences"
+            android:exported="false"
+            android:theme="@style/Theme.CoolDemo.Preference"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".chuanyun.ChuanYunActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity

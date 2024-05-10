@@ -14,4 +14,8 @@
         <item name="android:windowBackground">@null</item>
     </style>
 
+    <style name="Theme.CoolDemo.Preference" parent="Theme.CoolDemo">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
 </resources>
