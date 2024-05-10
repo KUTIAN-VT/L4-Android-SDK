@@ -20,37 +20,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coolfly.demo.databinding.ActivityRtspMultiBinding;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
 import com.wuadam.medialibrary.MediaHelper;
 
 public class RtspMultiActivity extends AppCompatActivity {
-
-    private Spinner spChannel;
-    private EditText etUri;
-    private CheckBox cbTcp;
-    private TextView tvOperate;
-    private TextView tvDecodeMode;
-    private FrameLayout fl1;
-    private FrameLayout fl2;
-    private FrameLayout fl3;
-    private FrameLayout fl4;
-
-    private SurfaceView vv1;
-    private SurfaceView vv2;
-    private SurfaceView vv3;
-    private SurfaceView vv4;
-
+    private ActivityRtspMultiBinding binding;
 
     private MediaHelper mediaHelper1;
     private MediaHelper mediaHelper2;
@@ -85,29 +67,16 @@ public class RtspMultiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rtsp_multi);
-
-        spChannel = findViewById(R.id.sp_channel);
-        etUri = findViewById(R.id.et_uri);
-        cbTcp = findViewById(R.id.cb_tcp);
-        tvOperate = findViewById(R.id.tv_operate);
-        tvDecodeMode = findViewById(R.id.tv_decode_mode);
-        fl1 = findViewById(R.id.fl1);
-        fl2 = findViewById(R.id.fl2);
-        fl3 = findViewById(R.id.fl3);
-        fl4 = findViewById(R.id.fl4);
-        vv1 = findViewById(R.id.vv1);
-        vv2 = findViewById(R.id.vv2);
-        vv3 = findViewById(R.id.vv3);
-        vv4 = findViewById(R.id.vv4);
+        binding = ActivityRtspMultiBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String[] channels = getResources().getStringArray(R.array.channel);
         ArrayAdapter<String> jpAmAdapter = new ArrayAdapter<String>(this, R.layout.item_select_light, channels);
         jpAmAdapter.setDropDownViewResource(R.layout.item_dropdown);
-        spChannel.setAdapter(jpAmAdapter);
+        binding.spChannel.setAdapter(jpAmAdapter);
 
-        spChannel.setSelection(0);
-        spChannel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.spChannel.setSelection(0);
+        binding.spChannel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedChannel = position + 2;
@@ -152,16 +121,16 @@ public class RtspMultiActivity extends AppCompatActivity {
                 SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
                 String uri = sp.getString(prefKey, defaultUrl);
                 if (!TextUtils.isEmpty(uri)) {
-                    etUri.setText(uri);
+                    binding.etUri.setText(uri);
                 }
 
-                cbTcp.setOnCheckedChangeListener(null);
-                cbTcp.setChecked(isTcp);
+                binding.cbTcp.setOnCheckedChangeListener(null);
+                binding.cbTcp.setChecked(isTcp);
                 setTcpListener();
 
-                tvDecodeMode.setText(isHw ? R.string.decode_mode_hw : R.string.decode_mode_sw);
+                binding.tvDecodeMode.setText(isHw ? R.string.decode_mode_hw : R.string.decode_mode_sw);
 
-                tvOperate.setText(isPlaying? R.string.stop : R.string.play);
+                binding.tvOperate.setText(isPlaying? R.string.stop : R.string.play);
             }
 
             @Override
@@ -174,16 +143,16 @@ public class RtspMultiActivity extends AppCompatActivity {
         SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
         String uri = sp.getString(PREF_MULTI_RTSP_URI_1, "rtsp://127.0.0.1:8554/main");
         if (!TextUtils.isEmpty(uri)) {
-            etUri.setText(uri);
+            binding.etUri.setText(uri);
         }
 
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
-        mediaHelper1 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv1, DECODE_CHANNEL1);
-        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv2, DECODE_CHANNEL2);
-        mediaHelper3 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv3, DECODE_CHANNEL3);
-        mediaHelper4 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, vv4, DECODE_CHANNEL4);
+        mediaHelper1 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv1, DECODE_CHANNEL1);
+        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv2, DECODE_CHANNEL2);
+        mediaHelper3 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv3, DECODE_CHANNEL3);
+        mediaHelper4 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv4, DECODE_CHANNEL4);
 
-        tvOperate.setOnClickListener(new View.OnClickListener() {
+        binding.tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean isPlaying = false;
@@ -209,15 +178,15 @@ public class RtspMultiActivity extends AppCompatActivity {
 
                 if (isPlaying) {
                     setIsPlaying(false);
-                    tvOperate.setText(R.string.play);
+                    binding.tvOperate.setText(R.string.play);
                     mediaHelper.stopPlayFile();
                 } else {
-                    String uri = etUri.getText().toString().trim();
+                    String uri = binding.etUri.getText().toString().trim();
                     if (!TextUtils.isEmpty(uri) && uri.startsWith("rtsp://")) {
                         mediaHelper.playFile(uri);
                         setIsPlaying(true);
-                        tvOperate.setText(R.string.stop);
-                        tvDecodeMode.setText(R.string.decode_mode_hw);
+                        binding.tvOperate.setText(R.string.stop);
+                        binding.tvDecodeMode.setText(R.string.decode_mode_hw);
 
 
                         String prefKey = PREF_MULTI_RTSP_URI_1;
@@ -245,12 +214,12 @@ public class RtspMultiActivity extends AppCompatActivity {
                     }
                 }
 
-                tvOperate.setEnabled(false);
+                binding.tvOperate.setEnabled(false);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (tvOperate != null) {
-                            tvOperate.setEnabled(true);
+                        if (binding.tvOperate != null) {
+                            binding.tvOperate.setEnabled(true);
                         }
                     }
                 }, 1000);
@@ -261,7 +230,7 @@ public class RtspMultiActivity extends AppCompatActivity {
     }
 
     private void setTcpListener() {
-        cbTcp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.cbTcp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
@@ -321,12 +290,12 @@ public class RtspMultiActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cbTcp.setOnCheckedChangeListener(null);
+        binding.cbTcp.setOnCheckedChangeListener(null);
         isPlaying1 = false;
         isPlaying2 = false;
         isPlaying3 = false;
         isPlaying4 = false;
-        tvOperate.setText(R.string.play);
+        binding.tvOperate.setText(R.string.play);
         ffListenerManager.removeListener();
         mediaHelper1.destroy();
         mediaHelper2.destroy();
@@ -342,23 +311,23 @@ public class RtspMultiActivity extends AppCompatActivity {
             MediaHelper mediaHelper = null;
             switch (handler) {
                 case DECODE_CHANNEL1:
-                    surface = vv1;
-                    fl = fl1;
+                    surface = binding.vv1;
+                    fl = binding.fl1;
                     mediaHelper = mediaHelper1;
                     break;
                 case DECODE_CHANNEL2:
-                    surface = vv2;
-                    fl = fl2;
+                    surface = binding.vv2;
+                    fl = binding.fl2;
                     mediaHelper = mediaHelper2;
                     break;
                 case DECODE_CHANNEL3:
-                    surface = vv3;
-                    fl = fl3;
+                    surface = binding.vv3;
+                    fl = binding.fl3;
                     mediaHelper = mediaHelper3;
                     break;
                 case DECODE_CHANNEL4:
-                    surface = vv4;
-                    fl = fl4;
+                    surface = binding.vv4;
+                    fl = binding.fl4;
                     mediaHelper = mediaHelper4;
                     break;
             }
@@ -395,7 +364,7 @@ public class RtspMultiActivity extends AppCompatActivity {
                     break;
             }
             if (selectedChannel == handler) {
-                tvDecodeMode.setText(R.string.decode_mode_sw);
+                binding.tvDecodeMode.setText(R.string.decode_mode_sw);
             }
         }
     };

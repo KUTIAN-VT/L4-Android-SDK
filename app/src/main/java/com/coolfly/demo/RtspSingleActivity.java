@@ -15,23 +15,17 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.PixelCopy;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coolfly.demo.databinding.ActivityRtspSingleBinding;
 import com.coolfly.demo.utils.Constants;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
@@ -44,18 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class RtspSingleActivity extends AppCompatActivity {
-
-    private EditText etUri;
-    private CheckBox cbTcp;
-    private TextView tvOperate;
-    private TextView tvDecodeMode;
-    private FrameLayout fl;
-    private SurfaceView surface;
-
-    private Button btnShot;
-    private Button btnStartRecord;
-    private Button btnStopRecord;
-    private Spinner spDecodeMode;
+    private ActivityRtspSingleBinding binding;
 
     private MediaHelper mediaHelper;
     private boolean isPlaying = false;
@@ -68,25 +51,14 @@ public class RtspSingleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rtsp_single);
-
-        etUri = findViewById(R.id.et_uri);
-        cbTcp = findViewById(R.id.cb_tcp);
-        tvOperate = findViewById(R.id.tv_operate);
-        tvDecodeMode = findViewById(R.id.tv_decode_mode);
-        fl = findViewById(R.id.fl);
-        surface = findViewById(R.id.surface);
-
-        btnShot = findViewById(R.id.btn_shot);
-        btnStartRecord = findViewById(R.id.btn_start_record);
-        btnStopRecord = findViewById(R.id.btn_stop_record);
-        spDecodeMode = findViewById(R.id.sp_decode_mode);
+        binding = ActivityRtspSingleBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String packageName = MainApplication.applicationContext.getPackageName();
         SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
         String uri = sp.getString(PREF_RTSP_URI, DEFAULT_MULTI_RTSP_URI_1);
         if (!TextUtils.isEmpty(uri)) {
-            etUri.setText(uri);
+            binding.etUri.setText(uri);
         }
 
         // decode mode start
@@ -97,12 +69,12 @@ public class RtspSingleActivity extends AppCompatActivity {
         String[] decodeModeArr = new String[]{"FFmpeg-Direct", "FFmpeg-GL", "FFmpeg-SwDecode-SwsScale", "FFmpeg-Jni-MediaCodec"};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
-        spDecodeMode.setAdapter(decodeModeAdapter);
+        binding.spDecodeMode.setAdapter(decodeModeAdapter);
 
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE_RTSP, Constants.DECODE_MODE_RTSP_FF_DIRECT);
-        spDecodeMode.setSelection(decodeMode);
+        binding.spDecodeMode.setSelection(decodeMode);
 
-        spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != decodeMode) {
@@ -131,28 +103,28 @@ public class RtspSingleActivity extends AppCompatActivity {
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         switch (decodeMode) {
             case Constants.DECODE_MODE_RTSP_FF_DIRECT:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, surface, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_GL:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE_PATH, surface, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE_PATH, binding.surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_SW_SWS:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SWS_SURFACE_PATH, surface, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_SWS_SURFACE_PATH, binding.surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_RTSP_FF_JNI_MEDIACODEC:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, surface, DECODE_CHANNEL);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, binding.surface, DECODE_CHANNEL);
                 break;
         }
 
-        tvOperate.setOnClickListener(new View.OnClickListener() {
+        binding.tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isPlaying) {
                     isPlaying = false;
-                    tvOperate.setText(R.string.play);
+                    binding.tvOperate.setText(R.string.play);
                     mediaHelper.stopPlayFile();
                 } else {
-                    String uri = etUri.getText().toString().trim();
+                    String uri = binding.etUri.getText().toString().trim();
                     if (!TextUtils.isEmpty(uri) && uri.startsWith("rtsp://")) {
                         boolean res = mediaHelper.playFile(uri);
                         if (!res) {
@@ -160,8 +132,8 @@ public class RtspSingleActivity extends AppCompatActivity {
                             return;
                         }
                         isPlaying = true;
-                        tvOperate.setText(R.string.stop);
-                        tvDecodeMode.setText(R.string.decode_mode_hw);
+                        binding.tvOperate.setText(R.string.stop);
+                        binding.tvDecodeMode.setText(R.string.decode_mode_hw);
 
 
                         String packageName = MainApplication.applicationContext.getPackageName();
@@ -174,20 +146,20 @@ public class RtspSingleActivity extends AppCompatActivity {
                     }
                 }
 
-                tvOperate.setEnabled(false);
+                binding.tvOperate.setEnabled(false);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (tvOperate != null) {
-                            tvOperate.setEnabled(true);
+                        if (binding.tvOperate != null) {
+                            binding.tvOperate.setEnabled(true);
                         }
                     }
                 }, 1000);
             }
         });
 
-        cbTcp.setChecked(mediaHelper.isRtspTcp());
-        cbTcp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.cbTcp.setChecked(mediaHelper.isRtspTcp());
+        binding.cbTcp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mediaHelper.setRtspTcp(isChecked);
@@ -212,15 +184,15 @@ public class RtspSingleActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cbTcp.setOnCheckedChangeListener(null);
+        binding.cbTcp.setOnCheckedChangeListener(null);
         isPlaying = false;
-        tvOperate.setText(R.string.play);
+        binding.tvOperate.setText(R.string.play);
         ffListenerManager.removeListener();
         mediaHelper.destroy();
     }
 
     public void onClick(View view) {
-        if (view == btnShot) {
+        if (view == binding.btnShot) {
             switch (mediaHelper.getDecodeMode()) {
                 case FF_SWS_SURFACE_PATH:
                 case FF_GL_SURFACE_PATH: {
@@ -243,7 +215,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                     Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         PixelCopy.request(
-                                surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
+                                binding.surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
                                     @Override
                                     public void onPixelCopyFinished(int copyResult) {
                                         if (copyResult == PixelCopy.SUCCESS) {
@@ -264,7 +236,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                 }
                 break;
             }
-        } else if (view == btnStartRecord) {
+        } else if (view == binding.btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
             switch (mediaHelper.getDecodeMode()) {
                 case FF_SWS_SURFACE_PATH:
@@ -284,7 +256,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                     // Not supported
                     break;
             }
-        } else if (view == btnStopRecord) {
+        } else if (view == binding.btnStopRecord) {
             switch (mediaHelper.getDecodeMode()) {
                 case FF_SWS_SURFACE_PATH:
                 case FF_GL_SURFACE_PATH:
@@ -302,26 +274,26 @@ public class RtspSingleActivity extends AppCompatActivity {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {
-                ViewGroup.LayoutParams layoutParams = surface.getLayoutParams();
-                float aspectRatio = ((float) fl.getWidth()) / fl.getHeight();
+                ViewGroup.LayoutParams layoutParams = binding.surface.getLayoutParams();
+                float aspectRatio = ((float) binding.fl.getWidth()) / binding.fl.getHeight();
                 float aspectRatioNew = ((float) width) / height;
                 if (aspectRatio > aspectRatioNew) {
-                    float realWidth = ((float) (fl.getHeight())) * aspectRatioNew;
+                    float realWidth = ((float) (binding.fl.getHeight())) * aspectRatioNew;
                     layoutParams.width = (int) realWidth;
                     layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 } else {
-                    float realHeight = ((float) (fl.getWidth())) / aspectRatioNew;
+                    float realHeight = ((float) (binding.fl.getWidth())) / aspectRatioNew;
                     layoutParams.height = (int) realHeight;
                     layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 }
-                surface.requestLayout();
+                binding.surface.requestLayout();
                 mediaHelper.updateVideoSize(width, height);
             }
         }
 
         @Override
         public void onDowngradeToSwDecode(int handler) {
-            tvDecodeMode.setText(R.string.decode_mode_sw);
+            binding.tvDecodeMode.setText(R.string.decode_mode_sw);
         }
     };
 }

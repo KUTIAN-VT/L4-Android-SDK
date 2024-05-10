@@ -23,8 +23,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.PixelCopy;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,20 +30,16 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.coolfly.demo.chuanyun.ChuanYunActivity;
+import com.coolfly.demo.databinding.ActivityMainBinding;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
@@ -86,6 +80,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private ActivityMainBinding binding;
     private UsbDeviceHelper usbDeviceHelper;
     private ProtocolHelper protocolHelper;
     /**
@@ -104,39 +99,6 @@ public class MainActivity extends AppCompatActivity {
     private VideoMock videoMock, videoMock2;
     private PermissionHelper permissionHelper;
     private UpgradeHelper upgradeHelper;
-
-    private ViewGroup rootView;
-    private SurfaceView surface, surface2;
-    private TextureView texture;
-    private TextView tvBitrateVideo;
-    private TextView widgetMap;
-    private Button btnShot;
-    private Button btnStartRecord;
-    private Button btnStopRecord;
-    private Button btnHwDecoder;
-    private SwitchCompat swMockVideo, swMockVideo2;
-    private Spinner spDecodeMode;
-    private SwitchCompat swHwDecode;
-    private SwitchCompat swAoa;
-    private SwitchCompat swFpv;
-    private Button btnUpgradeGrd;
-    private Button btnUpgradeSky;
-    private TextView tvUpdateProcess;
-    private Button btnRtsp;
-    private Button btnRtspMulti;
-    private Button btnChuanyun;
-    private Button btnMcu;
-    private TextView tvSn;
-    private TextView tvSysVersion;
-
-    private TextView tvVT = null;
-    private TextView tvRC = null;
-    private TextView tvRcScore = null;
-    private TextView tvVtScore = null;
-    private ImageView imageVT = null;
-    private ImageView imageRC = null;
-    private TextView tvOSDLocked = null;
-    private TextView tvRx;
 
     private boolean isMapMini = true;
 
@@ -171,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mapWidgetHeight = (int) getResources().getDimension(R.dimen.mini_map_height);
@@ -186,41 +149,6 @@ public class MainActivity extends AppCompatActivity {
         deviceHeight = outPoint.y;
         deviceWidth = outPoint.x;
 
-        rootView = findViewById(R.id.root_view);
-        surface = findViewById(R.id.surface);
-        surface2 = findViewById(R.id.surface2);
-        texture = findViewById(R.id.texture);
-        tvBitrateVideo = findViewById(R.id.tv_bitrate_video);
-        widgetMap = findViewById(R.id.widget_map);
-        btnShot = findViewById(R.id.btn_shot);
-        btnStartRecord = findViewById(R.id.btn_start_record);
-        btnStopRecord = findViewById(R.id.btn_stop_record);
-        btnHwDecoder = findViewById(R.id.btn_hw_decoder);
-        swMockVideo = findViewById(R.id.sw_mock_video);
-        swMockVideo2 = findViewById(R.id.sw_mock_video2);
-        spDecodeMode = findViewById(R.id.sp_decode_mode);
-        swHwDecode = findViewById(R.id.sw_hw_decode);
-        swAoa = findViewById(R.id.sw_aoa);
-        swFpv = findViewById(R.id.sw_fpv);
-        btnUpgradeGrd = findViewById(R.id.btn_upgrade_grd);
-        btnUpgradeSky = findViewById(R.id.btn_upgrade_sky);
-        tvUpdateProcess = findViewById(R.id.tv_update_process);
-        btnRtsp = findViewById(R.id.btn_rtsp);
-        btnRtspMulti = findViewById(R.id.btn_rtsp_multi);
-        btnChuanyun = findViewById(R.id.btn_chuanyun);
-        btnMcu = findViewById(R.id.btn_mcu);
-        tvSn = findViewById(R.id.tv_sn);
-        tvSysVersion = findViewById(R.id.tv_sys_version);
-
-        tvVT = findViewById(R.id.tv_VT);
-        tvRC = findViewById(R.id.tv_RC);
-        tvRcScore = findViewById(R.id.tv_RC_Score);
-        tvVtScore = findViewById(R.id.tv_VT_Score);
-        imageVT = findViewById(R.id.image_VT_Score);
-        imageRC = findViewById(R.id.image_RC_Score);
-        tvOSDLocked = findViewById(R.id.tv_osd_locked);
-        tvRx = findViewById(R.id.tv_rx);
-
         // decode mode start
         // 0. FFmpeg with hw decoder, direct render in SurfaceView
         // 1. FFmpeg with hw/sw decoder, yuv2rgb with GL, render in SurfaceView
@@ -229,22 +157,22 @@ public class MainActivity extends AppCompatActivity {
         String[] decodeModeArr = new String[]{"FFmpeg-SurfaceView", "FFmpeg-GL-SurfaceView", "MediaCodec-SurfaceView", "MediaCodec-TextureView"};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, decodeModeArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
-        spDecodeMode.setAdapter(decodeModeAdapter);
+        binding.spDecodeMode.setAdapter(decodeModeAdapter);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
-        spDecodeMode.setSelection(decodeMode);
+        binding.spDecodeMode.setSelection(decodeMode);
         if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
-            btnHwDecoder.setVisibility(View.GONE);
-            swHwDecode.setVisibility(View.GONE);
+            binding.btnHwDecoder.setVisibility(View.GONE);
+            binding.swHwDecode.setVisibility(View.GONE);
         }
         if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
-            surface.setVisibility(View.GONE);
+            binding.surface.setVisibility(View.GONE);
         } else {
-            texture.setVisibility(View.GONE);
+            binding.texture.setVisibility(View.GONE);
         }
 
-        spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.spDecodeMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != decodeMode) {
@@ -279,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         switch (decodeMode) {
             case Constants.DECODE_MODE_FF_SURFACE:
                 // 1. If you know video format(encoding/width/height), and if it does not change, use FormatProfile to accelerate first frame rendering
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, binding.surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1278, 720));
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 382, 288));
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H265, 1920, 1080));
@@ -288,15 +216,15 @@ public class MainActivity extends AppCompatActivity {
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface, DECODE_CHANNEL);
                 break;
             case Constants.DECODE_MODE_FF_GL_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_GL_SURFACE, binding.surface, DECODE_CHANNEL, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_SURFACE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, surface, DECODE_CHANNEL, 1920, 1080, 30);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, binding.surface, DECODE_CHANNEL, 1920, 1080, 30);
                 // Other video profile
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_SURFACE, surface, DECODE_CHANNEL, 240, 320, 25);
                 break;
             case Constants.DECODE_MODE_MEDIACODEC_TEXTURE:
-                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, DECODE_CHANNEL, 1920, 1080, 30);
+                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, binding.texture, DECODE_CHANNEL, 1920, 1080, 30);
                 // Other video profile
 //                mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE, texture, DECODE_CHANNEL, 240, 320, 25);
                 break;
@@ -309,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         mediaHelper.setListener(mediaListener);
 
         // Second video stream, best practice, use FF_DIRECT_SURFACE mode, use FormatProfile to accelerate first frame rendering
-        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, surface2, DECODE_CHANNEL2, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
+        mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE, binding.surface2, DECODE_CHANNEL2, new FormatProfile(FormatProfile.FORMAT.FORMAT_H264, 1920, 1080));
 
         // Default value is 1024 * 1024, when FormatProfile is not used, decrease this value to accelerate first frame rendering.
         // But don’t set the value too small, otherwise the video format will not be parsed.
@@ -326,14 +254,14 @@ public class MainActivity extends AppCompatActivity {
         permissionHelper = new PermissionHelper(this);
 
         if (CoolFly.isRk()) {
-            swAoa.setVisibility(View.GONE);
+            binding.swAoa.setVisibility(View.GONE);
         }
 
         readAoa();
 
         // Get whether hardware decoding now (default value is true)
-        swHwDecode.setChecked(FFJNI.isHwDecode());
-        swHwDecode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.swHwDecode.setChecked(FFJNI.isHwDecode());
+        binding.swHwDecode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -351,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        swMockVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.swMockVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -366,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        swMockVideo2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.swMockVideo2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -400,8 +328,8 @@ public class MainActivity extends AppCompatActivity {
         permissionHelper.onResume();
 
         try {
-            tvSn.setText(String.format("RCSN: %s", CoolFly.getRCSerialNumber()));
-            tvSysVersion.setText(String.format("RCSysVer: %s", CoolFly.getRCSysVersion()));
+            binding.tvSn.setText(String.format("RCSN: %s", CoolFly.getRCSerialNumber()));
+            binding.tvSysVersion.setText(String.format("RCSysVer: %s", CoolFly.getRCSysVersion()));
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
@@ -453,13 +381,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onClick(View view) {
-        if ((view == surface || view == texture) && !isMapMini) {
+        if ((view == binding.surface || view == binding.texture) && !isMapMini) {
             // 地图缩小，视频变大
             //reorder widgets
             if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
-                texture.setTranslationZ(1);
+                binding.texture.setTranslationZ(1);
             } else {
-                surface.setTranslationZ(1);
+                binding.surface.setTranslationZ(1);
             }
 
             //resize widgets
@@ -468,13 +396,13 @@ public class MainActivity extends AppCompatActivity {
             //disable user login widget on map
 //            widgetMap.getUserAccountLoginWidget().setVisibility(View.GONE);
             isMapMini = true;
-        } else if (view == widgetMap && isMapMini) {
+        } else if (view == binding.widgetMap && isMapMini) {
             // 地图变大，视频缩小
             //reorder widgets
             if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
-                texture.setTranslationZ(4);
+                binding.texture.setTranslationZ(4);
             } else {
-                surface.setTranslationZ(4);
+                binding.surface.setTranslationZ(4);
             }
 
             //resize widgets
@@ -484,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
 //            widgetMap.getUserAccountLoginWidget().setVisibility(View.VISIBLE);
             isMapMini = false;
         }
-        else if (view == btnShot) {
+        else if (view == binding.btnShot) {
             switch (mediaHelper.getDecodeMode()) {
                 case FF_GL_SURFACE: {
                     String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
@@ -506,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         PixelCopy.request(
-                                surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
+                                binding.surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
                                     @Override
                                     public void onPixelCopyFinished(int copyResult) {
                                         if (copyResult == PixelCopy.SUCCESS) {
@@ -527,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
                 case MEDIACODEC_TEXTURE: {
-                    Bitmap bitmap = texture.getBitmap();
+                    Bitmap bitmap = binding.texture.getBitmap();
                     if (bitmap != null) {
                         Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
                                 .show();
@@ -539,7 +467,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             }
-        } else if (view == btnStartRecord) {
+        } else if (view == binding.btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
             switch (mediaHelper.getDecodeMode()) {
                 case FF_GL_SURFACE:
@@ -572,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             }
-        } else if (view == btnStopRecord) {
+        } else if (view == binding.btnStopRecord) {
             switch (mediaHelper.getDecodeMode()) {
                 case FF_GL_SURFACE:
                 case FF_DIRECT_SURFACE:
@@ -596,32 +524,32 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             }
-        } else if (view == btnHwDecoder) {
+        } else if (view == binding.btnHwDecoder) {
             String info = FFJNI.avcodecinfo();
             Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
             Log.d("codec info", info);
-        } else if (view == btnUpgradeGrd) {
+        } else if (view == binding.btnUpgradeGrd) {
             if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_GRD);
-        } else if (view == btnUpgradeSky) {
+        } else if (view == binding.btnUpgradeSky) {
             if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_SKY);
-        } else if (view == btnRtsp) {
+        } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
-        } else if (view == btnRtspMulti) {
+        } else if (view == binding.btnRtspMulti) {
             Intent intent = new Intent(this, RtspMultiActivity.class);
             startActivity(intent);
-        } else if (view == btnChuanyun) {
+        } else if (view == binding.btnChuanyun) {
             Intent intent = new Intent(this, ChuanYunActivity.class);
             startActivity(intent);
-        } else if (view == btnMcu) {
+        } else if (view == binding.btnMcu) {
             Intent intent = new Intent(this, McuActivity.class);
             startActivity(intent);
         }
@@ -636,21 +564,21 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            swFpv.setOnCheckedChangeListener(null);
+                            binding.swFpv.setOnCheckedChangeListener(null);
 
                             switch (aoaMode) {
 
                                 case FPVOFF:
-                                    swFpv.setChecked(false);
+                                    binding.swFpv.setChecked(false);
                                     break;
                                 case FPVON:
-                                    swFpv.setChecked(true);
+                                    binding.swFpv.setChecked(true);
                                     break;
                                 case UNKNOWN:
                                     break;
                             }
 
-                            swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
@@ -668,32 +596,32 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            swAoa.setOnCheckedChangeListener(null);
-                            swFpv.setOnCheckedChangeListener(null);
+                            binding.swAoa.setOnCheckedChangeListener(null);
+                            binding.swFpv.setOnCheckedChangeListener(null);
 
                             switch (aoaMode) {
 
                                 case USB_FPVOFF:
-                                    swAoa.setChecked(false);
-                                    swFpv.setChecked(false);
+                                    binding.swAoa.setChecked(false);
+                                    binding.swFpv.setChecked(false);
                                     break;
                                 case USB_FPVON:
-                                    swAoa.setChecked(false);
-                                    swFpv.setChecked(true);
+                                    binding.swAoa.setChecked(false);
+                                    binding.swFpv.setChecked(true);
                                     break;
                                 case AOA_FPVOFF:
-                                    swAoa.setChecked(true);
-                                    swFpv.setChecked(false);
+                                    binding.swAoa.setChecked(true);
+                                    binding.swFpv.setChecked(false);
                                     break;
                                 case AOA_FPVON:
-                                    swAoa.setChecked(true);
-                                    swFpv.setChecked(true);
+                                    binding.swAoa.setChecked(true);
+                                    binding.swFpv.setChecked(true);
                                     break;
                                 case UNKNOWN:
                                     break;
                             }
 
-                            swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
@@ -705,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                            swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
@@ -741,8 +669,8 @@ public class MainActivity extends AppCompatActivity {
                     upgradeHelper = new UpgradeHelper(fis);
                     upgradeHelper.setListener(upgradeListener);
                     upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
-                    btnUpgradeGrd.setEnabled(false);
-                    btnUpgradeSky.setEnabled(false);
+                    binding.btnUpgradeGrd.setEnabled(false);
+                    binding.btnUpgradeSky.setEnabled(false);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -826,7 +754,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvRx.setText(packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
+                            binding.tvRx.setText(packet.getClass().getSimpleName() + ": " + stringBuilder.toString());
                         }
                     });
                 }
@@ -845,7 +773,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvRx.setText("UsbRx: " + stringBuilder.toString());
+                            binding.tvRx.setText("UsbRx: " + stringBuilder.toString());
                         }
                     });
                 }
@@ -921,45 +849,45 @@ public class MainActivity extends AppCompatActivity {
     private void renderWirelessInfo(WirelessInfo wirelessOSD) {
         String modulation = "";
         if (wirelessOSD.lockStatus == 0x00) {
-            tvOSDLocked.setTextColor(Color.RED);
-            tvOSDLocked.setText("DisConnect");
+            binding.tvOsdLocked.setTextColor(Color.RED);
+            binding.tvOsdLocked.setText("DisConnect");
         } else {
-            tvOSDLocked.setTextColor(Color.parseColor("#7CFC00"));
-            tvOSDLocked.setText("Connected");
+            binding.tvOsdLocked.setTextColor(Color.parseColor("#7CFC00"));
+            binding.tvOsdLocked.setText("Connected");
         }
 
 
         DecimalFormat format = new DecimalFormat("##0.000");
         String strSkySNR = format.format(wirelessOSD.skySNR);
-        tvRC.setText("SNR:     "+ strSkySNR + " dB\n");
+        binding.tvRC.setText("SNR:     "+ strSkySNR + " dB\n");
         if (wirelessOSD.lockStatus == 0x00) {
-            tvRC.setText("SNR:      --- dB\n");
-            tvRC.append("Power0: ---\n");
-            tvRC.append("Power1: ---\n");
+            binding.tvRC.setText("SNR:      --- dB\n");
+            binding.tvRC.append("Power0: ---\n");
+            binding.tvRC.append("Power1: ---\n");
 
-            tvRC.append("Energy0: --- dBm \n");
-            tvRC.append("Energy1: --- dBm \n");
+            binding.tvRC.append("Energy0: --- dBm \n");
+            binding.tvRC.append("Energy1: --- dBm \n");
 
-            tvRC.append("E_rate:    --- ");
+            binding.tvRC.append("E_rate:    --- ");
         }
         else {
-            tvRC.append("Power0: " + wirelessOSD.skyAgcVal[0] + "\n");
-            tvRC.append("Power1: " + wirelessOSD.skyAgcVal[1] + "\n");
+            binding.tvRC.append("Power0: " + wirelessOSD.skyAgcVal[0] + "\n");
+            binding.tvRC.append("Power1: " + wirelessOSD.skyAgcVal[1] + "\n");
 
 
             int dBand = arlinkDevice.band;
             if (dBand == 1) {
-                tvRC.append("Energy0: " + (1 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
-                tvRC.append("Energy1: " + (1 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
+                binding.tvRC.append("Energy0: " + (1 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
+                binding.tvRC.append("Energy1: " + (1 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
             } else if (dBand == 2) {
-                tvRC.append("Energy0: " + (9 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
-                tvRC.append("Energy1: " + (9 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
+                binding.tvRC.append("Energy0: " + (9 - wirelessOSD.skyAgcVal[0]) + " dBm\n");
+                binding.tvRC.append("Energy1: " + (9 - wirelessOSD.skyAgcVal[1]) + " dBm\n");
             } else {
-                tvRC.append("Energy0: --- dBm \n");
-                tvRC.append("Energy1: --- dBm \n");
+                binding.tvRC.append("Energy0: --- dBm \n");
+                binding.tvRC.append("Energy1: --- dBm \n");
             }
 
-            tvRC.append("E_rate:    " + (100 - wirelessOSD.rcLock));
+            binding.tvRC.append("E_rate:    " + (100 - wirelessOSD.rcLock));
         }
 
 
@@ -988,39 +916,39 @@ public class MainActivity extends AppCompatActivity {
 
         if (wirelessOSD.lockStatus == 0x00) {
 
-            //tvVT.setText("SNR0:     --- dB\n");
-            tvVT.setText("SNR:     --- dB\n");
+            //binding.tvVT.setText("SNR0:     --- dB\n");
+            binding.tvVT.setText("SNR:     --- dB\n");
 
-            tvVT.append("Power0:   --- \n");
-            tvVT.append("Power1:   --- \n");
+            binding.tvVT.append("Power0:   --- \n");
+            binding.tvVT.append("Power1:   --- \n");
 
-            tvVT.append("Energy0: --- dBm \n");
-            tvVT.append("Energy1: --- dBm \n");
-            tvVT.append("MCS:   "  + "--- \n");
-            tvVT.append("E_rate:    " + "--- ");
+            binding.tvVT.append("Energy0: --- dBm \n");
+            binding.tvVT.append("Energy1: --- dBm \n");
+            binding.tvVT.append("MCS:   "  + "--- \n");
+            binding.tvVT.append("E_rate:    " + "--- ");
 
         } else {
-            //tvVT.setText("SNR0:     " + format.format(wirelessOSD.snrValue[0]) + " dB\n");
-            tvVT.setText("SNR:     " + format.format(wirelessOSD.snrValue[1]) + " dB\n");
-            tvVT.append("Power0:   " + wirelessOSD.agcValue[0] + "\n");
-            tvVT.append("Power1:   " + wirelessOSD.agcValue[1] + "\n");
+            //binding.tvVT.setText("SNR0:     " + format.format(wirelessOSD.snrValue[0]) + " dB\n");
+            binding.tvVT.setText("SNR:     " + format.format(wirelessOSD.snrValue[1]) + " dB\n");
+            binding.tvVT.append("Power0:   " + wirelessOSD.agcValue[0] + "\n");
+            binding.tvVT.append("Power1:   " + wirelessOSD.agcValue[1] + "\n");
 
 
             int dBand = arlinkDevice.band;
             if (dBand == 1) {
-                tvVT.append("Energy0: " + (1 - wirelessOSD.agcValue[0]) + " dBm\n");
-                tvVT.append("Energy1: " + (1 - wirelessOSD.agcValue[1]) + " dBm\n");
+                binding.tvVT.append("Energy0: " + (1 - wirelessOSD.agcValue[0]) + " dBm\n");
+                binding.tvVT.append("Energy1: " + (1 - wirelessOSD.agcValue[1]) + " dBm\n");
             } else if (dBand == 2){
 
-                tvVT.append("Energy0: " + (9 - wirelessOSD.agcValue[0]) + " dBm\n");
-                tvVT.append("Energy1: " + (9 - wirelessOSD.agcValue[1]) + " dBm\n");
+                binding.tvVT.append("Energy0: " + (9 - wirelessOSD.agcValue[0]) + " dBm\n");
+                binding.tvVT.append("Energy1: " + (9 - wirelessOSD.agcValue[1]) + " dBm\n");
             } else {
-                tvVT.append("Energy0: --- dBm \n");
-                tvVT.append("Energy1: --- dBm \n");
+                binding.tvVT.append("Energy0: --- dBm \n");
+                binding.tvVT.append("Energy1: --- dBm \n");
             }
 
-            tvVT.append("MCS:   "  + modulation + "\n");
-            tvVT.append("E_rate:    " + wirelessOSD.errCnt);
+            binding.tvVT.append("MCS:   "  + modulation + "\n");
+            binding.tvVT.append("E_rate:    " + wirelessOSD.errCnt);
 
         }
 
@@ -1064,19 +992,19 @@ public class MainActivity extends AppCompatActivity {
             vtScore = 2;
 
         if (vtScore >= 75) {
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
         } else if (vtScore >= 55) {
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
         } else if (vtScore >= 35) {
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
         }  else if (vtScore >= 15) {
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
         } else if (vtScore > 0 && vtScore < 10) {
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
         }
 
         if (wirelessOSD.lockStatus == 0x00)
-            imageVT.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
+            binding.imageVTScore.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
 
 
         float RcSnr = wirelessOSD.skySNR;
@@ -1094,22 +1022,22 @@ public class MainActivity extends AppCompatActivity {
             rcScore = 100;
 
         if (rcScore >= 75) {
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_5);
         } else if (rcScore >= 55) {
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_4);
         } else if (rcScore >= 30) {
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_3);
         }  else if (rcScore >= 15) {
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_2);
         } else if (rcScore >= 0 && rcScore < 15) {
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_1);
         }
 
         if (wirelessOSD.lockStatus == 0x00)
-            imageRC.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
+            binding.imageRCScore.setImageResource(R.mipmap.fpv_topbar_signal_level_0);
 
-        tvRcScore.setText("" + rcScore);
-        tvVtScore.setText("" + vtScore);
+        binding.tvRCScore.setText("" + rcScore);
+        binding.tvVTScore.setText("" + vtScore);
     }
 
     /**
@@ -1118,11 +1046,11 @@ public class MainActivity extends AppCompatActivity {
      * @param videoHeight
      */
     private void setVideoLayout(int videoWidth, int videoHeight) {
-        float aspectRatio = ((float) rootView.getWidth()) / rootView.getHeight();
+        float aspectRatio = ((float) binding.rootView.getWidth()) / binding.rootView.getHeight();
         float aspectRatioNew = ((float) videoWidth) / videoHeight;
-        View viewToChange = mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE? texture: surface;
+        View viewToChange = mediaHelper.getDecodeMode() == MediaHelper.DECODE_MODE.MEDIACODEC_TEXTURE? binding.texture: binding.surface;
         if (aspectRatio > aspectRatioNew) {
-            float realWidth = ((float) (rootView.getHeight())) * aspectRatioNew;
+            float realWidth = ((float) (binding.rootView.getHeight())) * aspectRatioNew;
             if (isMapMini) {
                 ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
                 layoutParams.width = (int) realWidth;
@@ -1131,9 +1059,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             videoWidgetWidth = (int) realWidth;
-            videoWidgetHeight = rootView.getHeight();
+            videoWidgetHeight = binding.rootView.getHeight();
         } else {
-            float realHeight = ((float) (rootView.getWidth())) / aspectRatioNew;
+            float realHeight = ((float) (binding.rootView.getWidth())) / aspectRatioNew;
             if (isMapMini) {
                 ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
                 layoutParams.height = (int) realHeight;
@@ -1141,7 +1069,7 @@ public class MainActivity extends AppCompatActivity {
                 viewToChange.requestLayout();
             }
 
-            videoWidgetWidth = rootView.getWidth();
+            videoWidgetWidth = binding.rootView.getWidth();
             videoWidgetHeight = (int) realHeight;
         }
     }
@@ -1152,20 +1080,20 @@ public class MainActivity extends AppCompatActivity {
      * @param videoHeight
      */
     private void setVideoLayout2(int videoWidth, int videoHeight) {
-        float aspectRatio = ((float) surface2.getWidth()) / surface2.getHeight();
+        float aspectRatio = ((float) binding.surface2.getWidth()) / binding.surface2.getHeight();
         float aspectRatioNew = ((float) videoWidth) / videoHeight;
-        View viewToChange = surface2;
+        View viewToChange = binding.surface2;
         if (aspectRatio > aspectRatioNew) {
-            float realWidth = ((float) (surface2.getHeight())) * aspectRatioNew;
+            float realWidth = ((float) (binding.surface2.getHeight())) * aspectRatioNew;
             ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
             layoutParams.width = (int) realWidth;
-            layoutParams.height = surface2.getHeight();
+            layoutParams.height = binding.surface2.getHeight();
             viewToChange.requestLayout();
         } else {
-            float realHeight = ((float) (surface2.getWidth())) / aspectRatioNew;
+            float realHeight = ((float) (binding.surface2.getWidth())) / aspectRatioNew;
             ViewGroup.LayoutParams layoutParams = viewToChange.getLayoutParams();
             layoutParams.height = (int) realHeight;
-            layoutParams.width = surface2.getWidth();
+            layoutParams.width = binding.surface2.getWidth();
             viewToChange.requestLayout();
         }
     }
@@ -1250,7 +1178,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvBitrateVideo.setText(readable);
+                    binding.tvBitrateVideo.setText(readable);
                 }
             });
         }
@@ -1259,36 +1187,36 @@ public class MainActivity extends AppCompatActivity {
     private UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
         @Override
         public void onStart() {
-            tvUpdateProcess.setText(R.string.ota_start);
+            binding.tvUpdateProcess.setText(R.string.ota_start);
         }
 
         @Override
         public void onProcess(int curFrame, int totalFrame) {
-            tvUpdateProcess.setText(curFrame + " / " + totalFrame);
+            binding.tvUpdateProcess.setText(curFrame + " / " + totalFrame);
         }
 
         @Override
         public void onResend(int curFrame, int totalFrame) {
-            tvUpdateProcess.setText(getString(R.string.ota_resend, curFrame, totalFrame));
+            binding.tvUpdateProcess.setText(getString(R.string.ota_resend, curFrame, totalFrame));
         }
 
         @Override
         public void onFlashing() {
-            tvUpdateProcess.setText(R.string.ota_ing);
+            binding.tvUpdateProcess.setText(R.string.ota_ing);
         }
 
         @Override
         public void onComplete() {
-            tvUpdateProcess.setText(R.string.ota_finish);
-            btnUpgradeGrd.setEnabled(true);
-            btnUpgradeSky.setEnabled(true);
+            binding.tvUpdateProcess.setText(R.string.ota_finish);
+            binding.btnUpgradeGrd.setEnabled(true);
+            binding.btnUpgradeSky.setEnabled(true);
         }
 
         @Override
         public void onFail(String errMsg) {
-            tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
-            btnUpgradeGrd.setEnabled(true);
-            btnUpgradeSky.setEnabled(true);
+            binding.tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
+            binding.btnUpgradeGrd.setEnabled(true);
+            binding.btnUpgradeSky.setEnabled(true);
         }
 
         @Override
@@ -1302,12 +1230,12 @@ public class MainActivity extends AppCompatActivity {
     private void resizeMap(boolean isEnlarge) {
         if (isEnlarge) {
             // enlarge
-            ResizeAnimation enlargeAnimation = new ResizeAnimation(true, widgetMap, mapWidgetWidth, mapWidgetHeight, deviceWidth, deviceHeight, 0, 0);
-            widgetMap.startAnimation(enlargeAnimation);
+            ResizeAnimation enlargeAnimation = new ResizeAnimation(true, binding.widgetMap, mapWidgetWidth, mapWidgetHeight, deviceWidth, deviceHeight, 0, 0);
+            binding.widgetMap.startAnimation(enlargeAnimation);
         } else {
             // shrink
-            ResizeAnimation shrinkAnimation = new ResizeAnimation(false, widgetMap, deviceWidth, deviceHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
-            widgetMap.startAnimation(shrinkAnimation);
+            ResizeAnimation shrinkAnimation = new ResizeAnimation(false, binding.widgetMap, deviceWidth, deviceHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
+            binding.widgetMap.startAnimation(shrinkAnimation);
         }
     }
 
@@ -1315,22 +1243,22 @@ public class MainActivity extends AppCompatActivity {
         if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
             if (isEnlarge) {
                 // enlarge
-                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, texture, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
-                texture.startAnimation(enlargeAnimation);
+                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, binding.texture, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
+                binding.texture.startAnimation(enlargeAnimation);
             } else {
                 // shrink
-                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, texture, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
-                texture.startAnimation(shrinkAnimation);
+                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, binding.texture, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
+                binding.texture.startAnimation(shrinkAnimation);
             }
         } else {
             if (isEnlarge) {
                 // enlarge
-                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, surface, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
-                surface.startAnimation(enlargeAnimation);
+                ResizeAnimation enlargeAnimation = new ResizeAnimation(true, binding.surface, mapWidgetWidth, mapWidgetHeight, videoWidgetWidth, videoWidgetHeight, 0, 0);
+                binding.surface.startAnimation(enlargeAnimation);
             } else {
                 // shrink
-                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, surface, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
-                surface.startAnimation(shrinkAnimation);
+                ResizeAnimation shrinkAnimation = new ResizeAnimation(false, binding.surface, videoWidgetWidth, videoWidgetHeight, mapWidgetWidth, mapWidgetHeight, mapWidgetMarginRight, mapWidgetMarginBottom);
+                binding.surface.startAnimation(shrinkAnimation);
             }
         }
     }
