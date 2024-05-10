@@ -175,6 +175,13 @@
                 android:onClick="onClick"
                 android:text="chuanyun" />
 
+            <Button
+                android:id="@+id/btn_mcu"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="MCU" />
+
             <TextView
                 android:id="@+id/tv_sn"
                 android:layout_width="wrap_content"

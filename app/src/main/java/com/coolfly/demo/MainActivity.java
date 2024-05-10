@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRtsp;
     private Button btnRtspMulti;
     private Button btnChuanyun;
+    private Button btnMcu;
     private TextView tvSn;
     private TextView tvSysVersion;
 
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
         btnRtsp = findViewById(R.id.btn_rtsp);
         btnRtspMulti = findViewById(R.id.btn_rtsp_multi);
         btnChuanyun = findViewById(R.id.btn_chuanyun);
+        btnMcu = findViewById(R.id.btn_mcu);
         tvSn = findViewById(R.id.tv_sn);
         tvSysVersion = findViewById(R.id.tv_sys_version);
 
@@ -613,6 +615,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (view == btnChuanyun) {
             Intent intent = new Intent(this, ChuanYunActivity.class);
+            startActivity(intent);
+        } else if (view == btnMcu) {
+            Intent intent = new Intent(this, McuActivity.class);
             startActivity(intent);
         }
     }

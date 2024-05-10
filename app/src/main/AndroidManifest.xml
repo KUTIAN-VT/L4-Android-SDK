@@ -40,6 +40,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".McuActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".RtspSingleActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
