@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.station.chuanyun.SensorDevice;
+import com.coolfly.station.mcu.McuManager;
 import com.wuadam.fflibrary.FFJNI;
 import com.wuadam.fflibrary.listeners.FFListener;
 import com.wuadam.fflibrary.listeners.FFListenerManager;
@@ -47,7 +48,9 @@ public class MainApplication extends Application {
         FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
 
         // Show ChuanYun Log. Disable in production environment.
-        SensorDevice.setIsShowLog(true);
+        SensorDevice.setIsShowLog(false);
+        // Show Mcu Log. Disable in production environment.
+        McuManager.setIsShowLog(false);
     }
 
     FFListener ffListener = new FFListener() {
