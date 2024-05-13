@@ -145,16 +145,6 @@ public class RtspSingleActivity extends AppCompatActivity {
                         Toast.makeText(RtspSingleActivity.this, R.string.url_error, Toast.LENGTH_SHORT).show();
                     }
                 }
-
-                binding.tvOperate.setEnabled(false);
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (binding.tvOperate != null) {
-                            binding.tvOperate.setEnabled(true);
-                        }
-                    }
-                }, 1000);
             }
         });
 

@@ -12,8 +12,6 @@ import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_4;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.SurfaceView;
 import android.view.View;
@@ -183,7 +181,11 @@ public class RtspMultiActivity extends AppCompatActivity {
                 } else {
                     String uri = binding.etUri.getText().toString().trim();
                     if (!TextUtils.isEmpty(uri) && uri.startsWith("rtsp://")) {
-                        mediaHelper.playFile(uri);
+                        boolean res = mediaHelper.playFile(uri);
+                        if (!res) {
+                            Toast.makeText(RtspMultiActivity.this, R.string.surface_unavailable, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         setIsPlaying(true);
                         binding.tvOperate.setText(R.string.stop);
                         binding.tvDecodeMode.setText(R.string.decode_mode_hw);
@@ -213,16 +215,6 @@ public class RtspMultiActivity extends AppCompatActivity {
                         Toast.makeText(RtspMultiActivity.this, R.string.url_error, Toast.LENGTH_SHORT).show();
                     }
                 }
-
-                binding.tvOperate.setEnabled(false);
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (binding.tvOperate != null) {
-                            binding.tvOperate.setEnabled(true);
-                        }
-                    }
-                }, 1000);
             }
         });
 
