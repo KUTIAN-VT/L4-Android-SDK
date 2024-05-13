@@ -43,6 +43,7 @@ import com.coolfly.demo.databinding.ActivityMainBinding;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
+import com.coolfly.demo.v3ota.V3OtaActivity;
 import com.coolfly.station.prorocol.CoolFly;
 import com.coolfly.station.prorocol.ProtocolHelper;
 import com.coolfly.station.prorocol.ProtocolListener;
@@ -528,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
             String info = FFJNI.avcodecinfo();
             Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
             Log.d("codec info", info);
-        } else if (view == binding.btnUpgradeGrd) {
+        } else if (view == binding.btnUpgradeGnd) {
             if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
                 return;
@@ -540,6 +541,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             getUpgradeFis(REQ_OTA_SKY);
+        } else if (view == binding.btnUpgradeV3) {
+            Intent intent = new Intent(this, V3OtaActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
@@ -669,7 +673,7 @@ public class MainActivity extends AppCompatActivity {
                     upgradeHelper = new UpgradeHelper(fis);
                     upgradeHelper.setListener(upgradeListener);
                     upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
-                    binding.btnUpgradeGrd.setEnabled(false);
+                    binding.btnUpgradeGnd.setEnabled(false);
                     binding.btnUpgradeSky.setEnabled(false);
                 }
             } catch (FileNotFoundException e) {
@@ -1208,14 +1212,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onComplete() {
             binding.tvUpdateProcess.setText(R.string.ota_finish);
-            binding.btnUpgradeGrd.setEnabled(true);
+            binding.btnUpgradeGnd.setEnabled(true);
             binding.btnUpgradeSky.setEnabled(true);
         }
 
         @Override
         public void onFail(String errMsg) {
             binding.tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
-            binding.btnUpgradeGrd.setEnabled(true);
+            binding.btnUpgradeGnd.setEnabled(true);
             binding.btnUpgradeSky.setEnabled(true);
         }
 

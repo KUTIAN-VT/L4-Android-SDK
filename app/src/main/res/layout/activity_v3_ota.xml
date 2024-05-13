@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".v3ota.V3OtaActivity">
+
+    <LinearLayout
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_set_socket"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Set Socket"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_gnd_version"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="GND Version"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_sky_version"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="SKY Version"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_ota"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="OTA"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:imeOptions="actionGo"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:minLines="10"
+            android:textColor="#FF66FA45"
+            android:textCursorDrawable="@null" />
+    </ScrollView>
+</LinearLayout>

@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoolDemo">
         <activity
+            android:name=".v3ota.V3OtaActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
@@ -28,13 +31,13 @@
         <activity
             android:name=".chuanyun.preference.SerialPortPreferences"
             android:exported="false"
-            android:theme="@style/Theme.CoolDemo.Preference"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.CoolDemo.Preference" />
         <activity
             android:name=".chuanyun.preference.SocketPreferences"
             android:exported="false"
-            android:theme="@style/Theme.CoolDemo.Preference"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.CoolDemo.Preference" />
         <activity
             android:name=".chuanyun.ChuanYunActivity"
             android:exported="false"

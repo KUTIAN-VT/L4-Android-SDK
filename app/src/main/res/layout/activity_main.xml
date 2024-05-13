@@ -141,7 +141,7 @@
                 tools:text="50/66" />
 
             <Button
-                android:id="@+id/btn_upgrade_grd"
+                android:id="@+id/btn_upgrade_gnd"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
@@ -153,6 +153,13 @@
                 android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="@string/ota_sky" />
+
+            <Button
+                android:id="@+id/btn_upgrade_v3"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/ota_v3" />
 
             <Button
                 android:id="@+id/btn_rtsp"

@@ -11,8 +11,9 @@
 
     <string name="fpv_communication">FPV Communication</string>
     <string name="fpv_power">FPV Power</string>
-    <string name="ota_ground">Ground OTA</string>
-    <string name="ota_sky">Sky OTA</string>
+    <string name="ota_ground">V2 Gnd OTA</string>
+    <string name="ota_sky">V2 Sky OTA</string>
+    <string name="ota_v3">V3 OTA</string>
 
     <string name="restart_to_work">It takes effect after restarting the APP</string>
     <string name="ok">OK</string>

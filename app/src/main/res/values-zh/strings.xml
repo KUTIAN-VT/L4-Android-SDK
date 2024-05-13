@@ -11,8 +11,9 @@
 
     <string name="fpv_communication">图传通信</string>
     <string name="fpv_power">图传电源</string>
-    <string name="ota_ground">升级地面端</string>
-    <string name="ota_sky">升级天空端</string>
+    <string name="ota_ground">升级V2地面端</string>
+    <string name="ota_sky">升级V2天空端</string>
+    <string name="ota_v3">升级V3</string>
 
     <string name="restart_to_work">APP重启之后生效</string>
     <string name="ok">确定</string>
