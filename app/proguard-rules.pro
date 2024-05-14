@@ -43,3 +43,6 @@
 
 #serialport
 -keep class android.serialport.** { *; }
+
+#jsch
+-keep class com.jcraft.jsch.** { *; }

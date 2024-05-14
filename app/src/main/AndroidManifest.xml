@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoolDemo">
         <activity
-            android:name=".v3ota.V3OtaActivity"
-            android:exported="false" />
-        <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
@@ -44,6 +41,10 @@
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".McuActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".v3ota.V3OtaActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
