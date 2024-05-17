@@ -179,6 +179,44 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="up down ratio"
+                    android:textColor="@android:color/white" />
+
+                <Spinner
+                    android:id="@+id/sp_up_down_ratio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="bandwidth"
+                    android:textColor="@android:color/white" />
+
+                <Spinner
+                    android:id="@+id/sp_bandwidth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_pair_device"
                 android:layout_width="match_parent"
@@ -198,6 +236,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="switch cam"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_read_version"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read version"
                 android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>

@@ -7,12 +7,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.MainApplication;
+import com.coolfly.demo.R;
 import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
 import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityChuanYunBinding;
@@ -22,6 +25,7 @@ import com.coolfly.station.chuanyun.entity.PairResponse;
 import com.coolfly.station.chuanyun.entity.RFConfig2;
 import com.coolfly.station.chuanyun.entity.Sbus;
 import com.coolfly.station.chuanyun.entity.Status;
+import com.coolfly.station.chuanyun.entity.Version;
 
 public class ChuanYunActivity extends AppCompatActivity {
     private ActivityChuanYunBinding binding;
@@ -174,6 +178,44 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
+        String[] upDownRatioArray = new String[RFConfig2.UP_DOWN_RATIO.values().length];
+        for (int i = 0; i<upDownRatioArray.length; i++) {
+            upDownRatioArray[i] = RFConfig2.UP_DOWN_RATIO.values()[i].value;
+        }
+        ArrayAdapter<String> upDownRatioAdapter = new ArrayAdapter<String>(this, R.layout.item_select, upDownRatioArray);
+        upDownRatioAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        binding.spUpDownRatio.setAdapter(upDownRatioAdapter);
+        binding.spUpDownRatio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                writeRFConfig2(RFConfig2.UpDownRatio(RFConfig2.UP_DOWN_RATIO.values()[position]));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        String[] bandwidthArray = new String[RFConfig2.BANDWIDTH.values().length];
+        for (int i = 0; i<bandwidthArray.length; i++) {
+            bandwidthArray[i] = RFConfig2.BANDWIDTH.values()[i].value;
+        }
+        ArrayAdapter<String> bandwidthAdapter = new ArrayAdapter<String>(this, R.layout.item_select, bandwidthArray);
+        bandwidthAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        binding.spBandwidth.setAdapter(bandwidthAdapter);
+        binding.spBandwidth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                writeRFConfig2(RFConfig2.BandWidth(RFConfig2.BANDWIDTH.values()[position]));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         binding.btnPairDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,6 +236,13 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sensorDevice.switch201VideoMode(videoMode201++ % 2);
+            }
+        });
+
+        binding.btnReadVersion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readVersion();
             }
         });
     }
@@ -263,6 +312,13 @@ public class ChuanYunActivity extends AppCompatActivity {
         public void onRfConfig2(RFConfig2 rfConfig2) {
             handler.post(() -> {
                 binding.tvLog.setText("RECEIVE: " + rfConfig2.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onVersion(Version version) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + version.toString() + "\n");
             });
         }
     };
