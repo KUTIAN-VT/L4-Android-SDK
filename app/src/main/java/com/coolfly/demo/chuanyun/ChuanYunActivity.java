@@ -22,6 +22,7 @@ import com.coolfly.demo.databinding.ActivityChuanYunBinding;
 import com.coolfly.station.chuanyun.SensorDevice;
 import com.coolfly.station.chuanyun.entity.Calibrate;
 import com.coolfly.station.chuanyun.entity.PairResponse;
+import com.coolfly.station.chuanyun.entity.RFConfig;
 import com.coolfly.station.chuanyun.entity.RFConfig2;
 import com.coolfly.station.chuanyun.entity.Sbus;
 import com.coolfly.station.chuanyun.entity.Status;
@@ -111,6 +112,20 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 writeSbus();
+            }
+        });
+
+        binding.btnReadRfConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readRfConfig();
+            }
+        });
+
+        binding.btnSetWorkMode7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.writeRfConfig(RFConfig.WorkMode(7));
             }
         });
 
@@ -305,6 +320,13 @@ public class ChuanYunActivity extends AppCompatActivity {
 //            3 : 校准完成。
             handler.post(() -> {
                 binding.tvLog.setText("RECEIVE: " + calibrate.toString() + "\n");
+            });
+        }
+
+        @Override
+        public void onRfConfig(RFConfig rfConfig) {
+            handler.post(() -> {
+                binding.tvLog.setText("RECEIVE: " + rfConfig.toString() + "\n");
             });
         }
 

@@ -75,10 +75,24 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/btn_read_rf_config"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read RFConfig"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_set_work_mode_7"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="set work mode 7"
+                android:textSize="12sp" />
+
+            <Button
                 android:id="@+id/btn_read_rf_config_2"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="read RFConfig2"
+                android:text="read soft switch RFConfig"
                 android:textSize="12sp" />
 
             <LinearLayout
