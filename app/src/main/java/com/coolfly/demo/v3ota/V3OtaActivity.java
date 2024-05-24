@@ -88,12 +88,7 @@ public class V3OtaActivity extends AppCompatActivity {
                 if (fis != null) {
                     binding.btnOta.setEnabled(false);
                     binding.tvMessage.setText("");
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            OtaWorker.ota(V3OtaActivity.this, getIpPref(), fis, otaListener);
-                        }
-                    }).start();
+                    OtaWorker.ota(V3OtaActivity.this, getIpPref(), fis, otaListener);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -145,6 +140,11 @@ public class V3OtaActivity extends AppCompatActivity {
 
     private ProgressDialog otaProgressDialog;
     private OtaWorker.OtaListener otaListener = new OtaWorker.OtaListener() {
+        @Override
+        public void onStart() {
+
+        }
+
         @Override
         public void uploadStart() {
             otaProgressDialog = new ProgressDialog(V3OtaActivity.this, 0);

@@ -184,22 +184,12 @@ public class McuActivity extends AppCompatActivity {
     private McuOtaHelper.McuOTAListener mcuOTAListener = new McuOtaHelper.McuOTAListener() {
         @Override
         public void onOTAStart() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText("OTA start");
-                }
-            });
+            binding.tvLog.setText("OTA start");
         }
 
         @Override
         public void onOTAProgress(int progress) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText("OTA progress: " + progress + "%");
-                }
-            });
+            binding.tvLog.setText("OTA progress: " + progress + "%");
         }
 
         @Override
@@ -207,12 +197,7 @@ public class McuActivity extends AppCompatActivity {
             if (mcuOtaHelper != null) {
                 mcuOtaHelper.release();
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText("OTA success");
-                }
-            });
+            binding.tvLog.setText("OTA success");
         }
 
         @Override
@@ -220,12 +205,7 @@ public class McuActivity extends AppCompatActivity {
             if (mcuOtaHelper != null) {
                 mcuOtaHelper.release();
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText("OTA fail: " + error);
-                }
-            });
+            binding.tvLog.setText("OTA fail: " + error);
         }
     };
 
@@ -259,23 +239,13 @@ public class McuActivity extends AppCompatActivity {
                 if (fis != null) {
                     mcuOtaHelper = new McuOtaHelper(this, fis);
                     mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                mcuOtaHelper.start();
-                            } catch (RuntimeException e) {
-                                e.printStackTrace();
-                                mcuOtaHelper.release();
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        binding.tvLog.setText("OTA fail: " + e.getMessage());
-                                    }
-                                });
-                            }
-                        }
-                    }).start();
+                    try {
+                        mcuOtaHelper.start();
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                        mcuOtaHelper.release();
+                        binding.tvLog.setText("OTA fail: " + e.getMessage());
+                    }
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
