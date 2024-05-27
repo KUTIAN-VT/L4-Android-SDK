@@ -42,7 +42,7 @@ public class McuActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // MCU
-        mcuManager = McuManager.getInstance(MainApplication.applicationContext);
+        mcuManager = McuManager.getInstance();
         mcuManager.addListener(mcuListener);
         if (!mcuManager.isConnectionAlive()) {
             mcuManager.onLine();
@@ -147,22 +147,12 @@ public class McuActivity extends AppCompatActivity {
 
         @Override
         public void onVersion(Version version) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText(version.toString());
-                }
-            });
+            binding.tvLog.setText(version.toString());
         }
 
         @Override
         public void onTemperature(Temperature temperature) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText(temperature.toString());
-                }
-            });
+            binding.tvLog.setText(temperature.toString());
         }
 
         @Override
@@ -172,12 +162,7 @@ public class McuActivity extends AppCompatActivity {
 
         @Override
         public void onNACK(String error) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.tvLog.setText(error);
-                }
-            });
+            binding.tvLog.setText(error);
         }
     };
 
@@ -237,7 +222,7 @@ public class McuActivity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
-                    mcuOtaHelper = new McuOtaHelper(this, fis);
+                    mcuOtaHelper = new McuOtaHelper(fis);
                     mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
                     try {
                         mcuOtaHelper.start();
