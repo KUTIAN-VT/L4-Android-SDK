@@ -13,9 +13,11 @@ import android.widget.CompoundButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityMcuBinding;
+import com.coolfly.demo.utils.WidgetUtils;
 import com.coolfly.station.mcu.McuManager;
 import com.coolfly.station.mcu.McuOtaHelper;
 import com.coolfly.station.mcu.McuPacket;
+import com.coolfly.station.mcu.entity.HeartBeat;
 import com.coolfly.station.mcu.entity.Temperature;
 import com.coolfly.station.mcu.entity.Version;
 import com.coolfly.station.prorocol.CoolFly;
@@ -57,6 +59,12 @@ public class McuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mcuManager.writePacket(McuPacket.createWriteFetchVersionPacket());
+            }
+        });
+        binding.tvMcuReadHeartBeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createReadHeartBeatPacket());
             }
         });
         binding.swMcuBuzzer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -134,6 +142,14 @@ public class McuActivity extends AppCompatActivity {
     }
 
     private McuManager.McuListener mcuListener = new McuManager.McuListener() {
+        @Override
+        public void onHeartBeat(HeartBeat heartBeat) {
+            binding.tvLog.setText(heartBeat.toString());
+            WidgetUtils.setSwitchWithoutListener(binding.swMcuBuzzer, heartBeat.isBuzzOn());
+            WidgetUtils.setSwitchWithoutListener(binding.swMcuFan, heartBeat.isFanOn());
+            WidgetUtils.setSelectionWithoutCallback(binding.spMcuFanSpeed, heartBeat.getFanSpeed());
+        }
+
         @Override
         public void onShutdownOs() {
             try {
