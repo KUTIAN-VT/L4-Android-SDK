@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coolfly.demo.InfraredActivity;
 import com.coolfly.demo.MainApplication;
 import com.coolfly.demo.R;
 import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
@@ -258,6 +259,14 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sensorDevice.readVersion();
+            }
+        });
+
+        binding.btnInfraredConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChuanYunActivity.this, InfraredActivity.class);
+                startActivity(intent);
             }
         });
     }

@@ -258,6 +258,13 @@
                 android:layout_height="48dp"
                 android:text="read version"
                 android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_infrared_config"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="infrared config"
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 

@@ -44,6 +44,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".InfraredActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".v3ota.V3OtaActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
