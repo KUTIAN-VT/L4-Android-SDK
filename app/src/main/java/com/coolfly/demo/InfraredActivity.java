@@ -10,7 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityInfraredBinding;
 import com.coolfly.station.chuanyun.SensorDevice;
+import com.coolfly.station.chuanyun.entity.Calibrate;
 import com.coolfly.station.chuanyun.entity.InfraredConfig;
+import com.coolfly.station.chuanyun.entity.PairResponse;
+import com.coolfly.station.chuanyun.entity.RFConfig;
+import com.coolfly.station.chuanyun.entity.RFConfig2;
+import com.coolfly.station.chuanyun.entity.Sbus;
+import com.coolfly.station.chuanyun.entity.Status;
+import com.coolfly.station.chuanyun.entity.Version;
 
 public class InfraredActivity extends AppCompatActivity {
 
@@ -27,6 +34,7 @@ public class InfraredActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         sensorDevice = SensorDevice.getInstance(this);
+        sensorDevice.addListener(sensorDeviceListener);
 
         String[] fanSpeedArr = new String[24];
         for (int i = 0; i < fanSpeedArr.length; i++) {
@@ -128,6 +136,64 @@ public class InfraredActivity extends AppCompatActivity {
                 sensorDevice.writeInfraredConfig(infraredConfig);
             }
         });
+
+        binding.tvReadSn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InfraredConfig infraredConfig = new InfraredConfig();
+                infraredConfig.sn = new int[]{1,2,3,4,5,6,7};
+                sensorDevice.readInfraredConfig(infraredConfig);
+            }
+        });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sensorDevice != null) {
+            sensorDevice.removeListener(sensorDeviceListener);
+        }
+    }
+
+    private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
+        @Override
+        public void onStatus(Status status) {
+
+        }
+
+        @Override
+        public void onPairResponse(PairResponse pairResponse) {
+
+        }
+
+        @Override
+        public void onSbus(Sbus sbus) {
+
+        }
+
+        @Override
+        public void onCalibrate(Calibrate calibrate) {
+
+        }
+
+        @Override
+        public void onRfConfig(RFConfig rfConfig) {
+
+        }
+
+        @Override
+        public void onRfConfig2(RFConfig2 rfConfig2) {
+
+        }
+
+        @Override
+        public void onVersion(Version version) {
+
+        }
+
+        @Override
+        public void onInfraredConfig(InfraredConfig infraredConfig) {
+            binding.tvLog.setText(infraredConfig.toString());
+        }
+    };
 }

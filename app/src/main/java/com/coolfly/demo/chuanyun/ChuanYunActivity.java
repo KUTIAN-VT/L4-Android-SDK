@@ -22,6 +22,7 @@ import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityChuanYunBinding;
 import com.coolfly.station.chuanyun.SensorDevice;
 import com.coolfly.station.chuanyun.entity.Calibrate;
+import com.coolfly.station.chuanyun.entity.InfraredConfig;
 import com.coolfly.station.chuanyun.entity.PairResponse;
 import com.coolfly.station.chuanyun.entity.RFConfig;
 import com.coolfly.station.chuanyun.entity.RFConfig2;
@@ -351,6 +352,11 @@ public class ChuanYunActivity extends AppCompatActivity {
             handler.post(() -> {
                 binding.tvLog.setText("RECEIVE: " + version.toString() + "\n");
             });
+        }
+
+        @Override
+        public void onInfraredConfig(InfraredConfig infraredConfig) {
+
         }
     };
 }
