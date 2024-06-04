@@ -121,7 +121,7 @@ public class V3OtaActivity extends AppCompatActivity {
     private String getIpPref() {
         String packageName = getPackageName();
         SharedPreferences sp = getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
-        return sp.getString("SOCKET_IP", "192.168.1.144").trim();
+        return sp.getString("SOCKET_IP", "192.168.144.100").trim();
     }
 
     private VersionWorker.OnVersionListener onVersionListener = new VersionWorker.OnVersionListener() {

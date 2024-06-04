@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Socket setup">
     <EditTextPreference
-        android:defaultValue="192.168.1.144"
+        android:defaultValue="192.168.144.100"
         android:key="SOCKET_IP"
         android:persistent="true"
         android:title="IP" />

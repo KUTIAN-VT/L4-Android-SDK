@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
         binding.spDecodeMode.setSelection(decodeMode);
         if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
-            binding.btnHwDecoder.setVisibility(View.GONE);
+            binding.btnFfInfo.setVisibility(View.GONE);
             binding.swHwDecode.setVisibility(View.GONE);
         }
         if (decodeMode == Constants.DECODE_MODE_MEDIACODEC_TEXTURE) {
@@ -525,10 +525,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             }
-        } else if (view == binding.btnHwDecoder) {
+        } else if (view == binding.btnFfInfo) {
             String info = FFJNI.avcodecinfo();
-            Toast.makeText(MainActivity.this, info, Toast.LENGTH_LONG).show();
             Log.d("codec info", info);
+            info = FFJNI.avformatinfo();
+            Log.d("format info", info);
+            info = FFJNI.urlprotocolinfo();
+            Log.d("protocol info", info);
         } else if (view == binding.btnUpgradeGnd) {
             if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
                 Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();

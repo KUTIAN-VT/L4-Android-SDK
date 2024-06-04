@@ -4,7 +4,7 @@
     <string name="take_photo">拍照</string>
     <string name="record_start">开始录像</string>
     <string name="record_stop">停止录像</string>
-    <string name="hw_decoders">编解码器</string>
+    <string name="ff_info">ffmpeg信息</string>
     <string name="mock_video">Mock视频流</string>
     <string name="mock_video2">Mock视频流2</string>
     <string name="hw_decode">硬解码</string>

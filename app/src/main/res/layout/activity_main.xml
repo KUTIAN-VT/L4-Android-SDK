@@ -77,11 +77,11 @@
                 android:text="@string/record_stop" />
 
             <Button
-                android:id="@+id/btn_hw_decoder"
+                android:id="@+id/btn_ff_info"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="@string/hw_decoders" />
+                android:text="@string/ff_info" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_mock_video"
