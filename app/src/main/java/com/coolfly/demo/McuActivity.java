@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,8 +35,8 @@ public class McuActivity extends AppCompatActivity {
 
     private McuManager mcuManager;
 
-    private McuOtaHelper mcuOtaHelper;
     private final int REQ_OTA_MCU = 3;
+    private McuOtaHelper mcuOtaHelper = McuOtaHelper.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +127,10 @@ public class McuActivity extends AppCompatActivity {
         binding.tvMcuOta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mcuOtaHelper.isRunning()) {
+                    Toast.makeText(McuActivity.this, "OTA is running", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 getUpgradeFis(REQ_OTA_MCU);
             }
         });
@@ -195,17 +200,11 @@ public class McuActivity extends AppCompatActivity {
 
         @Override
         public void onOTASuccess() {
-            if (mcuOtaHelper != null) {
-                mcuOtaHelper.release();
-            }
             binding.tvLog.setText("OTA success");
         }
 
         @Override
         public void onOTAFail(String error) {
-            if (mcuOtaHelper != null) {
-                mcuOtaHelper.release();
-            }
             binding.tvLog.setText("OTA fail: " + error);
         }
     };
@@ -238,13 +237,11 @@ public class McuActivity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
-                    mcuOtaHelper = new McuOtaHelper(fis);
                     mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
                     try {
-                        mcuOtaHelper.start();
+                        mcuOtaHelper.start(fis);
                     } catch (RuntimeException e) {
                         e.printStackTrace();
-                        mcuOtaHelper.release();
                         binding.tvLog.setText("OTA fail: " + e.getMessage());
                     }
                 }
