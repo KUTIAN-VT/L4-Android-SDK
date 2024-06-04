@@ -98,137 +98,174 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/et_ap_mac"
-                    android:layout_width="128dp"
-                    android:layout_height="wrap_content"
-                    android:hint="ApMac"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@android:color/white"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btn_write_ap_mac"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="write"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/et_power_2g"
-                    android:layout_width="128dp"
-                    android:layout_height="wrap_content"
-                    android:hint="Power2G"
-                    android:inputType="number"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@android:color/white"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btn_write_power_2g"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="write"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/et_power_5g"
-                    android:layout_width="128dp"
-                    android:layout_height="wrap_content"
-                    android:hint="Power5G"
-                    android:inputType="number"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@android:color/white"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btn_write_power_5g"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="write"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_write_bangswitch_2g"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="2G"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/btn_write_bangswitch_5g"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:text="5G"
-                    android:textSize="12sp" />
+                android:background="@color/colorPrimaryDark"
+                android:orientation="vertical">
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/sw_banghop"
+                    android:id="@+id/sw_is_soft_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BandHop"
+                    android:text="Is Soft Switch"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="up down ratio"
-                    android:textColor="@android:color/white" />
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_up_down_ratio"
-                    android:layout_width="0dp"
+                    <EditText
+                        android:id="@+id/et_ap_mac"
+                        android:layout_width="128dp"
+                        android:layout_height="wrap_content"
+                        android:hint="ApMac"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btn_write_ap_mac"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="write"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                    android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/et_dev_mac"
+                        android:layout_width="128dp"
+                        android:layout_height="wrap_content"
+                        android:hint="DevMac"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textSize="12sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <Button
+                        android:id="@+id/btn_write_dev_mac"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="write"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="bandwidth"
-                    android:textColor="@android:color/white" />
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/sp_bandwidth"
-                    android:layout_width="0dp"
+                    <EditText
+                        android:id="@+id/et_power_2g"
+                        android:layout_width="128dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Power2G"
+                        android:inputType="number"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btn_write_power_2g"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="write"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_power_5g"
+                        android:layout_width="128dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Power5G"
+                        android:inputType="number"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btn_write_power_5g"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="write"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_write_bangswitch_2g"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="2G"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/btn_write_bangswitch_5g"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="5G"
+                        android:textSize="12sp" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_banghop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BandHop"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="up down ratio"
+                        android:textColor="@android:color/white" />
+
+                    <Spinner
+                        android:id="@+id/sp_up_down_ratio"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="bandwidth"
+                        android:textColor="@android:color/white" />
+
+                    <Spinner
+                        android:id="@+id/sp_bandwidth"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
             </LinearLayout>
 
             <Button

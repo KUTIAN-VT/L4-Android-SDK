@@ -143,7 +143,21 @@ public class ChuanYunActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String value = binding.etApMac.getText().toString();
                 if (!TextUtils.isEmpty(value)) {
-                    writeRFConfig2(RFConfig2.ApMac(value));
+                    if (isSoftSwitch())
+                        sensorDevice.writeRfConfig2(RFConfig2.ApMac(value));
+                    else
+                        sensorDevice.writeRfConfig(RFConfig.ApMac(value));
+                }
+            }
+        });
+
+        binding.btnWriteDevMac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etDevMac.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    // not available for soft switch
+                    sensorDevice.writeRfConfig(RFConfig.DevMac(value));
                 }
             }
         });
@@ -155,7 +169,10 @@ public class ChuanYunActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(value)) {
                     int valueInt = Integer.parseInt(value);
                     if (valueInt >= 15 && valueInt <= 28) {
-                        writeRFConfig2(RFConfig2.Power2G(valueInt));
+                        if (isSoftSwitch())
+                            sensorDevice.writeRfConfig2(RFConfig2.Power2G(valueInt));
+                        else
+                            sensorDevice.writeRfConfig(RFConfig.Power2G(valueInt));
                     }
                 }
             }
@@ -168,7 +185,10 @@ public class ChuanYunActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(value)) {
                     int valueInt = Integer.parseInt(value);
                     if (valueInt >= 15 && valueInt <= 25) {
-                        writeRFConfig2(RFConfig2.Power5G(valueInt));
+                        if (isSoftSwitch())
+                            sensorDevice.writeRfConfig2(RFConfig2.Power5G(valueInt));
+                        else
+                            sensorDevice.writeRfConfig(RFConfig.Power5G(valueInt));
                     }
                 }
             }
@@ -177,21 +197,30 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding.btnWriteBangswitch2g.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                writeRFConfig2(RFConfig2.BandSwitch("2G"));
+                if (isSoftSwitch())
+                    sensorDevice.writeRfConfig2(RFConfig2.BandSwitch("2G"));
+                else
+                    sensorDevice.writeRfConfig(RFConfig.BandSwitch("2G"));
             }
         });
 
         binding.btnWriteBangswitch5g.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                writeRFConfig2(RFConfig2.BandSwitch("5G"));
+                if (isSoftSwitch())
+                    sensorDevice.writeRfConfig2(RFConfig2.BandSwitch("5G"));
+                else
+                    sensorDevice.writeRfConfig(RFConfig.BandSwitch("5G"));
             }
         });
 
         binding.swBanghop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                writeRFConfig2(RFConfig2.BandHop(isChecked ? 1 : 0));
+                if (isSoftSwitch())
+                    sensorDevice.writeRfConfig2(RFConfig2.BandHop(isChecked ? 1 : 0));
+                else
+                    sensorDevice.writeRfConfig(RFConfig.BandHop(isChecked ? 1 : 0));
             }
         });
 
@@ -205,7 +234,10 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding.spUpDownRatio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                writeRFConfig2(RFConfig2.UpDownRatio(RFConfig2.UP_DOWN_RATIO.values()[position]));
+                if (isSoftSwitch())
+                    sensorDevice.writeRfConfig2(RFConfig2.UpDownRatio(RFConfig2.UP_DOWN_RATIO.values()[position]));
+                else
+                    sensorDevice.writeRfConfig(RFConfig.UpDownRatio(RFConfig2.UP_DOWN_RATIO.values()[position]));
             }
 
             @Override
@@ -224,7 +256,10 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding.spBandwidth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                writeRFConfig2(RFConfig2.BandWidth(RFConfig2.BANDWIDTH.values()[position]));
+                if (isSoftSwitch())
+                    sensorDevice.writeRfConfig2(RFConfig2.BandWidth(RFConfig2.BANDWIDTH.values()[position]));
+                else
+                    sensorDevice.writeRfConfig(RFConfig.BandWidth(RFConfig2.BANDWIDTH.values()[position]));
             }
 
             @Override
@@ -288,8 +323,8 @@ public class ChuanYunActivity extends AppCompatActivity {
                 }).create().show();
     }
 
-    private void writeRFConfig2(RFConfig2 rfConfig2) {
-        sensorDevice.writeRfConfig2(rfConfig2);
+    private boolean isSoftSwitch() {
+        return binding.swIsSoftSwitch.isChecked();
     }
 
     @Override
