@@ -131,26 +131,6 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
-        binding.btnReadRfConfig2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sensorDevice.readRfConfig2();
-            }
-        });
-
-        binding.btnWriteApMac.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String value = binding.etApMac.getText().toString();
-                if (!TextUtils.isEmpty(value)) {
-                    if (isSoftSwitch())
-                        sensorDevice.writeRfConfig2(RFConfig2.ApMac(value));
-                    else
-                        sensorDevice.writeRfConfig(RFConfig.ApMac(value));
-                }
-            }
-        });
-
         binding.btnWriteDevMac.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +142,41 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
+        binding.btnWriteRfPowerFix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value2 = binding.etRfPowerFix2.getText().toString();
+                String value5 = binding.etRfPowerFix5.getText().toString();
+                if (!TextUtils.isEmpty(value2) && !TextUtils.isEmpty(value5)) {
+                    // not available for soft switch
+                    sensorDevice.writeRfConfig(RFConfig.RfPower(RFConfig.RfPower.FIX(Integer.parseInt(value2), Integer.parseInt(value5))));
+                }
+            }
+        });
+
+        binding.btnWriteRfPowerAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String valueDown2 = binding.etRfPowerAutoDown2.getText().toString();
+                String valueUp2 = binding.etRfPowerAutoUp2.getText().toString();
+
+                String valueDown5 = binding.etRfPowerAutoDown5.getText().toString();
+                String valueUp5 = binding.etRfPowerAutoUp5.getText().toString();
+
+                if (!TextUtils.isEmpty(valueDown2) && !TextUtils.isEmpty(valueUp2) && !TextUtils.isEmpty(valueDown5) && !TextUtils.isEmpty(valueUp5)) {
+                    // not available for soft switch
+                    sensorDevice.writeRfConfig(RFConfig.RfPower(RFConfig.RfPower.AUTO(Integer.parseInt(valueDown2), Integer.parseInt(valueUp2), Integer.parseInt(valueDown5), Integer.parseInt(valueUp5))));
+                }
+            }
+        });
+
+        binding.btnReadRfConfig2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorDevice.readRfConfig2();
+            }
+        });
+
         binding.btnWritePower2g.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,10 +184,8 @@ public class ChuanYunActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(value)) {
                     int valueInt = Integer.parseInt(value);
                     if (valueInt >= 15 && valueInt <= 28) {
-                        if (isSoftSwitch())
-                            sensorDevice.writeRfConfig2(RFConfig2.Power2G(valueInt));
-                        else
-                            sensorDevice.writeRfConfig(RFConfig.Power2G(valueInt));
+                        // not available for hard switch
+                        sensorDevice.writeRfConfig2(RFConfig2.Power2G(valueInt));
                     }
                 }
             }
@@ -185,11 +198,22 @@ public class ChuanYunActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(value)) {
                     int valueInt = Integer.parseInt(value);
                     if (valueInt >= 15 && valueInt <= 25) {
-                        if (isSoftSwitch())
-                            sensorDevice.writeRfConfig2(RFConfig2.Power5G(valueInt));
-                        else
-                            sensorDevice.writeRfConfig(RFConfig.Power5G(valueInt));
+                        // not available for hard switch
+                        sensorDevice.writeRfConfig2(RFConfig2.Power5G(valueInt));
                     }
+                }
+            }
+        });
+
+        binding.btnWriteApMac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etApMac.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    if (isSoftSwitch())
+                        sensorDevice.writeRfConfig2(RFConfig2.ApMac(value));
+                    else
+                        sensorDevice.writeRfConfig(RFConfig.ApMac(value));
                 }
             }
         });
@@ -337,9 +361,9 @@ public class ChuanYunActivity extends AppCompatActivity {
     private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
         public void onStatus(Status status) {
-            handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + status.toString() + "\n");
-            });
+//            handler.post(() -> {
+//                binding.tvLog.setText("RECEIVE: " + status.toString() + "\n");
+//            });
         }
 
         @Override
