@@ -726,15 +726,6 @@ public class MainActivity extends AppCompatActivity {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 arlinkDevice = deviceInfo;
 
-                protocolHelper.startSkyUart3PassThrough();
-                Log.d(TAG, "startSkyUart3PassThrough");
-                protocolHelper.startSkyUart1PassThrough();
-                Log.d(TAG, "startSkyUart1PassThrough");
-                protocolHelper.startGndUart3PassThrough();
-                Log.d(TAG, "startGndUart3PassThrough");
-                protocolHelper.startUsbPassThrough();
-                Log.d(TAG, "startUsbPassThrough");
-
                 if (deviceInfo.skyGround == 1) {
                     // todo
                     //  (optional) query osd info
@@ -808,49 +799,6 @@ public class MainActivity extends AppCompatActivity {
 
     private enum UART{
         SkyUart1, SkyUart3, GndUart3;
-    }
-
-    /**
-     * todo
-     *  call this method to send data (such as mavlink packages bytes) through usb bypass
-     * @param data
-     * @param length
-     */
-    private void writeDataToUsb(byte[] data, int length) {
-        protocolHelper.sendUsbTx(data, length);
-
-        final StringBuilder stringBuilder = new StringBuilder(data.length);
-        for (int i = 0; i<data.length; i++) {
-            stringBuilder.append(String.format("%02X ", data[i]));
-        }
-        Log.d(TAG, "onWrite usb: " + stringBuilder.toString());
-    }
-
-    /**
-     * todo
-     *  call this method to send data (such as mavlink packages bytes) through uart bypass (SkyUart1/SkyUart3/GndUart3)
-     * @param data
-     * @param length
-     */
-    private void writeDataToUart(UART uart, byte[] data, int length) {
-        switch (uart) {
-
-            case SkyUart1:
-                protocolHelper.sendSkyUart1Tx(data, length);
-                break;
-            case SkyUart3:
-                protocolHelper.sendSkyUart3Tx(data, length);
-                break;
-            case GndUart3:
-                protocolHelper.sendGndUart3Tx(data, length);
-                break;
-        }
-
-        final StringBuilder stringBuilder = new StringBuilder(data.length);
-        for (int i = 0; i<data.length; i++) {
-            stringBuilder.append(String.format("%02X ", data[i]));
-        }
-        Log.d(TAG, "onWrite " + uart + ": " + stringBuilder.toString());
     }
 
     private void renderWirelessInfo(WirelessInfo wirelessOSD) {
