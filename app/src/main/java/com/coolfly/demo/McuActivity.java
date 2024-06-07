@@ -50,6 +50,10 @@ public class McuActivity extends AppCompatActivity {
         if (!mcuManager.isConnectionAlive()) {
             mcuManager.onLine();
         }
+
+        // MCU OTA
+        mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
+
         binding.tvMcuReboot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,7 +241,6 @@ public class McuActivity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
-                    mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
                     try {
                         mcuOtaHelper.start(fis);
                     } catch (RuntimeException e) {
