@@ -137,7 +137,7 @@ public class ChuanYunActivity extends AppCompatActivity {
                 String value = binding.etDevMac.getText().toString();
                 if (!TextUtils.isEmpty(value)) {
                     // not available for soft switch
-                    sensorDevice.writeRfConfig(RFConfig.DevMac(value));
+                    sensorDevice.writeRfConfig(RFConfig.DevMac0(value));
                 }
             }
         });
