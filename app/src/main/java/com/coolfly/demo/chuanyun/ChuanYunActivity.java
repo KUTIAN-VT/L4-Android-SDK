@@ -361,22 +361,22 @@ public class ChuanYunActivity extends AppCompatActivity {
     private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
         public void onStatus(Status status) {
-//            handler.post(() -> {
-//                binding.tvLog.setText("RECEIVE: " + status.toString() + "\n");
-//            });
+            handler.post(() -> {
+                binding.tvStatus.setText("RECEIVE: " + status.toString() + "\n");
+            });
         }
 
         @Override
         public void onPairResponse(PairResponse pairResponse) {
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + pairResponse.toString() + "\n");
+                binding.tvOthers.setText("RECEIVE: " + pairResponse.toString() + "\n");
             });
         }
 
         @Override
         public void onSbus(Sbus sbus) {
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + sbus.toString() + "\n");
+                binding.tvSbus.setText("RECEIVE: " + sbus.toString() + "\n");
             });
         }
 
@@ -388,28 +388,28 @@ public class ChuanYunActivity extends AppCompatActivity {
 //            2 : 校准中，请勿触碰摇杆和波轮。
 //            3 : 校准完成。
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + calibrate.toString() + "\n");
+                binding.tvOthers.setText("RECEIVE: " + calibrate.toString() + "\n");
             });
         }
 
         @Override
         public void onRfConfig(RFConfig rfConfig) {
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + rfConfig.toString() + "\n");
+                binding.tvOthers.setText("RECEIVE: " + rfConfig.toString() + "\n");
             });
         }
 
         @Override
         public void onRfConfig2(RFConfig2 rfConfig2) {
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + rfConfig2.toString() + "\n");
+                binding.tvOthers.setText("RECEIVE: " + rfConfig2.toString() + "\n");
             });
         }
 
         @Override
         public void onVersion(Version version) {
             handler.post(() -> {
-                binding.tvLog.setText("RECEIVE: " + version.toString() + "\n");
+                binding.tvOthers.setText("RECEIVE: " + version.toString() + "\n");
             });
         }
 
