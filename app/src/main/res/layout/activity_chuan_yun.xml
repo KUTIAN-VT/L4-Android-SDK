@@ -512,8 +512,7 @@
             <TextView
                 android:id="@+id/tv_sbus"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:padding="8dp"
                 android:textColor="#FF66FA45"
                 android:textSize="12sp"
