@@ -90,9 +90,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding.btnDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sensorDevice.isConnectionAlive()) {
-                    sensorDevice.offLine();
-                }
+                sensorDevice.offLine();
             }
         });
 
@@ -354,7 +352,6 @@ public class ChuanYunActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sensorDevice.offLine();
         sensorDevice.removeListener(sensorDeviceListener);
     }
 

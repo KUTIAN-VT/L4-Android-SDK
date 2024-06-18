@@ -34,9 +34,9 @@ public class McuActivity extends AppCompatActivity {
     private ActivityMcuBinding binding;
 
     private McuManager mcuManager;
+    private McuOtaHelper mcuOtaHelper;
 
     private final int REQ_OTA_MCU = 3;
-    private McuOtaHelper mcuOtaHelper = McuOtaHelper.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +47,24 @@ public class McuActivity extends AppCompatActivity {
         // MCU
         mcuManager = McuManager.getInstance();
         mcuManager.addListener(mcuListener);
-        if (!mcuManager.isConnectionAlive()) {
-            mcuManager.onLine();
-        }
 
         // MCU OTA
+        mcuOtaHelper = McuOtaHelper.getInstance();
         mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
+
+        binding.tvConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.onLine();
+            }
+        });
+
+        binding.tvDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.offLine();
+            }
+        });
 
         binding.tvMcuReboot.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +156,6 @@ public class McuActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mcuManager.removeListener(mcuListener);
-        mcuManager.offLine();
 
         Wheel.setWheelListener(null);
         Wheel.stop();
