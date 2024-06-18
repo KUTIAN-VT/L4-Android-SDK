@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
+def versionTime = new Date().format("yyyy-MM-dd-HH-mm")
+
 android {
     namespace 'com.coolfly.demo'
     compileSdk 34
@@ -12,6 +14,7 @@ android {
         targetSdk 33
         versionCode 19
         versionName "1.19.0"
+        buildConfigField "String", "COMPILE_TIME", "\"$versionTime\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -28,6 +31,17 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def fileName = "app.apk"
+            if (variant.buildType.name == 'release') {
+                fileName = "app-release-" + versionTime + ".apk"
+            } else if (variant.buildType.name == 'debug') {
+                fileName = "app-debug-" + versionTime + ".apk"
+            }
+            outputFileName = fileName
+        }
     }
 }
 

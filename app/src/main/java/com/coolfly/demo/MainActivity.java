@@ -335,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
                  IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
+        binding.tvAppVersion.setText("Built at " + BuildConfig.COMPILE_TIME);
     }
 
     @Override
