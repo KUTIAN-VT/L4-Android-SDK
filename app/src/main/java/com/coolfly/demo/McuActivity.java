@@ -52,6 +52,15 @@ public class McuActivity extends AppCompatActivity {
         mcuOtaHelper = McuOtaHelper.getInstance();
         mcuOtaHelper.setMcuOTAListener(mcuOTAListener);
 
+        // Show Mcu Log in logcat. Disable in production environment.
+        binding.swLog.setChecked(McuManager.isShowLog);
+        binding.swLog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                McuManager.setIsShowLog(isChecked);
+            }
+        });
+
         binding.tvConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

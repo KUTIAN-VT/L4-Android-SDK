@@ -46,11 +46,6 @@ public class MainApplication extends Application {
          */
         FFJNI.setHwDecode(isHwDecode);
         FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
-
-        // Show ChuanYun Log. Disable in production environment.
-        SensorDevice.setIsShowLog(false);
-        // Show Mcu Log. Disable in production environment.
-        McuManager.setIsShowLog(false);
     }
 
     FFListener ffListener = new FFListener() {

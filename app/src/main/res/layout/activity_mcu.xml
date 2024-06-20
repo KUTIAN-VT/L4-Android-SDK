@@ -35,6 +35,14 @@
             android:text="DISCONNECT"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_height="wrap_content"
+            android:text="LOG"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout

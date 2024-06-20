@@ -94,6 +94,15 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
+        // Show ChuanYun Log in logcat. Disable in production environment.
+        binding.swLog.setChecked(SensorDevice.isShowLog);
+        binding.swLog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorDevice.setIsShowLog(isChecked);
+            }
+        });
+
         binding.btnReadStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -8,7 +8,7 @@
     tools:context=".chuanyun.ChuanYunActivity">
 
     <ScrollView
-        android:layout_width="192dp"
+        android:layout_width="136dp"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -53,19 +53,29 @@
                 android:text="disconnect"
                 android:textSize="12sp" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_log"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="LOG"
+                android:textColor="@android:color/white" />
+
             <Button
                 android:id="@+id/btn_read_status"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="read status"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_read_sbus"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:text="read sbus"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_write_sbus"
@@ -74,6 +84,52 @@
                 android:text="write sbus"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btn_pair_device"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="pair device"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_calibrate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="calibrate"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_switch_camera"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="switch cam"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_read_version"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="read version"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_infrared_config"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="infrared config"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="196dp"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,7 +140,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="rf hard switch"
+                    android:text="RF hard switch"
                     android:textColor="@android:color/white" />
 
                 <Button
@@ -108,8 +164,9 @@
 
                     <EditText
                         android:id="@+id/et_dev_mac"
-                        android:layout_width="128dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:hint="DevMac"
                         android:textColor="@android:color/white"
                         android:textColorHint="@android:color/white"
@@ -117,7 +174,7 @@
 
                     <Button
                         android:id="@+id/btn_write_dev_mac"
-                        android:layout_width="match_parent"
+                        android:layout_width="64dp"
                         android:layout_height="48dp"
                         android:text="write"
                         android:textSize="12sp" />
@@ -130,8 +187,9 @@
 
                     <EditText
                         android:id="@+id/et_rf_power_fix_2"
-                        android:layout_width="60dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:hint="2G"
                         android:inputType="number"
                         android:textColor="@android:color/white"
@@ -146,8 +204,9 @@
 
                     <EditText
                         android:id="@+id/et_rf_power_fix_5"
-                        android:layout_width="60dp"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:hint="5G"
                         android:inputType="number"
                         android:textColor="@android:color/white"
@@ -156,7 +215,7 @@
 
                     <Button
                         android:id="@+id/btn_write_rf_power_fix"
-                        android:layout_width="match_parent"
+                        android:layout_width="64dp"
                         android:layout_height="48dp"
                         android:text="fix rf power"
                         android:textSize="12sp" />
@@ -246,7 +305,7 @@
 
                     <Button
                         android:id="@+id/btn_write_rf_power_auto"
-                        android:layout_width="68dp"
+                        android:layout_width="64dp"
                         android:layout_height="96dp"
                         android:text="auto rf power"
                         android:textSize="12sp" />
@@ -264,7 +323,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="rf soft switch"
+                    android:text="RF soft switch"
                     android:textColor="@android:color/white" />
 
                 <Button
@@ -281,8 +340,9 @@
 
                     <EditText
                         android:id="@+id/et_power_2g"
-                        android:layout_width="128dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:hint="Power2G"
                         android:inputType="number"
                         android:textColor="@android:color/white"
@@ -291,7 +351,7 @@
 
                     <Button
                         android:id="@+id/btn_write_power_2g"
-                        android:layout_width="match_parent"
+                        android:layout_width="64dp"
                         android:layout_height="48dp"
                         android:text="write"
                         android:textSize="12sp" />
@@ -304,8 +364,9 @@
 
                     <EditText
                         android:id="@+id/et_power_5g"
-                        android:layout_width="128dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:hint="Power5G"
                         android:inputType="number"
                         android:textColor="@android:color/white"
@@ -314,7 +375,7 @@
 
                     <Button
                         android:id="@+id/btn_write_power_5g"
-                        android:layout_width="match_parent"
+                        android:layout_width="64dp"
                         android:layout_height="48dp"
                         android:text="write"
                         android:textSize="12sp" />
@@ -330,7 +391,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="rf hard/soft switch"
+                    android:text="RF hard/soft switch"
                     android:textColor="@android:color/white" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -348,8 +409,9 @@
 
                     <EditText
                         android:id="@+id/et_ap_mac"
-                        android:layout_width="128dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:hint="ApMac"
                         android:textColor="@android:color/white"
                         android:textColorHint="@android:color/white"
@@ -357,7 +419,7 @@
 
                     <Button
                         android:id="@+id/btn_write_ap_mac"
-                        android:layout_width="match_parent"
+                        android:layout_width="64dp"
                         android:layout_height="48dp"
                         android:text="write"
                         android:textSize="12sp" />
@@ -431,41 +493,6 @@
                         android:layout_weight="1" />
                 </LinearLayout>
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_pair_device"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="pair device"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_calibrate"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="calibrate"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_switch_camera"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="switch cam"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_read_version"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="read version"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_infrared_config"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="infrared config"
-                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -477,7 +504,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="3">
 
             <TextView
                 android:id="@+id/tv_status"
@@ -507,7 +534,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="2">
 
             <TextView
                 android:id="@+id/tv_sbus"
@@ -538,7 +565,7 @@
             android:id="@+id/tv_others"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:padding="8dp"
             android:textColor="#FF66FA45"
             android:textSize="12sp"
