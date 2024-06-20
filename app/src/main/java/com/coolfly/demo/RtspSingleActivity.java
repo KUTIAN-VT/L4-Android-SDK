@@ -260,7 +260,7 @@ public class RtspSingleActivity extends AppCompatActivity {
             }
         }
     }
-    private FFListener ffListener = new FFListener() {
+    private final FFListener ffListener = new FFListener() {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {

@@ -295,7 +295,7 @@ public class RtspMultiActivity extends AppCompatActivity {
         mediaHelper4.destroy();
     }
 
-    private FFListener ffListener = new FFListener() {
+    private final FFListener ffListener = new FFListener() {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             SurfaceView surface = null;

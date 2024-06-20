@@ -124,7 +124,7 @@ public class V3OtaActivity extends AppCompatActivity {
         return sp.getString("SOCKET_IP", "192.168.144.100").trim();
     }
 
-    private VersionWorker.OnVersionListener onVersionListener = new VersionWorker.OnVersionListener() {
+    private final VersionWorker.OnVersionListener onVersionListener = new VersionWorker.OnVersionListener() {
         @Override
         public void onVersion(String version, boolean isSky) {
             binding.tvMessage.setText(version);
@@ -139,7 +139,7 @@ public class V3OtaActivity extends AppCompatActivity {
     };
 
     private ProgressDialog otaProgressDialog;
-    private OtaWorker.OtaListener otaListener = new OtaWorker.OtaListener() {
+    private final OtaWorker.OtaListener otaListener = new OtaWorker.OtaListener() {
         @Override
         public void onStart() {
 

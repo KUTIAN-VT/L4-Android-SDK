@@ -155,7 +155,7 @@ public class InfraredActivity extends AppCompatActivity {
         }
     }
 
-    private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
+    private final SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
         public void onStatus(Status status) {
 

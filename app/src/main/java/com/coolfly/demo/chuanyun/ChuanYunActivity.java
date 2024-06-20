@@ -355,7 +355,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         sensorDevice.removeListener(sensorDeviceListener);
     }
 
-    private SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
+    private final SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
         public void onStatus(Status status) {
             handler.post(() -> {

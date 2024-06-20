@@ -686,7 +686,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
+    private final UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
         public void onDisconnect() {
             bitRateHelperVideo.stop();
@@ -719,7 +719,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private DeviceInfo arlinkDevice = new DeviceInfo();
-    private ProtocolListener protocolListener = new ProtocolListener() {
+    private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseCoolflyPacket packet) {
             Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName());
@@ -1055,7 +1055,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // For MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE modes, to record H264 stream
-    private MediaListener mediaListener = new MediaListener() {
+    private final MediaListener mediaListener = new MediaListener() {
         @Override
         public void onConfigure(MediaFormat mediaFormat) {
             mMediaFormat = mediaFormat;
@@ -1115,7 +1115,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private FFListener ffListener = new FFListener() {
+    private final FFListener ffListener = new FFListener() {
         @Override
         public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {
@@ -1128,7 +1128,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private BitRateHelper.OnBitRateListener bitRateListenerVideo = new BitRateHelper.OnBitRateListener() {
+    private final BitRateHelper.OnBitRateListener bitRateListenerVideo = new BitRateHelper.OnBitRateListener() {
         @Override
         public void onBitRate(long bitRate, String readable) {
             runOnUiThread(new Runnable() {
@@ -1140,7 +1140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
+    private final UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
         @Override
         public void onStart() {
             binding.tvUpdateProcess.setText(R.string.ota_start);

@@ -161,7 +161,7 @@ public class McuActivity extends AppCompatActivity {
         Wheel.stop();
     }
 
-    private McuManager.McuListener mcuListener = new McuManager.McuListener() {
+    private final McuManager.McuListener mcuListener = new McuManager.McuListener() {
         @Override
         public void onHeartBeat(HeartBeat heartBeat) {
             binding.tvLog.setText(heartBeat.toString());
@@ -202,7 +202,7 @@ public class McuActivity extends AppCompatActivity {
         }
     };
 
-    private McuOtaHelper.McuOTAListener mcuOTAListener = new McuOtaHelper.McuOTAListener() {
+    private final McuOtaHelper.McuOTAListener mcuOTAListener = new McuOtaHelper.McuOTAListener() {
         @Override
         public void onOTAStart() {
             binding.tvLog.setText("OTA start");
@@ -224,7 +224,7 @@ public class McuActivity extends AppCompatActivity {
         }
     };
 
-    private WheelListener wheelListener = new WheelListener() {
+    private final WheelListener wheelListener = new WheelListener() {
         @Override
         public void onWheel(int value1, int value2) {
             runOnUiThread(new Runnable() {
