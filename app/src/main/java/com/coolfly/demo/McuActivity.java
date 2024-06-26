@@ -18,6 +18,7 @@ import com.coolfly.demo.utils.WidgetUtils;
 import com.coolfly.station.mcu.McuManager;
 import com.coolfly.station.mcu.McuOtaHelper;
 import com.coolfly.station.mcu.McuPacket;
+import com.coolfly.station.mcu.entity.ActiveState;
 import com.coolfly.station.mcu.entity.HeartBeat;
 import com.coolfly.station.mcu.entity.Temperature;
 import com.coolfly.station.mcu.entity.Version;
@@ -144,6 +145,20 @@ public class McuActivity extends AppCompatActivity {
             }
         });
 
+        // Active
+        binding.tvMcuReadActiveState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createReadActiveStatePacket());
+            }
+        });
+        binding.tvMcuWriteActiveInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createWriteActiveInfoPacket(new ActiveState(null, System.currentTimeMillis(), "ABCDEFGHIJKLMNOPQRSTUVWX")));
+            }
+        });
+
         // Wheel
         Wheel.setWheelListener(wheelListener);
         Wheel.start();
@@ -198,6 +213,11 @@ public class McuActivity extends AppCompatActivity {
         @Override
         public void onTemperature(Temperature temperature) {
             binding.tvLog.setText(temperature.toString());
+        }
+
+        @Override
+        public void onActiveState(ActiveState activeState) {
+            binding.tvLog.setText(activeState.toString());
         }
 
         @Override
