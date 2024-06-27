@@ -198,14 +198,26 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/tv_mcu_write_active_info"
+            android:id="@+id/tv_mcu_write_activate"
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_margin="4dp"
             android:layout_weight="1"
             android:background="@android:color/holo_blue_dark"
             android:gravity="center"
-            android:text="write active info"
+            android:text="activate"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_mcu_write_deactivate"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="deactivate"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 

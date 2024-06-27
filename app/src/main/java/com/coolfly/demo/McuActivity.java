@@ -152,10 +152,16 @@ public class McuActivity extends AppCompatActivity {
                 mcuManager.writePacket(McuPacket.createReadActiveStatePacket());
             }
         });
-        binding.tvMcuWriteActiveInfo.setOnClickListener(new View.OnClickListener() {
+        binding.tvMcuWriteActivate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mcuManager.writePacket(McuPacket.createWriteActiveInfoPacket(new ActiveState(null, System.currentTimeMillis(), "ABCDEFGHIJKLMNOPQRSTUVWX")));
+                mcuManager.writePacket(McuPacket.createWriteActiveInfoPacket(new ActiveState(true, System.currentTimeMillis() / 1000, "ABCDEFGHIJKLMNOPQRSTUVWX")));
+            }
+        });
+        binding.tvMcuWriteDeactivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createWriteActiveInfoPacket(new ActiveState(false, null, null)));
             }
         });
 
