@@ -173,7 +173,7 @@ public class McuActivity extends AppCompatActivity {
         binding.tvMcuOta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mcuOtaHelper.isRunning()) {
+                if (McuOtaHelper.isRunning()) {
                     Toast.makeText(McuActivity.this, "OTA is running", Toast.LENGTH_SHORT).show();
                     return;
                 }
