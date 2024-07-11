@@ -113,6 +113,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding.btnReadSbus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Read all fields of SBUS, different from only reading the joystick value automatically
                 sensorDevice.readSbus();
             }
         });
