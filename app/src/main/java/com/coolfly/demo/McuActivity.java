@@ -20,7 +20,6 @@ import com.coolfly.station.mcu.McuOtaHelper;
 import com.coolfly.station.mcu.McuPacket;
 import com.coolfly.station.mcu.entity.ActiveState;
 import com.coolfly.station.mcu.entity.HeartBeat;
-import com.coolfly.station.mcu.entity.Temperature;
 import com.coolfly.station.mcu.entity.Version;
 import com.coolfly.station.prorocol.CoolFly;
 import com.coolfly.station.wheel.Wheel;
@@ -214,11 +213,6 @@ public class McuActivity extends AppCompatActivity {
         @Override
         public void onVersion(Version version) {
             binding.tvLog.setText(version.toString());
-        }
-
-        @Override
-        public void onTemperature(Temperature temperature) {
-            binding.tvLog.setText(temperature.toString());
         }
 
         @Override
