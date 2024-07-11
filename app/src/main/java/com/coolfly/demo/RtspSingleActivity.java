@@ -262,7 +262,8 @@ public class RtspSingleActivity extends AppCompatActivity {
     }
     private final FFListener ffListener = new FFListener() {
         @Override
-        public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
+        public void onMediaFormat(String format, int width, int height, int frameRateNum, int frameRateDen, long bitRate, int handler) {
+            int frameRate = frameRateDen == 0? 0: frameRateNum / frameRateDen;
             if (handler == DECODE_CHANNEL) {
                 ViewGroup.LayoutParams layoutParams = binding.surface.getLayoutParams();
                 float aspectRatio = ((float) binding.fl.getWidth()) / binding.fl.getHeight();

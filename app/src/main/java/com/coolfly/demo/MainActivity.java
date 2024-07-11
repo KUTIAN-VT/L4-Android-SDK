@@ -1117,7 +1117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final FFListener ffListener = new FFListener() {
         @Override
-        public void onMediaFormat(String format, int width, int height, long bitRate, int handler) {
+        public void onMediaFormat(String format, int width, int height, int frameRateNum, int frameRateDen, long bitRate, int handler) {
             if (handler == DECODE_CHANNEL) {
                 setVideoLayout(width, height);
                 mediaHelper.updateVideoSize(width, height);
