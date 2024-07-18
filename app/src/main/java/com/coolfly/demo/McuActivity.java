@@ -28,6 +28,7 @@ import com.coolfly.station.wheel.WheelListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class McuActivity extends AppCompatActivity {
 
@@ -110,10 +111,17 @@ public class McuActivity extends AppCompatActivity {
                         }).create().show();
             }
         });
-        binding.swMcuStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.tvMcuRgb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mcuManager.writePacket(McuPacket.createWriteCalibrateStatusPacket(isChecked));
+            public void onClick(View v) {
+                new AlertDialog.Builder(McuActivity.this)
+                        .setTitle("RGB")
+                        .setItems(Arrays.stream(McuPacket.RGB_STATUS.values())
+                                .map(McuPacket.RGB_STATUS::name)
+                                .toArray(String[]::new), (dialog, which) -> {
+                            McuPacket packet = McuPacket.createWriteRgbStatusPacket(McuPacket.RGB_STATUS.values()[which]);
+                            mcuManager.writePacket(packet);
+                        }).create().show();
             }
         });
         binding.swMcuFan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

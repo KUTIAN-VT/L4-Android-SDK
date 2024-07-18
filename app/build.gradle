@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.coolfly.demo"
-        minSdk 23
+        minSdk 24
         targetSdk 33
         versionCode 19
         versionName "1.19.0"
