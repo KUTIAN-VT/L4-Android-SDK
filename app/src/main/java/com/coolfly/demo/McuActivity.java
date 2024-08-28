@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.serialport.SerialPortFinder;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -59,6 +60,34 @@ public class McuActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 McuManager.setIsShowLog(isChecked);
+            }
+        });
+
+        binding.tvPath.setText(McuManager.DEVICE_PATH);
+        binding.tvPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] paths = new SerialPortFinder().getAllDevicesPath();
+                new AlertDialog.Builder(McuActivity.this)
+                        .setTitle("device path")
+                        .setItems(paths, (dialog, which) -> {
+                            McuManager.setDevicePath(paths[which]);
+                            binding.tvPath.setText(McuManager.DEVICE_PATH);
+                        }).create().show();
+            }
+        });
+
+        binding.tvBaudrate.setText(McuManager.BAUDRATE);
+        binding.tvBaudrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] baudrates = getResources().getStringArray(R.array.baudrates_value);
+                new AlertDialog.Builder(McuActivity.this)
+                        .setTitle("baudrate")
+                        .setItems(baudrates, (dialog, which) -> {
+                            McuManager.setBaudRate(baudrates[which]);
+                            binding.tvBaudrate.setText(McuManager.BAUDRATE);
+                        }).create().show();
             }
         });
 
