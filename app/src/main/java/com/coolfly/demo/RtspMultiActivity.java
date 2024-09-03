@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -67,6 +68,7 @@ public class RtspMultiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRtspMultiBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         String[] channels = getResources().getStringArray(R.array.channel);
         ArrayAdapter<String> jpAmAdapter = new ArrayAdapter<String>(this, R.layout.item_select_light, channels);

@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.PixelCopy;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -53,6 +54,7 @@ public class RtspSingleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRtspSingleBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         String packageName = MainApplication.applicationContext.getPackageName();
         SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
