@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 
+import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityInfraredBinding;
@@ -155,6 +156,7 @@ public class InfraredActivity extends AppCompatActivity {
         }
     }
 
+    @Keep
     private final SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
         public void onStatus(Status status) {

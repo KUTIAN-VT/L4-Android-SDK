@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.annotation.Keep;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -686,6 +687,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Keep
     private final UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
         public void onDisconnect() {
@@ -719,6 +721,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private DeviceInfo arlinkDevice = new DeviceInfo();
+
+    @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseCoolflyPacket packet) {

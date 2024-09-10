@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityMcuBinding;
@@ -227,6 +228,7 @@ public class McuActivity extends AppCompatActivity {
         Wheel.stop();
     }
 
+    @Keep
     private final McuManager.McuListener mcuListener = new McuManager.McuListener() {
         @Override
         public void onHeartBeat(HeartBeat heartBeat) {
