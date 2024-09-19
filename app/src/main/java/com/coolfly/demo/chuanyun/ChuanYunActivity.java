@@ -3,8 +3,6 @@ package com.coolfly.demo.chuanyun;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,13 +26,14 @@ import com.coolfly.station.chuanyun.entity.PairResponse;
 import com.coolfly.station.chuanyun.entity.RFConfig;
 import com.coolfly.station.chuanyun.entity.RFConfig2;
 import com.coolfly.station.chuanyun.entity.Sbus;
+import com.coolfly.station.chuanyun.entity.SbusConfig;
+import com.coolfly.station.chuanyun.entity.SbusData;
 import com.coolfly.station.chuanyun.entity.Status;
 import com.coolfly.station.chuanyun.entity.Version;
 
 public class ChuanYunActivity extends AppCompatActivity {
     private ActivityChuanYunBinding binding;
 
-    private Handler handler;
     private SensorDevice sensorDevice;
     private int videoMode201 = 0;
 
@@ -43,8 +42,6 @@ public class ChuanYunActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChuanYunBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        handler = new Handler(Looper.getMainLooper());
 
         sensorDevice = SensorDevice.getInstance(MainApplication.applicationContext);
         sensorDevice.addListener(sensorDeviceListener);
@@ -369,24 +366,33 @@ public class ChuanYunActivity extends AppCompatActivity {
     @Keep
     private final SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
+        public void onConnected(int i) {
+
+        }
+
+        @Override
         public void onStatus(Status status) {
-            handler.post(() -> {
-                binding.tvStatus.setText("RECEIVE: " + status.toString() + "\n");
-            });
+            binding.tvStatus.setText("RECEIVE: " + status.toString() + "\n");
         }
 
         @Override
         public void onPairResponse(PairResponse pairResponse) {
-            handler.post(() -> {
-                binding.tvOthers.setText("RECEIVE: " + pairResponse.toString() + "\n");
-            });
+            binding.tvOthers.setText("RECEIVE: " + pairResponse.toString() + "\n");
         }
 
         @Override
         public void onSbus(Sbus sbus) {
-            handler.post(() -> {
-                binding.tvSbus.setText("RECEIVE: " + sbus.toString() + "\n");
-            });
+            binding.tvSbus.setText("RECEIVE: " + sbus.toString() + "\n");
+        }
+
+        @Override
+        public void onSbusConfig(SbusConfig sbusConfig) {
+            binding.tvSbus.setText("RECEIVE: " + sbusConfig.toString() + "\n");
+        }
+
+        @Override
+        public void onSbusData(SbusData sbusData) {
+            binding.tvSbus.setText("RECEIVE: " + sbusData.toString() + "\n");
         }
 
         @Override
@@ -396,30 +402,22 @@ public class ChuanYunActivity extends AppCompatActivity {
 //            1 : 开始校准。
 //            2 : 校准中，请勿触碰摇杆和波轮。
 //            3 : 校准完成。
-            handler.post(() -> {
-                binding.tvOthers.setText("RECEIVE: " + calibrate.toString() + "\n");
-            });
+            binding.tvOthers.setText("RECEIVE: " + calibrate.toString() + "\n");
         }
 
         @Override
         public void onRfConfig(RFConfig rfConfig) {
-            handler.post(() -> {
-                binding.tvOthers.setText("RECEIVE: " + rfConfig.toString() + "\n");
-            });
+            binding.tvOthers.setText("RECEIVE: " + rfConfig.toString() + "\n");
         }
 
         @Override
         public void onRfConfig2(RFConfig2 rfConfig2) {
-            handler.post(() -> {
-                binding.tvOthers.setText("RECEIVE: " + rfConfig2.toString() + "\n");
-            });
+            binding.tvOthers.setText("RECEIVE: " + rfConfig2.toString() + "\n");
         }
 
         @Override
         public void onVersion(Version version) {
-            handler.post(() -> {
-                binding.tvOthers.setText("RECEIVE: " + version.toString() + "\n");
-            });
+            binding.tvOthers.setText("RECEIVE: " + version.toString() + "\n");
         }
 
         @Override

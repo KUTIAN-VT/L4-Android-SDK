@@ -261,13 +261,137 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv_log"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_mcu_sbus"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:text="SBUS data"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="mode"
+            android:textColor="@android:color/white" />
+
+        <Spinner
+            android:id="@+id/sp_mcu_sbus_mode"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="4dp" />
+
+        <TextView
+            android:id="@+id/tv_mcu_sbus_calibrate"
+            android:layout_width="60dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="calibrate"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_mcu_sbus_reset"
+            android:layout_width="60dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="reset"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="config:"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tv_mcu_sbus_config_read"
+            android:layout_width="60dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="read"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/et_sbus_config_payload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tv_mcu_sbus_config_send"
+            android:layout_width="60dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="send"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        android:textColor="#FF66FA45"
-        android:textSize="16sp"
-        tools:text="aaa" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_log"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:textColor="#FF66FA45"
+            android:textSize="16sp"
+            tools:text="aaa" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_blue_dark" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_sbus"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:textColor="#FF66FA45"
+                android:textSize="16sp"
+                tools:text="aaa" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.3"
+                android:gravity="center"
+                android:text="SBUS"
+                android:textColor="@color/light_blue_A200"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </LinearLayout>
 </LinearLayout>

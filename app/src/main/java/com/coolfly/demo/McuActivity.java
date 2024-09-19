@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.serialport.SerialPortFinder;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,13 +16,18 @@ import android.widget.Toast;
 import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityMcuBinding;
 import com.coolfly.demo.utils.WidgetUtils;
+import com.coolfly.station.chuanyun.entity.SbusConfig;
+import com.coolfly.station.chuanyun.entity.SbusData;
 import com.coolfly.station.mcu.McuManager;
 import com.coolfly.station.mcu.McuOtaHelper;
 import com.coolfly.station.mcu.McuPacket;
 import com.coolfly.station.mcu.entity.ActiveState;
+import com.coolfly.station.mcu.entity.CalibrateState;
 import com.coolfly.station.mcu.entity.HeartBeat;
+import com.coolfly.station.mcu.entity.OperateMode;
 import com.coolfly.station.mcu.entity.Version;
 import com.coolfly.station.prorocol.CoolFly;
 import com.coolfly.station.wheel.Wheel;
@@ -40,6 +46,9 @@ public class McuActivity extends AppCompatActivity {
     private McuOtaHelper mcuOtaHelper;
 
     private final int REQ_OTA_MCU = 3;
+
+    // operate mode
+    private final String[] modeArr = {"US", "JP", "CN"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,6 +226,66 @@ public class McuActivity extends AppCompatActivity {
                 getUpgradeFis(REQ_OTA_MCU);
             }
         });
+
+        // SBUS for V4
+        binding.swMcuSbus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mcuManager.writePacket(McuPacket.createWriteSbusDataSwitchPacket(isChecked));
+            }
+        });
+
+        // operate mode
+        ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, modeArr);
+        modeAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        binding.spMcuSbusMode.setAdapter(modeAdapter);
+        binding.spMcuSbusMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                OperateMode operateMode = new OperateMode();
+                operateMode.mode = modeArr[position];
+                mcuManager.writePacket(McuPacket.createWriteOperateModePacket(operateMode));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        binding.tvMcuSbusCalibrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createWriteCalibrateStartPacket());
+            }
+        });
+
+        binding.tvMcuSbusReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createWriteResetSbusConfigPacket());
+            }
+        });
+
+        binding.tvMcuSbusConfigRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mcuManager.writePacket(McuPacket.createReadSbusConfigPacket());
+            }
+        });
+
+        binding.tvMcuSbusConfigSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String jsonStr = binding.etSbusConfigPayload.getText().toString();
+                if (!TextUtils.isEmpty(jsonStr)) {
+                    SbusConfig sbusConfig = JSON.parseObject(jsonStr, SbusConfig.class);
+                    if (sbusConfig != null) {
+                        mcuManager.writePacket(McuPacket.createWriteSbusConfigPacket(sbusConfig));
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -230,6 +299,11 @@ public class McuActivity extends AppCompatActivity {
 
     @Keep
     private final McuManager.McuListener mcuListener = new McuManager.McuListener() {
+        @Override
+        public void onConnected() {
+            mcuManager.writePacket(McuPacket.createReadOperateModePacket());
+        }
+
         @Override
         public void onHeartBeat(HeartBeat heartBeat) {
             binding.tvLog.setText(heartBeat.toString());
@@ -257,6 +331,28 @@ public class McuActivity extends AppCompatActivity {
         @Override
         public void onActiveState(ActiveState activeState) {
             binding.tvLog.setText(activeState.toString());
+        }
+
+        @Override
+        public void onSbusConfig(SbusConfig sbusConfig) {
+            binding.etSbusConfigPayload.setText(JSON.toJSONString(sbusConfig, false));
+            binding.tvLog.setText(sbusConfig.toString());
+        }
+
+        @Override
+        public void onSbusData(SbusData sbusData) {
+            binding.tvSbus.setText(sbusData.toString());
+        }
+
+        @Override
+        public void onOperateMode(OperateMode operateMode) {
+            binding.tvLog.setText(operateMode.toString());
+            binding.spMcuSbusMode.setSelection(Arrays.asList(modeArr).indexOf(operateMode.mode));
+        }
+
+        @Override
+        public void onCalibrateState(CalibrateState calibrateState) {
+            binding.tvLog.setText(calibrateState.toString());
         }
 
         @Override

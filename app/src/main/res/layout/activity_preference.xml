@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="end"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".PreferenceActivity">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_log_ffmpeg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ffmpeg log"
+        android:textColor="@android:color/white" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_log_usb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="USB log"
+        android:textColor="@android:color/white" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_log_ar8030_vpn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="AR8030 VPN log"
+        android:textColor="@android:color/white" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_log_ar8030_parse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="AR8030 parse log"
+        android:textColor="@android:color/white" />
+</LinearLayout>

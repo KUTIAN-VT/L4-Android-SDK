@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.coolfly.demo"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 19
         versionName "1.19.0"
         buildConfigField "String", "COMPILE_TIME", "\"$versionTime\""

@@ -14,6 +14,8 @@
     <string name="ota_ground">V2 Gnd OTA</string>
     <string name="ota_sky">V2 Sky OTA</string>
     <string name="ota_v3">V3 OTA</string>
+    <string name="ota_v4">V4 OTA</string>
+    <string name="pair_v4">V4 Pair</string>
 
     <string name="restart_to_work">It takes effect after restarting the APP</string>
     <string name="ok">OK</string>

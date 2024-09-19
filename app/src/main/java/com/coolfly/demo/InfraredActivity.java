@@ -17,6 +17,8 @@ import com.coolfly.station.chuanyun.entity.PairResponse;
 import com.coolfly.station.chuanyun.entity.RFConfig;
 import com.coolfly.station.chuanyun.entity.RFConfig2;
 import com.coolfly.station.chuanyun.entity.Sbus;
+import com.coolfly.station.chuanyun.entity.SbusConfig;
+import com.coolfly.station.chuanyun.entity.SbusData;
 import com.coolfly.station.chuanyun.entity.Status;
 import com.coolfly.station.chuanyun.entity.Version;
 
@@ -159,6 +161,11 @@ public class InfraredActivity extends AppCompatActivity {
     @Keep
     private final SensorDevice.SensorDeviceListener sensorDeviceListener = new SensorDevice.SensorDeviceListener() {
         @Override
+        public void onConnected(int i) {
+
+        }
+
+        @Override
         public void onStatus(Status status) {
 
         }
@@ -170,6 +177,16 @@ public class InfraredActivity extends AppCompatActivity {
 
         @Override
         public void onSbus(Sbus sbus) {
+
+        }
+
+        @Override
+        public void onSbusConfig(SbusConfig sbusConfig) {
+
+        }
+
+        @Override
+        public void onSbusData(SbusData sbusData) {
 
         }
 

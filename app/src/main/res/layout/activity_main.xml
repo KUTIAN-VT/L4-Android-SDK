@@ -162,6 +162,20 @@
                 android:text="@string/ota_v3" />
 
             <Button
+                android:id="@+id/btn_upgrade_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/ota_v4" />
+
+            <Button
+                android:id="@+id/btn_pair_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/pair_v4" />
+
+            <Button
                 android:id="@+id/btn_rtsp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
@@ -188,6 +202,13 @@
                 android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="MCU" />
+
+            <Button
+                android:id="@+id/btn_preference"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="Preference" />
 
             <TextView
                 android:id="@+id/tv_sn"

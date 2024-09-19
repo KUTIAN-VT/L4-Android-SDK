@@ -52,10 +52,12 @@ import com.coolfly.station.prorocol.UpgradeHelper;
 import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
+import com.coolfly.station.prorocol.bean.RcStatus8030;
 import com.coolfly.station.prorocol.bean.UartRx;
 import com.coolfly.station.prorocol.bean.UsbRx;
 import com.coolfly.station.prorocol.bean.WirelessInfo;
 import com.wuadam.aoalibrary.AoaSwitch;
+import com.wuadam.aoalibrary.DEVICE_TYPE;
 import com.wuadam.aoalibrary.HostSwitch;
 import com.wuadam.aoalibrary.host.UsbDeviceHelper;
 import com.wuadam.aoalibrary.host.UsbDeviceListener;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int REQ_OTA_GRD = 1;
     private final int REQ_OTA_SKY = 2;
+    private final int REQ_OTA_V4 = 3;
 
     /**
      *  Video decode channel 1, support 5 channels, from 1 to 5, shared between USB and RTSP
@@ -203,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
         usbDeviceHelper.addListener(usbDeviceListener);
 
-        protocolHelper = new ProtocolHelper();
+        protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
 
         switch (decodeMode) {
@@ -535,20 +538,28 @@ public class MainActivity extends AppCompatActivity {
             info = FFJNI.urlprotocolinfo();
             Log.d("protocol info", info);
         } else if (view == binding.btnUpgradeGnd) {
-            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
-                Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
+            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED || usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8020) {
+                Toast.makeText(MainActivity.this, "USB not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_GRD);
         } else if (view == binding.btnUpgradeSky) {
-            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED) {
-                Toast.makeText(MainActivity.this, "AOA not connected", Toast.LENGTH_SHORT).show();
+            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED || usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8020) {
+                Toast.makeText(MainActivity.this, "USB not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_SKY);
         } else if (view == binding.btnUpgradeV3) {
             Intent intent = new Intent(this, V3OtaActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnUpgradeV4) {
+            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED || usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8030) {
+                Toast.makeText(MainActivity.this, "USB not connected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            getUpgradeFis(REQ_OTA_V4);
+        } else if (view == binding.btnPairV4) {
+            protocolHelper.ar8030StartPair();
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
@@ -560,6 +571,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (view == binding.btnMcu) {
             Intent intent = new Intent(this, McuActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnPreference) {
+            Intent intent = new Intent(this, PreferenceActivity.class);
             startActivity(intent);
         }
     }
@@ -675,11 +689,20 @@ public class MainActivity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
-                    upgradeHelper = new UpgradeHelper(fis);
-                    upgradeHelper.setListener(upgradeListener);
-                    upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
-                    binding.btnUpgradeGnd.setEnabled(false);
-                    binding.btnUpgradeSky.setEnabled(false);
+                    switch (requestCode) {
+                        case REQ_OTA_GRD:
+                        case REQ_OTA_SKY:
+                            upgradeHelper = new UpgradeHelper(fis);
+                            upgradeHelper.setListener(upgradeListener);
+                            upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
+                            binding.btnUpgradeGnd.setEnabled(false);
+                            binding.btnUpgradeSky.setEnabled(false);
+                            break;
+                        case REQ_OTA_V4:
+                            protocolHelper.ar8030Upgrade(fis, upgradeListener);
+                            binding.btnUpgradeV4.setEnabled(false);
+                            break;
+                    }
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -690,16 +713,23 @@ public class MainActivity extends AppCompatActivity {
     @Keep
     private final UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
-        public void onDisconnect() {
-            bitRateHelperVideo.stop();
-            protocolHelper.resetSkyUart3PassThrough();
-            protocolHelper.resetSkyUart1PassThrough();
-            protocolHelper.resetGndUart3PassThrough();
-            protocolHelper.resetUsbPassThrough();
+        public void onNoUsbDevice() {
+
         }
 
         @Override
-        public void onVideoData(byte[] data, int length) {
+        public void onStartReadData(DEVICE_TYPE deviceType) {
+            protocolHelper.onStartReadData(deviceType.name());
+        }
+
+        @Override
+        public void onDisconnect(DEVICE_TYPE deviceType) {
+            bitRateHelperVideo.stop();
+            protocolHelper.onDisconnect(deviceType.name());
+        }
+
+        @Override
+        public void onVideoData(byte[] data, int length, DEVICE_TYPE deviceType) {
             bitRateHelperVideo.receive(length);
             mediaHelper.offerData(data, length);
             if (NEED_SAVE_H264) {
@@ -715,8 +745,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCtrlData(byte[] data, int length) {
-            protocolHelper.parseData(data, length);
+        public void onCtrlData(byte[] data, int length, DEVICE_TYPE deviceType) {
+            protocolHelper.parseData(data, length, deviceType.name());
         }
     };
 
@@ -726,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseCoolflyPacket packet) {
-            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName());
+            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 arlinkDevice = deviceInfo;
@@ -791,6 +821,8 @@ public class MainActivity extends AppCompatActivity {
                 if (upgradeHelper != null) {
                     upgradeHelper.onAck((ACK) packet);
                 }
+            } else if (packet instanceof RcStatus8030) {
+                // AR8030 status
             }
         }
 
@@ -800,11 +832,23 @@ public class MainActivity extends AppCompatActivity {
                 usbDeviceHelper.writeData(data);
             }
         }
-    };
 
-    private enum UART{
-        SkyUart1, SkyUart3, GndUart3;
-    }
+        @Override
+        public void onPairTimeOut(com.coolfly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+            if (deviceType == com.coolfly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+                Toast.makeText(MainActivity.this, "Pair time out", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onPairSuccess(com.coolfly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+            if (deviceType == com.coolfly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+                Toast.makeText(MainActivity.this, "Pair success", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     private void renderWirelessInfo(WirelessInfo wirelessOSD) {
         String modulation = "";
@@ -1168,15 +1212,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onComplete() {
             binding.tvUpdateProcess.setText(R.string.ota_finish);
+
             binding.btnUpgradeGnd.setEnabled(true);
             binding.btnUpgradeSky.setEnabled(true);
+
+            binding.btnUpgradeV4.setEnabled(true);
         }
 
         @Override
         public void onFail(String errMsg) {
             binding.tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
+
             binding.btnUpgradeGnd.setEnabled(true);
             binding.btnUpgradeSky.setEnabled(true);
+
+            binding.btnUpgradeV4.setEnabled(true);
         }
 
         @Override

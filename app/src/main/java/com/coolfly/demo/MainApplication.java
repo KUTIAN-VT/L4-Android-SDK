@@ -32,7 +32,7 @@ public class MainApplication extends Application {
          * @param avLog true-Log output, false-No log output
          * @param frameIPLastBytes returns the last few bytes of I frame (I in IDR and Slice) and P frame. <=0 means no return. >0 means the number of bytes returned. It is returned through onFrameIPLastBytes callback.
          */
-        FFJNI.init(false, 0);
+        FFJNI.init(PreferenceActivity.isShowFfmpegLog, 0);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isHwDecode = sharedPreferences.getBoolean(Constants.PREF_IS_HW_DECODE, true);
