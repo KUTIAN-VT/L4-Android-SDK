@@ -51,6 +51,7 @@ import com.coolfly.station.prorocol.ProtocolListener;
 import com.coolfly.station.prorocol.UpgradeHelper;
 import com.coolfly.station.prorocol.bean.ACK;
 import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
+import com.coolfly.station.prorocol.bean.ChanInfo8030;
 import com.coolfly.station.prorocol.bean.DeviceInfo;
 import com.coolfly.station.prorocol.bean.RcStatus8030;
 import com.coolfly.station.prorocol.bean.UartRx;
@@ -560,6 +561,8 @@ public class MainActivity extends AppCompatActivity {
             getUpgradeFis(REQ_OTA_V4);
         } else if (view == binding.btnPairV4) {
             protocolHelper.ar8030StartPair();
+        } else if (view == binding.btnGetChannelInfoV4) {
+            protocolHelper.ar8030GetChannelInfo();
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
@@ -823,6 +826,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (packet instanceof RcStatus8030) {
                 // AR8030 status
+            } else if (packet instanceof ChanInfo8030) {
+                // AR8030 channel info
             }
         }
 
