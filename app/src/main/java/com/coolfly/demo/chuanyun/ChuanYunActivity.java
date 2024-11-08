@@ -19,17 +19,17 @@ import com.coolfly.demo.R;
 import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
 import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityChuanYunBinding;
-import com.coolfly.station.chuanyun.SensorDevice;
-import com.coolfly.station.chuanyun.entity.Calibrate;
-import com.coolfly.station.chuanyun.entity.InfraredConfig;
-import com.coolfly.station.chuanyun.entity.PairResponse;
-import com.coolfly.station.chuanyun.entity.RFConfig;
-import com.coolfly.station.chuanyun.entity.RFConfig2;
-import com.coolfly.station.chuanyun.entity.Sbus;
-import com.coolfly.station.chuanyun.entity.SbusConfig;
-import com.coolfly.station.chuanyun.entity.SbusData;
-import com.coolfly.station.chuanyun.entity.Status;
-import com.coolfly.station.chuanyun.entity.Version;
+import com.fly.station.chuanyun.SensorDevice;
+import com.fly.station.chuanyun.entity.Calibrate;
+import com.fly.station.chuanyun.entity.InfraredConfig;
+import com.fly.station.chuanyun.entity.PairResponse;
+import com.fly.station.chuanyun.entity.RFConfig;
+import com.fly.station.chuanyun.entity.RFConfig2;
+import com.fly.station.chuanyun.entity.Sbus;
+import com.fly.station.chuanyun.entity.SbusConfig;
+import com.fly.station.chuanyun.entity.SbusData;
+import com.fly.station.chuanyun.entity.Status;
+import com.fly.station.chuanyun.entity.Version;
 
 public class ChuanYunActivity extends AppCompatActivity {
     private ActivityChuanYunBinding binding;

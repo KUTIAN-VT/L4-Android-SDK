@@ -9,7 +9,7 @@ import android.preference.PreferenceActivity;
 
 import com.coolfly.demo.MainApplication;
 import com.coolfly.demo.R;
-import com.coolfly.station.chuanyun.SensorDevice;
+import com.fly.station.chuanyun.SensorDevice;
 
 /**
  * @Description:

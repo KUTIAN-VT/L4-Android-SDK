@@ -192,7 +192,7 @@ public final class ImageUtils {
                 InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
                 ImageUtils.save2Album(
                         inputStream,
-                        "coolfly",
+                        "fly",
                         System.currentTimeMillis() + ".jpg",
                         false
                 );

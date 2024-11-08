@@ -1,6 +1,6 @@
 package com.coolfly.demo;
 
-import com.wuadam.medialibrary.MediaHelper;
+import com.fly.medialibrary.MediaHelper;
 
 import java.io.InputStream;
 

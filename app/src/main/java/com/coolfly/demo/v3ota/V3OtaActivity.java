@@ -19,8 +19,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityV3OtaBinding;
-import com.coolfly.station.ssh.OtaWorker;
-import com.coolfly.station.ssh.VersionWorker;
+import com.fly.station.ssh.OtaWorker;
+import com.fly.station.ssh.VersionWorker;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

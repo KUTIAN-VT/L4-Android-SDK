@@ -5,10 +5,12 @@ import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_1;
 import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_2;
 import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_3;
 import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_4;
+import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_1;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_2;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_3;
 import static com.coolfly.demo.utils.Constants.PREF_MULTI_RTSP_URI_4;
+import static com.coolfly.demo.utils.Constants.SP_NAME;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,10 +27,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityRtspMultiBinding;
-import com.wuadam.fflibrary.listeners.FFListener;
-import com.wuadam.fflibrary.listeners.FFListenerManager;
-import com.wuadam.medialibrary.MediaHelper;
+import com.fly.fflibrary.MediaConfig;
+import com.fly.fflibrary.listeners.FFListener;
+import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.medialibrary.MediaHelper;
 
 public class RtspMultiActivity extends AppCompatActivity {
     private ActivityRtspMultiBinding binding;
@@ -42,11 +46,6 @@ public class RtspMultiActivity extends AppCompatActivity {
     private boolean isHw2 = true;
     private boolean isHw3 = true;
     private boolean isHw4 = true;
-
-    private boolean isTcp1 = false;
-    private boolean isTcp2 = false;
-    private boolean isTcp3 = false;
-    private boolean isTcp4 = false;
 
     private boolean isPlaying1 = false;
     private boolean isPlaying2 = false;
@@ -82,35 +81,35 @@ public class RtspMultiActivity extends AppCompatActivity {
                 selectedChannel = position + 2;
 
                 String prefKey = PREF_MULTI_RTSP_URI_1;
-                boolean isTcp = isTcp1;
+                boolean isTcp = false;
                 boolean isHw = isHw1;
                 boolean isPlaying = isPlaying1;
                 String defaultUrl = DEFAULT_MULTI_RTSP_URI_1;
                 switch (selectedChannel) {
                     case DECODE_CHANNEL1:
                         prefKey = PREF_MULTI_RTSP_URI_1;
-                        isTcp = isTcp1;
+                        isTcp = mediaHelper1.isRtspTcp();
                         isHw = isHw1;
                         isPlaying = isPlaying1;
                         defaultUrl = DEFAULT_MULTI_RTSP_URI_1;
                         break;
                     case DECODE_CHANNEL2:
                         prefKey = PREF_MULTI_RTSP_URI_2;
-                        isTcp = isTcp2;
+                        isTcp = mediaHelper2.isRtspTcp();
                         isHw = isHw2;
                         isPlaying = isPlaying2;
                         defaultUrl = DEFAULT_MULTI_RTSP_URI_2;
                         break;
                     case DECODE_CHANNEL3:
                         prefKey = PREF_MULTI_RTSP_URI_3;
-                        isTcp = isTcp3;
+                        isTcp = mediaHelper3.isRtspTcp();
                         isHw = isHw3;
                         isPlaying = isPlaying3;
                         defaultUrl = DEFAULT_MULTI_RTSP_URI_3;
                         break;
                     case DECODE_CHANNEL4:
                         prefKey = PREF_MULTI_RTSP_URI_4;
-                        isTcp = isTcp4;
+                        isTcp = mediaHelper4.isRtspTcp();
                         isHw = isHw4;
                         isPlaying = isPlaying4;
                         defaultUrl = DEFAULT_MULTI_RTSP_URI_4;
@@ -139,18 +138,34 @@ public class RtspMultiActivity extends AppCompatActivity {
             }
         });
 
-        String packageName = MainApplication.applicationContext.getPackageName();
-        SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
         String uri = sp.getString(PREF_MULTI_RTSP_URI_1, "rtsp://127.0.0.1:8554/main");
         if (!TextUtils.isEmpty(uri)) {
             binding.etUri.setText(uri);
         }
 
+        MediaConfig mediaConfig = null;
+        try {
+            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (mediaConfig == null) {
+            mediaConfig = new MediaConfig();
+        }
+
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         mediaHelper1 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv1, DECODE_CHANNEL1);
+        mediaHelper1.setMediaConfig(mediaConfig);
+
         mediaHelper2 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv2, DECODE_CHANNEL2);
+        mediaHelper2.setMediaConfig(mediaConfig);
+
         mediaHelper3 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv3, DECODE_CHANNEL3);
+        mediaHelper3.setMediaConfig(mediaConfig);
+
         mediaHelper4 = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.vv4, DECODE_CHANNEL4);
+        mediaHelper4.setMediaConfig(mediaConfig);
 
         binding.tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,19 +245,15 @@ public class RtspMultiActivity extends AppCompatActivity {
 
                 switch (selectedChannel) {
                     case DECODE_CHANNEL1:
-                        isTcp1 = isChecked;
                         mediaHelper1.setRtspTcp(isChecked);
                         break;
                     case DECODE_CHANNEL2:
-                        isTcp2 = isChecked;
                         mediaHelper2.setRtspTcp(isChecked);
                         break;
                     case DECODE_CHANNEL3:
-                        isTcp3 = isChecked;
                         mediaHelper3.setRtspTcp(isChecked);
                         break;
                     case DECODE_CHANNEL4:
-                        isTcp4 = isChecked;
                         mediaHelper4.setRtspTcp(isChecked);
                         break;
                 }

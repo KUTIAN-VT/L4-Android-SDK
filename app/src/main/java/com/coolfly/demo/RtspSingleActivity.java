@@ -1,7 +1,9 @@
 package com.coolfly.demo;
 
 import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_1;
+import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
 import static com.coolfly.demo.utils.Constants.PREF_RTSP_URI;
+import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
 import android.content.DialogInterface;
@@ -26,12 +28,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityRtspSingleBinding;
 import com.coolfly.demo.utils.Constants;
-import com.wuadam.fflibrary.FFJNI;
-import com.wuadam.fflibrary.listeners.FFListener;
-import com.wuadam.fflibrary.listeners.FFListenerManager;
-import com.wuadam.medialibrary.MediaHelper;
+import com.fly.fflibrary.FFJNI;
+import com.fly.fflibrary.MediaConfig;
+import com.fly.fflibrary.listeners.FFListener;
+import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.medialibrary.MediaHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +60,7 @@ public class RtspSingleActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        String packageName = MainApplication.applicationContext.getPackageName();
-        SharedPreferences sp = MainApplication.applicationContext.getSharedPreferences(packageName + "_preferences", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
         String uri = sp.getString(PREF_RTSP_URI, DEFAULT_MULTI_RTSP_URI_1);
         if (!TextUtils.isEmpty(uri)) {
             binding.etUri.setText(uri);
@@ -102,6 +105,16 @@ public class RtspSingleActivity extends AppCompatActivity {
         });
         // decode mode ends
 
+        MediaConfig mediaConfig = null;
+        try {
+            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (mediaConfig == null) {
+            mediaConfig = new MediaConfig();
+        }
+
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         switch (decodeMode) {
             case Constants.DECODE_MODE_RTSP_FF_DIRECT:
@@ -117,6 +130,7 @@ public class RtspSingleActivity extends AppCompatActivity {
                 mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_NDK_MEDIACODEC_SURFACE_PATH, binding.surface, DECODE_CHANNEL);
                 break;
         }
+        mediaHelper.setMediaConfig(mediaConfig);
 
         binding.tvOperate.setOnClickListener(new View.OnClickListener() {
             @Override

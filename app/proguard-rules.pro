@@ -21,20 +21,20 @@
 #-renamesourcefileattribute SourceFile
 
 #aoa
--keep class com.wuadam.aoalibrary.** { *; }
--keep class com.wuadam.aoa.** { *; }
+-keep class com.fly.aoalibrary.** { *; }
+-keep class aoa.** { *; }
 
 #cf
--keep class com.coolfly.station.** { *; }
--keep class com.wuadam.coolfly.** { *; }
+-keep class com.fly.station.** { *; }
+-keep class cf.** { *; }
 
 #ff
--keep class com.wuadam.fflibrary.** { *; }
--keep class com.wuadam.ff.** { *; }
+-keep class com.fly.fflibrary.** { *; }
+-keep class ff.** { *; }
 
 #media
--keep class com.wuadam.medialibrary.** { *; }
--keep class com.wuadam.media.** { *; }
+-keep class com.fly.medialibrary.** { *; }
+-keep class media.** { *; }
 
 
 # Fastjson

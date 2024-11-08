@@ -9,10 +9,10 @@ import android.widget.Toast;
 
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
-import com.wuadam.fflibrary.FFJNI;
-import com.wuadam.fflibrary.listeners.FFListener;
-import com.wuadam.fflibrary.listeners.FFListenerManager;
-import com.wuadam.medialibrary.MediaHelper;
+import com.fly.fflibrary.FFJNI;
+import com.fly.fflibrary.listeners.FFListener;
+import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.medialibrary.MediaHelper;
 
 /**
  * @Description:
@@ -32,7 +32,7 @@ public class MainApplication extends Application {
          * @param avLog true-Log output, false-No log output
          * @param frameIPLastBytes returns the last few bytes of I frame (I in IDR and Slice) and P frame. <=0 means no return. >0 means the number of bytes returned. It is returned through onFrameIPLastBytes callback.
          */
-        FFJNI.init(PreferenceActivity.isShowFfmpegLog, 0);
+        FFJNI.init(PreferenceActivity.isShowFfmpegLog);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isHwDecode = sharedPreferences.getBoolean(Constants.PREF_IS_HW_DECODE, true);
@@ -55,7 +55,7 @@ public class MainApplication extends Application {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".jpg", false);
+                        ImageUtils.save2Album(path, "fly", System.currentTimeMillis() + ".jpg", false);
                     }
                 }).start();
             }
@@ -69,7 +69,7 @@ public class MainApplication extends Application {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".mp4", true);
+                        ImageUtils.save2Album(path, "fly", System.currentTimeMillis() + ".mp4", true);
                     }
                 }).start();
             }

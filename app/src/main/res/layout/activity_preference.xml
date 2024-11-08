@@ -40,4 +40,42 @@
         android:layout_marginTop="16dp"
         android:text="AR8030 parse log"
         android:textColor="@android:color/white" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/et_media_config"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#33000000"
+            android:imeOptions="flagNoExtractUi"
+            android:padding="8dp"
+            android:textColor="#FF66FA45"
+            android:textSize="16sp"
+            tools:text="aaa" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.3"
+            android:gravity="center"
+            android:text="MEDIA CONFIG"
+            android:textColor="@color/light_blue_A200"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_save_media_config"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="save media config"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 </LinearLayout>

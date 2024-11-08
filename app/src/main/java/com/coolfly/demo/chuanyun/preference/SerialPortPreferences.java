@@ -10,7 +10,7 @@ import android.preference.PreferenceActivity;
 import android.serialport.SerialPortFinder;
 
 import com.coolfly.demo.R;
-import com.coolfly.station.chuanyun.SensorDevice;
+import com.fly.station.chuanyun.SensorDevice;
 
 /**
  * @Description:

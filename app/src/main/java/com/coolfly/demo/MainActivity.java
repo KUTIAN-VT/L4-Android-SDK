@@ -1,6 +1,8 @@
 package com.coolfly.demo;
 
 
+import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
+import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
 import android.app.Activity;
@@ -18,7 +20,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -39,39 +40,41 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.chuanyun.ChuanYunActivity;
 import com.coolfly.demo.databinding.ActivityMainBinding;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
 import com.coolfly.demo.v3ota.V3OtaActivity;
-import com.coolfly.station.prorocol.CoolFly;
-import com.coolfly.station.prorocol.ProtocolHelper;
-import com.coolfly.station.prorocol.ProtocolListener;
-import com.coolfly.station.prorocol.UpgradeHelper;
-import com.coolfly.station.prorocol.bean.ACK;
-import com.coolfly.station.prorocol.bean.BaseCoolflyPacket;
-import com.coolfly.station.prorocol.bean.ChanInfo8030;
-import com.coolfly.station.prorocol.bean.DeviceInfo;
-import com.coolfly.station.prorocol.bean.RcStatus8030;
-import com.coolfly.station.prorocol.bean.UartRx;
-import com.coolfly.station.prorocol.bean.UsbRx;
-import com.coolfly.station.prorocol.bean.WirelessInfo;
-import com.wuadam.aoalibrary.AoaSwitch;
-import com.wuadam.aoalibrary.DEVICE_TYPE;
-import com.wuadam.aoalibrary.HostSwitch;
-import com.wuadam.aoalibrary.host.UsbDeviceHelper;
-import com.wuadam.aoalibrary.host.UsbDeviceListener;
-import com.wuadam.fflibrary.FFJNI;
-import com.wuadam.fflibrary.FormatProfile;
-import com.wuadam.fflibrary.listeners.FFListener;
-import com.wuadam.fflibrary.listeners.FFListenerManager;
-import com.wuadam.medialibrary.BitRateHelper;
-import com.wuadam.medialibrary.H264Extractor;
-import com.wuadam.medialibrary.H264Saver;
-import com.wuadam.medialibrary.MediaHelper;
-import com.wuadam.medialibrary.MediaListener;
-import com.wuadam.medialibrary.MuxerUtil;
+import com.fly.fflibrary.MediaConfig;
+import com.fly.station.prorocol.Fly;
+import com.fly.station.prorocol.ProtocolHelper;
+import com.fly.station.prorocol.ProtocolListener;
+import com.fly.station.prorocol.UpgradeHelper;
+import com.fly.station.prorocol.bean.ACK;
+import com.fly.station.prorocol.bean.BaseFlyPacket;
+import com.fly.station.prorocol.bean.ChanInfo8030;
+import com.fly.station.prorocol.bean.DeviceInfo;
+import com.fly.station.prorocol.bean.RcStatus8030;
+import com.fly.station.prorocol.bean.UartRx;
+import com.fly.station.prorocol.bean.UsbRx;
+import com.fly.station.prorocol.bean.WirelessInfo;
+import com.fly.aoalibrary.AoaSwitch;
+import com.fly.aoalibrary.DEVICE_TYPE;
+import com.fly.aoalibrary.HostSwitch;
+import com.fly.aoalibrary.host.UsbDeviceHelper;
+import com.fly.aoalibrary.host.UsbDeviceListener;
+import com.fly.fflibrary.FFJNI;
+import com.fly.fflibrary.FormatProfile;
+import com.fly.fflibrary.listeners.FFListener;
+import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.medialibrary.BitRateHelper;
+import com.fly.medialibrary.H264Extractor;
+import com.fly.medialibrary.H264Saver;
+import com.fly.medialibrary.MediaHelper;
+import com.fly.medialibrary.MediaListener;
+import com.fly.medialibrary.MuxerUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);
         binding.spDecodeMode.setAdapter(decodeModeAdapter);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
         decodeMode = sp.getInt(Constants.PREF_DECODE_MODE, Constants.DECODE_MODE_FF_SURFACE);
         binding.spDecodeMode.setSelection(decodeMode);
         if (decodeMode != Constants.DECODE_MODE_FF_GL_SURFACE && decodeMode != Constants.DECODE_MODE_FF_SURFACE) {
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != decodeMode) {
-                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putInt(Constants.PREF_DECODE_MODE, position);
                     editor.apply();
@@ -210,6 +213,15 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
 
+        MediaConfig mediaConfig = null;
+        try {
+            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (mediaConfig == null) {
+            mediaConfig = new MediaConfig();
+        }
         switch (decodeMode) {
             case Constants.DECODE_MODE_FF_SURFACE:
                 // 1. If you know video format(encoding/width/height), and if it does not change, use FormatProfile to accelerate first frame rendering
@@ -237,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // Default value is 1024 * 1024, when FormatProfile is not used, decrease this value to accelerate first frame rendering.
         // But don’t set the value too small, otherwise the video format will not be parsed.
-        mediaHelper.setProbeSize(DECODE_CHANNEL, 100 * 1024);
+        mediaHelper.setMediaConfig(mediaConfig);
 
         // Only necessary for MEDIACODEC_SURFACE and MEDIACODEC_TEXTURE modes, to record H264 stream
         mediaHelper.setListener(mediaListener);
@@ -247,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Default value is 1024 * 1024, when FormatProfile is not used, decrease this value to accelerate first frame rendering.
         // But don’t set the value too small, otherwise the video format will not be parsed.
-        mediaHelper2.setProbeSize(DECODE_CHANNEL2, 100 * 1024);
+        mediaHelper2.setMediaConfig(mediaConfig);
 
         ffListenerManager = FFListenerManager.addListener(this, ffListener);
 
@@ -259,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
         permissionHelper = new PermissionHelper(this);
 
-        if (CoolFly.isRk()) {
+        if (Fly.isRk()) {
             binding.swAoa.setVisibility(View.GONE);
         }
 
@@ -270,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
         binding.swHwDecode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean(Constants.PREF_IS_HW_DECODE, isChecked);
                 editor.apply();
@@ -330,12 +342,11 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         usbDeviceHelper.onResume();
-        protocolHelper.onResume();
         permissionHelper.onResume();
 
         try {
-            binding.tvSn.setText(String.format("RCSN: %s", CoolFly.getRCSerialNumber()));
-            binding.tvSysVersion.setText(String.format("RCSysVer: %s", CoolFly.getRCSysVersion()));
+            binding.tvSn.setText(String.format("RCSN: %s", Fly.getRCSerialNumber()));
+            binding.tvSysVersion.setText(String.format("RCSysVer: %s", Fly.getRCSysVersion()));
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
@@ -346,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        protocolHelper.onPause();
     }
 
     @Override
@@ -357,8 +367,9 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper.removeListener(protocolListener);
         protocolHelper.onDestroy();
         ffListenerManager.removeListener();
-        FFJNI.stop(DECODE_CHANNEL);
-        FFJNI.stop(DECODE_CHANNEL2);
+        mediaHelper.destroy();
+        mediaHelper2.destroy();
+
         h264Saver.stop();
         if (videoMock != null) {
             videoMock.destroy();
@@ -524,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                ImageUtils.save2Album(path, "coolfly", System.currentTimeMillis() + ".mp4", true);
+                                ImageUtils.save2Album(path, "fly", System.currentTimeMillis() + ".mp4", true);
                             }
                         }).start();
                     }
@@ -585,7 +596,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (CoolFly.isRk()) {
+                if (Fly.isRk()) {
                     HostSwitch.AoaMode aoaMode = HostSwitch.getMode();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -758,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
     @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
-        public void onReadCmd(BaseCoolflyPacket packet) {
+        public void onReadCmd(BaseFlyPacket packet) {
             Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
@@ -839,17 +850,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairTimeOut(com.coolfly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onPairTimeOut(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
             // Now only for 8030
-            if (deviceType == com.coolfly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+            if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
                 Toast.makeText(MainActivity.this, "Pair time out", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onPairSuccess(com.coolfly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onPairSuccess(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
             // Now only for 8030
-            if (deviceType == com.coolfly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+            if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
                 Toast.makeText(MainActivity.this, "Pair success", Toast.LENGTH_SHORT).show();
             }
         }

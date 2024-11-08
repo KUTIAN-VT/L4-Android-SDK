@@ -19,19 +19,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityMcuBinding;
 import com.coolfly.demo.utils.WidgetUtils;
-import com.coolfly.station.chuanyun.entity.SbusConfig;
-import com.coolfly.station.chuanyun.entity.SbusData;
-import com.coolfly.station.mcu.McuManager;
-import com.coolfly.station.mcu.McuOtaHelper;
-import com.coolfly.station.mcu.McuPacket;
-import com.coolfly.station.mcu.entity.ActiveState;
-import com.coolfly.station.mcu.entity.CalibrateState;
-import com.coolfly.station.mcu.entity.HeartBeat;
-import com.coolfly.station.mcu.entity.OperateMode;
-import com.coolfly.station.mcu.entity.Version;
-import com.coolfly.station.prorocol.CoolFly;
-import com.coolfly.station.wheel.Wheel;
-import com.coolfly.station.wheel.WheelListener;
+import com.fly.station.chuanyun.entity.SbusConfig;
+import com.fly.station.chuanyun.entity.SbusData;
+import com.fly.station.mcu.McuManager;
+import com.fly.station.mcu.McuOtaHelper;
+import com.fly.station.mcu.McuPacket;
+import com.fly.station.mcu.entity.ActiveState;
+import com.fly.station.mcu.entity.CalibrateState;
+import com.fly.station.mcu.entity.HeartBeat;
+import com.fly.station.mcu.entity.OperateMode;
+import com.fly.station.mcu.entity.Version;
+import com.fly.station.prorocol.Fly;
+import com.fly.station.wheel.Wheel;
+import com.fly.station.wheel.WheelListener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -315,7 +315,7 @@ public class McuActivity extends AppCompatActivity {
         @Override
         public void onShutdownOs() {
             try {
-                CoolFly.shutDown();
+                Fly.shutDown();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
