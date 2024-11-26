@@ -35,6 +35,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -57,6 +58,7 @@ import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.ChanInfo8030;
 import com.fly.station.prorocol.bean.DeviceInfo;
 import com.fly.station.prorocol.bean.RcStatus8030;
+import com.fly.station.prorocol.bean.SysInfo8030;
 import com.fly.station.prorocol.bean.UartRx;
 import com.fly.station.prorocol.bean.UsbRx;
 import com.fly.station.prorocol.bean.WirelessInfo;
@@ -574,6 +576,14 @@ public class MainActivity extends AppCompatActivity {
             protocolHelper.ar8030StartPair();
         } else if (view == binding.btnGetChannelInfoV4) {
             protocolHelper.ar8030GetChannelInfo();
+        } else if (view == binding.btnSetBandwidthV4) {
+            Intent intent = new Intent(this, V4BandwidthActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnConfigV4) {
+            Intent intent = new Intent(this, V4ConfigActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnSysinfoV4) {
+            protocolHelper.ar8030GetSysInfo();
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
@@ -770,7 +780,7 @@ public class MainActivity extends AppCompatActivity {
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseFlyPacket packet) {
-            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
+//            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
                 arlinkDevice = deviceInfo;
@@ -839,6 +849,9 @@ public class MainActivity extends AppCompatActivity {
                 // AR8030 status
             } else if (packet instanceof ChanInfo8030) {
                 // AR8030 channel info
+            } else if (packet instanceof SysInfo8030) {
+                // AR8030 system info
+                Toast.makeText(MainActivity.this, packet.toString(), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -864,6 +877,22 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Pair success", Toast.LENGTH_SHORT).show();
             }
         }
+
+        @Override
+        public void onConfigJson(@Nullable String s, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+        }
+
+        @Override
+        public void onSetConfigJson(boolean b, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+        }
+
+        @Override
+        public void onResetConfigJson(boolean b, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+        }
+
     };
 
     private void renderWirelessInfo(WirelessInfo wirelessOSD) {

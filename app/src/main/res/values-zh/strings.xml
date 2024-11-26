@@ -17,6 +17,9 @@
     <string name="ota_v4">升级V4</string>
     <string name="pair_v4">对频V4</string>
     <string name="chaninfo_v4">频点V4</string>
+    <string name="bandwidth_v4">带宽V4</string>
+    <string name="config_v4">配置V4</string>
+    <string name="sysinfo_v4">版本V4</string>
 
     <string name="restart_to_work">APP重启之后生效</string>
     <string name="ok">确定</string>

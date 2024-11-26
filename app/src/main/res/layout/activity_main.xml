@@ -183,6 +183,27 @@
                 android:text="@string/chaninfo_v4" />
 
             <Button
+                android:id="@+id/btn_set_bandwidth_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/bandwidth_v4" />
+
+            <Button
+                android:id="@+id/btn_config_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/config_v4" />
+
+            <Button
+                android:id="@+id/btn_sysinfo_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/sysinfo_v4" />
+
+            <Button
                 android:id="@+id/btn_rtsp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"

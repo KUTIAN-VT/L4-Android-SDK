@@ -17,6 +17,9 @@
     <string name="ota_v4">V4 OTA</string>
     <string name="pair_v4">V4 Pair</string>
     <string name="chaninfo_v4">V4 chaninfo</string>
+    <string name="bandwidth_v4">V4 bandwidth</string>
+    <string name="config_v4">V4 config</string>
+    <string name="sysinfo_v4">V4 info</string>
 
     <string name="restart_to_work">It takes effect after restarting the APP</string>
     <string name="ok">OK</string>

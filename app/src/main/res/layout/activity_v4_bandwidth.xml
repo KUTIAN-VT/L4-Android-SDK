@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".V4BandwidthActivity">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DEV -> AP"
+            android:textColor="@color/white"
+            android:textSize="32sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="rx buffer size: "
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/et_rx_bandwidth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+                android:text="80000"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bytes"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="tx buffer size: "
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/et_tx_bandwidth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+                android:text="20000"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bytes"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_set_dev_2_ap"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="SET bandwidth"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_reset_dev_2_ap"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="RESET bandwidth"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_blue_dark" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AP -> DEV"
+            android:textColor="@color/white"
+            android:textSize="32sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="rx buffer size: "
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/et_rx_framechange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+                android:text="40000"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bytes"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="tx buffer size: "
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/et_tx_framechange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+                android:text="60000"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bytes"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_set_ap_2_dev"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="SET frame change"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_reset_ap_2_dev"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="RESET frame change"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

@@ -64,6 +64,14 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".V4BandwidthActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".V4ConfigActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
