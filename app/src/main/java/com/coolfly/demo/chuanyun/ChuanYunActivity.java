@@ -137,17 +137,6 @@ public class ChuanYunActivity extends AppCompatActivity {
             }
         });
 
-        binding.btnWriteDevMac.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String value = binding.etDevMac.getText().toString();
-                if (!TextUtils.isEmpty(value)) {
-                    // not available for soft switch
-                    sensorDevice.writeRfConfig(RFConfig.DevMac0(value));
-                }
-            }
-        });
-
         binding.btnWriteRfPowerFix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,6 +209,19 @@ public class ChuanYunActivity extends AppCompatActivity {
                         sensorDevice.writeRfConfig2(RFConfig2.ApMac(value));
                     else
                         sensorDevice.writeRfConfig(RFConfig.ApMac(value));
+                }
+            }
+        });
+
+        binding.btnWriteDevMac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = binding.etDevMac.getText().toString();
+                if (!TextUtils.isEmpty(value)) {
+                    if (isSoftSwitch())
+                        sensorDevice.writeRfConfig2(RFConfig2.DevMac(value, 0));
+                    else
+                        sensorDevice.writeRfConfig(RFConfig.DevMac0(value));
                 }
             }
         });
