@@ -48,7 +48,22 @@ import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
 import com.coolfly.demo.v3ota.V3OtaActivity;
+import com.fly.aoalibrary.AoaSwitch;
+import com.fly.aoalibrary.DEVICE_TYPE;
+import com.fly.aoalibrary.HostSwitch;
+import com.fly.aoalibrary.host.UsbDeviceHelper;
+import com.fly.aoalibrary.host.UsbDeviceListener;
+import com.fly.fflibrary.FFJNI;
+import com.fly.fflibrary.FormatProfile;
 import com.fly.fflibrary.MediaConfig;
+import com.fly.fflibrary.listeners.FFListener;
+import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.medialibrary.BitRateHelper;
+import com.fly.medialibrary.H264Extractor;
+import com.fly.medialibrary.H264Saver;
+import com.fly.medialibrary.MediaHelper;
+import com.fly.medialibrary.MediaListener;
+import com.fly.medialibrary.MuxerUtil;
 import com.fly.station.prorocol.Fly;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
@@ -62,21 +77,6 @@ import com.fly.station.prorocol.bean.SysInfo8030;
 import com.fly.station.prorocol.bean.UartRx;
 import com.fly.station.prorocol.bean.UsbRx;
 import com.fly.station.prorocol.bean.WirelessInfo;
-import com.fly.aoalibrary.AoaSwitch;
-import com.fly.aoalibrary.DEVICE_TYPE;
-import com.fly.aoalibrary.HostSwitch;
-import com.fly.aoalibrary.host.UsbDeviceHelper;
-import com.fly.aoalibrary.host.UsbDeviceListener;
-import com.fly.fflibrary.FFJNI;
-import com.fly.fflibrary.FormatProfile;
-import com.fly.fflibrary.listeners.FFListener;
-import com.fly.fflibrary.listeners.FFListenerManager;
-import com.fly.medialibrary.BitRateHelper;
-import com.fly.medialibrary.H264Extractor;
-import com.fly.medialibrary.H264Saver;
-import com.fly.medialibrary.MediaHelper;
-import com.fly.medialibrary.MediaListener;
-import com.fly.medialibrary.MuxerUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnPairV4) {
             protocolHelper.ar8030StartPair();
         } else if (view == binding.btnGetChannelInfoV4) {
-            protocolHelper.ar8030GetChannelInfo();
+            protocolHelper.ar8030GetChannelInfo(false);
         } else if (view == binding.btnSetBandwidthV4) {
             Intent intent = new Intent(this, V4BandwidthActivity.class);
             startActivity(intent);
@@ -583,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, V4ConfigActivity.class);
             startActivity(intent);
         } else if (view == binding.btnSysinfoV4) {
-            protocolHelper.ar8030GetSysInfo();
+            protocolHelper.ar8030GetSysInfo(false);
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
@@ -779,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
     @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
-        public void onReadCmd(BaseFlyPacket packet) {
+        public void onReadCmd(BaseFlyPacket packet, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
 //            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
             if (packet instanceof DeviceInfo) {
                 DeviceInfo deviceInfo = (DeviceInfo) packet;
@@ -851,15 +851,13 @@ public class MainActivity extends AppCompatActivity {
                 // AR8030 channel info
             } else if (packet instanceof SysInfo8030) {
                 // AR8030 system info
-                Toast.makeText(MainActivity.this, packet.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, (isRemote? "dev: ": "ap: ") + packet, Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
         public void onWrite(byte[] data) {
-            if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
-                usbDeviceHelper.writeData(data);
-            }
+            usbDeviceHelper.writeData(data);
         }
 
         @Override
@@ -879,17 +877,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onConfigJson(@Nullable String s, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onPairLost(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030
+            if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+                Toast.makeText(MainActivity.this, "Pair lost", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onConfigJson(@Nullable String jsonString, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
         }
 
         @Override
-        public void onSetConfigJson(boolean b, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onSetConfigJson(boolean result, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
         }
 
         @Override
-        public void onResetConfigJson(boolean b, com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onResetConfigJson(boolean result, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
         }
 

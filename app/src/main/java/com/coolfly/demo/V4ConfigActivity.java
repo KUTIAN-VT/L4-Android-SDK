@@ -31,7 +31,7 @@ public class V4ConfigActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.tvRead.setOnClickListener(v -> {
-            if (!protocolHelper.ar8030GetConfigJson()) {
+            if (!protocolHelper.ar8030GetConfigJson(binding.swRemote.isChecked())) {
                 Toast.makeText(V4ConfigActivity.this, "read config is busy", Toast.LENGTH_SHORT).show();
             }
         });
@@ -53,13 +53,13 @@ public class V4ConfigActivity extends AppCompatActivity {
                 Toast.makeText(V4ConfigActivity.this, "json format error", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!protocolHelper.ar8030SetConfigJson(json)) {
+            if (!protocolHelper.ar8030SetConfigJson(json, binding.swRemote.isChecked())) {
                 Toast.makeText(V4ConfigActivity.this, "write config is busy", Toast.LENGTH_SHORT).show();
             }
         });
 
         binding.tvReset.setOnClickListener(v -> {
-            protocolHelper.ar8030ResetConfigJson();
+            protocolHelper.ar8030ResetConfigJson(binding.swRemote.isChecked());
         });
 
         binding.tvSave.setOnClickListener(v -> {
@@ -70,7 +70,7 @@ public class V4ConfigActivity extends AppCompatActivity {
                 return;
             }
             try {
-                FileOutputStream fos = openFileOutput("config.json", MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput((binding.swRemote.isChecked()? "remote-" : "") + "config.json", MODE_PRIVATE);
                 fos.write(content.getBytes());
                 fos.flush();
                 fos.close();
@@ -89,7 +89,7 @@ public class V4ConfigActivity extends AppCompatActivity {
                     String content = "";
                     byte[] buffer = new byte[100 * 1024];
                     int len;
-                    FileInputStream fis = openFileInput("config.json");
+                    FileInputStream fis = openFileInput((binding.swRemote.isChecked()? "remote-" : "") + "config.json");
                     while ((len = fis.read(buffer)) != -1) {
                         content += new String(buffer, 0, len);
                     }
@@ -114,7 +114,7 @@ public class V4ConfigActivity extends AppCompatActivity {
 
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
-        public void onReadCmd(BaseFlyPacket baseFlyPacket) {
+        public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
 
         }
 
@@ -134,19 +134,24 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onConfigJson(@Nullable String s, DEVICE_TYPE deviceType) {
-            // Now only for 8030
-            if (s == null) {
-                Toast.makeText(V4ConfigActivity.this, "read config json failed", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            binding.etJson.setText(s);
+        public void onPairLost(DEVICE_TYPE deviceType) {
+
         }
 
         @Override
-        public void onSetConfigJson(boolean b, DEVICE_TYPE deviceType) {
+        public void onConfigJson(@Nullable String jsonString, DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
-            if (b) {
+            if (jsonString == null) {
+                Toast.makeText(V4ConfigActivity.this, "read config json failed", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            binding.etJson.setText(jsonString);
+        }
+
+        @Override
+        public void onSetConfigJson(boolean result, DEVICE_TYPE deviceType, boolean isRemote) {
+            // Now only for 8030
+            if (result) {
                 Toast.makeText(V4ConfigActivity.this, "write config json success", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(V4ConfigActivity.this, "write config json failed", Toast.LENGTH_SHORT).show();
@@ -154,9 +159,9 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onResetConfigJson(boolean b, DEVICE_TYPE deviceType) {
+        public void onResetConfigJson(boolean result, DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
-            if (b) {
+            if (result) {
                 Toast.makeText(V4ConfigActivity.this, "reset config json success", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(V4ConfigActivity.this, "reset config json failed", Toast.LENGTH_SHORT).show();
