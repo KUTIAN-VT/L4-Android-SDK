@@ -103,5 +103,10 @@ public class MainApplication extends Application {
             }
             Log.d(TAG, "onFrameIPLastBytes: " + stringBuilder.toString());
         }
+
+        @Override
+        public void onError(int code, String msg, int handler) {
+            Toast.makeText(applicationContext, "code: " + code + ", msg: " + msg, Toast.LENGTH_SHORT).show();
+        }
     };
 }
