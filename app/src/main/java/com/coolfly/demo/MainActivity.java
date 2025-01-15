@@ -590,6 +590,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnRtspMulti) {
             Intent intent = new Intent(this, RtspMultiActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnUdp) {
+            Intent intent = new Intent(this, UdpRtpActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnChuanyun) {
             Intent intent = new Intent(this, ChuanYunActivity.class);
             startActivity(intent);
