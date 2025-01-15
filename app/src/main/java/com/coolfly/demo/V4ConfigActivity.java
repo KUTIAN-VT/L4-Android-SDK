@@ -60,6 +60,7 @@ public class V4ConfigActivity extends AppCompatActivity {
 
         binding.tvReset.setOnClickListener(v -> {
             protocolHelper.ar8030ResetConfigJson(binding.swRemote.isChecked());
+            protocolHelper.ar8030ResetMiniDb();
         });
 
         binding.tvSave.setOnClickListener(v -> {
