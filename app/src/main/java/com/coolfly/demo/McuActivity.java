@@ -73,6 +73,11 @@ public class McuActivity extends AppCompatActivity {
             }
         });
 
+        if (Fly.isRk()) {
+            McuManager.setDevicePath("/dev/ttyS4");
+        } else {
+            McuManager.setDevicePath("/dev/ttyHS0");
+        }
         binding.tvPath.setText(McuManager.DEVICE_PATH);
         binding.tvPath.setOnClickListener(new View.OnClickListener() {
             @Override
