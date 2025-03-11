@@ -45,6 +45,7 @@ public class ChuanYunActivity extends AppCompatActivity {
 
         sensorDevice = SensorDevice.getInstance(MainApplication.applicationContext);
         sensorDevice.addListener(sensorDeviceListener);
+        // Use sensorDevice.setHandler to set the handler to receive the message, and the default handler is the main thread handler.
 
         binding.btnSetSocket.setOnClickListener(new View.OnClickListener() {
             @Override

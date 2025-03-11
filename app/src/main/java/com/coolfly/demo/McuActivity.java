@@ -59,6 +59,7 @@ public class McuActivity extends AppCompatActivity {
         // MCU
         mcuManager = McuManager.getInstance();
         mcuManager.addListener(mcuListener);
+        // Use mcuManager.setHandler to set the handler to receive the message, and the default handler is the main thread handler.
 
         // MCU OTA
         mcuOtaHelper = McuOtaHelper.getInstance();
