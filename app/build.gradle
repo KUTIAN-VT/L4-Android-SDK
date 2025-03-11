@@ -6,7 +6,7 @@ def versionTime = new Date().format("yyyy-MM-dd-HH-mm")
 
 android {
     namespace 'com.coolfly.demo'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.coolfly.demo"

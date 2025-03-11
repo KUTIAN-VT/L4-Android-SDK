@@ -310,6 +310,11 @@ public class McuActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onGiveUpConnect() {
+            // No MCU response
+        }
+
+        @Override
         public void onHeartBeat(HeartBeat heartBeat) {
             binding.tvLog.setText(heartBeat.toString());
             WidgetUtils.setSwitchWithoutListener(binding.swMcuBuzzer, heartBeat.isBuzzOn());
