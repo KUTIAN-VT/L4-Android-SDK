@@ -865,7 +865,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPairTimeOut(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
-            // Now only for 8030
+            // Now only for 8030, pair manually time out
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
                 Toast.makeText(MainActivity.this, "Pair time out", Toast.LENGTH_SHORT).show();
             }
@@ -873,17 +873,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPairSuccess(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
-            // Now only for 8030
+            // Now only for 8030, pair manually success
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
                 Toast.makeText(MainActivity.this, "Pair success", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onPairLost(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
-            // Now only for 8030
+        public void onLinked(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030, link ready automatically
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(MainActivity.this, "Pair lost", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Link ready", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onLinkLost(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            // Now only for 8030, link lost automatically
+            if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+                Toast.makeText(MainActivity.this, "Link lost", Toast.LENGTH_SHORT).show();
             }
         }
 

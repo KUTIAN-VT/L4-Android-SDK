@@ -135,7 +135,12 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairLost(DEVICE_TYPE deviceType) {
+        public void onLinked(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
+        public void onLinkLost(DEVICE_TYPE deviceType) {
 
         }
 
