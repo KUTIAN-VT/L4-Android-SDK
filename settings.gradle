@@ -20,12 +20,15 @@ include ':fflibrary'
 include ':cflibrary'
 include ':aoalibrary'
 include ':medialibrary'
+include ':loglibrary'
 
 project(':fflibrary').projectDir = new File('./coollibrary/ff')
 project(':cflibrary').projectDir = new File('./coollibrary/cf')
 project(':aoalibrary').projectDir = new File('./coollibrary/aoa')
 project(':medialibrary').projectDir = new File('./coollibrary/media')
+project(':loglibrary').projectDir = new File('./coollibrary/log')
 //project(':fflibrary').projectDir = new File("../CoolFly/fflibrary")
 //project(':cflibrary').projectDir = new File("../CoolFly/cflibrary")
 //project(':aoalibrary').projectDir = new File("../CoolFly/aoalibrary")
 //project(':medialibrary').projectDir = new File("../CoolFly/medialibrary")
+//project(':loglibrary').projectDir = new File("../CoolFly/loglibrary")

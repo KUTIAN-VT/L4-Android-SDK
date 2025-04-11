@@ -52,6 +52,7 @@ dependencies {
     implementation project(path: ':cflibrary')
     implementation project(path: ':aoalibrary')
     implementation project(path: ':medialibrary')
+    implementation project(path: ':loglibrary')
 
     implementation 'com.alibaba:fastjson:1.2.83'
     implementation 'com.licheedev:android-serialport:2.1.3'

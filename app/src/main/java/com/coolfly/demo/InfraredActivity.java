@@ -166,6 +166,11 @@ public class InfraredActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onDisconnected(int i) {
+
+        }
+
+        @Override
         public void onStatus(Status status) {
 
         }
