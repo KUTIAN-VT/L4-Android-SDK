@@ -746,6 +746,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onStartReadData(DEVICE_TYPE deviceType) {
+            switch (deviceType) {
+                case TYPE_8020:
+                    break;
+                case TYPE_8030:
+                    // If you use port 2 for AR8030 socket, set it here. Default port is 3.
+//                    protocolHelper.ar8030SetPort(2);
+                    break;
+            }
             protocolHelper.onStartReadData(deviceType.name());
         }
 
