@@ -7,12 +7,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.listeners.FFListener;
 import com.fly.fflibrary.listeners.FFListenerManager;
 import com.fly.medialibrary.MediaHelper;
+import com.fly.station.prorocol.ProtocolHelper;
 
 /**
  * @Description:
@@ -26,13 +28,19 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         applicationContext = this;
+        PreferenceActivity.initPreference();
+
+        /*
+         * Initialize media
+         */
         MediaHelper.init(this);
+
         /*
          * Initialize FFmpeg
          * @param avLog true-Log output, false-No log output
          * @param frameIPLastBytes returns the last few bytes of I frame (I in IDR and Slice) and P frame. <=0 means no return. >0 means the number of bytes returned. It is returned through onFrameIPLastBytes callback.
          */
-        FFJNI.init(PreferenceActivity.isShowFfmpegLog);
+        FFJNI.init(PreferenceActivity.preferenceObject.show_ffmpeg_log);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isHwDecode = sharedPreferences.getBoolean(Constants.PREF_IS_HW_DECODE, true);
@@ -44,6 +52,13 @@ public class MainApplication extends Application {
          */
         FFJNI.setHwDecode(isHwDecode);
         FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
+
+        /*
+         * Initialize P401
+         */
+        ProtocolHelper.ar8030SetPort(PreferenceActivity.preferenceObject.p401_port);
+        com.fly.station.prorocol.Constants.isShowAR8030VPNLog = PreferenceActivity.preferenceObject.show_ar8030_vpn_log;
+        com.fly.station.prorocol.Constants.isShowAR8030ParseLog = PreferenceActivity.preferenceObject.show_ar8030_parse_log;
     }
 
     FFListener ffListener = new FFListener() {

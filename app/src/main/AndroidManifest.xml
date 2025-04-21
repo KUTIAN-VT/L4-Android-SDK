@@ -65,7 +65,7 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".PreferenceActivity"
+            android:name=".preference.PreferenceActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity

@@ -19,6 +19,7 @@ import com.coolfly.demo.R;
 import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
 import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityChuanYunBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.station.chuanyun.SensorDevice;
 import com.fly.station.chuanyun.entity.Calibrate;
 import com.fly.station.chuanyun.entity.InfraredConfig;
@@ -43,6 +44,7 @@ public class ChuanYunActivity extends AppCompatActivity {
         binding = ActivityChuanYunBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        SensorDevice.setIsShowLog(PreferenceActivity.preferenceObject.show_chuanyun_log);
         sensorDevice = SensorDevice.getInstance(MainApplication.applicationContext);
         sensorDevice.addListener(sensorDeviceListener);
         // Use sensorDevice.setHandler to set the handler to receive the message, and the default handler is the main thread handler.
@@ -74,9 +76,13 @@ public class ChuanYunActivity extends AppCompatActivity {
                             .setItems(new String[]{"Socket for P301", "Serial for P201"}, (dialog, which) -> {
                                 if (which == 0) {
                                     // IP and PORT set in SocketPreferences
+                                    SensorDevice.setIp(PreferenceActivity.preferenceObject.p301_socket_ip);
+                                    SensorDevice.setPort(PreferenceActivity.preferenceObject.p301_socket_port);
                                     sensorDevice.onLine(SensorDevice.SOCKET);
                                 } else {
                                     // PATH and BAUDRATE set in SerialPortPreferences
+                                    SensorDevice.setDevicePath(PreferenceActivity.preferenceObject.p201_serial_path);
+                                    SensorDevice.setBaudRate(PreferenceActivity.preferenceObject.p201_serial_baudrate.toString());
                                     sensorDevice.onLine(SensorDevice.SERIAL);
                                 }
                             }).create().show();
@@ -99,6 +105,8 @@ public class ChuanYunActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SensorDevice.setIsShowLog(isChecked);
+                PreferenceActivity.preferenceObject.show_chuanyun_log = isChecked;
+                PreferenceActivity.savePreference();
             }
         });
 

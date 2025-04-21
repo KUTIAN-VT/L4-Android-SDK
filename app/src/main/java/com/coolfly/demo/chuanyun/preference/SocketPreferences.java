@@ -32,6 +32,8 @@ public class SocketPreferences extends PreferenceActivity {
                 SensorDevice.getInstance(MainApplication.applicationContext).offLine();
 
                 SensorDevice.setIp((String) newValue);
+                com.coolfly.demo.preference.PreferenceActivity.preferenceObject.p301_socket_ip = (String) newValue;
+                com.coolfly.demo.preference.PreferenceActivity.savePreference();
                 return true;
             }
         });
@@ -45,6 +47,8 @@ public class SocketPreferences extends PreferenceActivity {
                 SensorDevice.getInstance(MainApplication.applicationContext).offLine();
 
                 SensorDevice.setPort(Integer.parseInt((String) newValue));
+                com.coolfly.demo.preference.PreferenceActivity.preferenceObject.p301_socket_port = Integer.parseInt((String) newValue);
+                com.coolfly.demo.preference.PreferenceActivity.savePreference();
                 return true;
             }
         });

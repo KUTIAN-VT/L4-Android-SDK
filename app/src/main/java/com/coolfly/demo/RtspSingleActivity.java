@@ -1,7 +1,6 @@
 package com.coolfly.demo;
 
 import static com.coolfly.demo.utils.Constants.DEFAULT_MULTI_RTSP_URI_1;
-import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
 import static com.coolfly.demo.utils.Constants.PREF_RTSP_URI;
 import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
@@ -28,8 +27,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityRtspSingleBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.Constants;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.MediaConfig;
@@ -105,15 +104,7 @@ public class RtspSingleActivity extends AppCompatActivity {
         });
         // decode mode ends
 
-        MediaConfig mediaConfig = null;
-        try {
-            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        if (mediaConfig == null) {
-            mediaConfig = new MediaConfig();
-        }
+        MediaConfig mediaConfig = PreferenceActivity.preferenceObject.mediaConfig;
 
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         switch (decodeMode) {

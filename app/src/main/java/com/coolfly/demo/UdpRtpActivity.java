@@ -1,6 +1,5 @@
 package com.coolfly.demo;
 
-import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
 import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
@@ -21,8 +20,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityUdpRtpBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.MediaConfig;
 import com.fly.fflibrary.listeners.FFListener;
@@ -76,15 +75,7 @@ public class UdpRtpActivity extends AppCompatActivity {
             }
         });
 
-        MediaConfig mediaConfig = null;
-        try {
-            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        if (mediaConfig == null) {
-            mediaConfig = new MediaConfig();
-        }
+        MediaConfig mediaConfig = PreferenceActivity.preferenceObject.mediaConfig;
 
         ffListenerManager = FFListenerManager.addListener(MainApplication.applicationContext, ffListener);
         mediaHelper = new MediaHelper(MediaHelper.DECODE_MODE.FF_DIRECT_SURFACE_PATH, binding.surface, DECODE_CHANNEL);

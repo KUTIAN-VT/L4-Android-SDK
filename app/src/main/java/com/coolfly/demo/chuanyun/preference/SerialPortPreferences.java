@@ -38,6 +38,8 @@ public class SerialPortPreferences extends PreferenceActivity {
                 preference.setSummary((String) newValue);
 
                 SensorDevice.setDevicePath((String) newValue);
+                com.coolfly.demo.preference.PreferenceActivity.preferenceObject.p201_serial_path = (String) newValue;
+                com.coolfly.demo.preference.PreferenceActivity.savePreference();
                 return true;
             }
         });
@@ -50,6 +52,8 @@ public class SerialPortPreferences extends PreferenceActivity {
                 preference.setSummary((String) newValue);
 
                 SensorDevice.setBaudRate((String) newValue);
+                com.coolfly.demo.preference.PreferenceActivity.preferenceObject.p201_serial_baudrate = Integer.parseInt((String) newValue);
+                com.coolfly.demo.preference.PreferenceActivity.savePreference();
                 return true;
             }
         });

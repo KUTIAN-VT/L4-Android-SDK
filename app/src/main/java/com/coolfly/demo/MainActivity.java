@@ -1,7 +1,6 @@
 package com.coolfly.demo;
 
 
-import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
 import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
@@ -41,9 +40,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
-import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.chuanyun.ChuanYunActivity;
 import com.coolfly.demo.databinding.ActivityMainBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
@@ -215,15 +214,7 @@ public class MainActivity extends AppCompatActivity {
         protocolHelper = ProtocolHelper.getInstance();
         protocolHelper.addListener(protocolListener);
 
-        MediaConfig mediaConfig = null;
-        try {
-            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        if (mediaConfig == null) {
-            mediaConfig = new MediaConfig();
-        }
+        MediaConfig mediaConfig = PreferenceActivity.preferenceObject.mediaConfig;
         switch (decodeMode) {
             case Constants.DECODE_MODE_FF_SURFACE:
                 // 1. If you know video format(encoding/width/height), and if it does not change, use FormatProfile to accelerate first frame rendering
@@ -751,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case TYPE_8030:
                     // If you use port 2 for AR8030 socket, set it here. Default port is 3.
-//                    protocolHelper.ar8030SetPort(2);
+//                    ProtocolHelper.ar8030SetPort(2);
                     break;
             }
             protocolHelper.onStartReadData(deviceType.name());

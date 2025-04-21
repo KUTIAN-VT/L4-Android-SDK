@@ -1,6 +1,6 @@
-package com.coolfly.demo;
+package com.coolfly.demo.preference;
 
-import static com.coolfly.demo.utils.Constants.PREF_MEDIA_CONFIG;
+import static com.coolfly.demo.utils.Constants.PREF_APP_CONFIG;
 import static com.coolfly.demo.utils.Constants.SP_NAME;
 
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
+import com.coolfly.demo.MainApplication;
 import com.coolfly.demo.databinding.ActivityPreferenceBinding;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.fflibrary.FFJNI;
@@ -17,11 +18,28 @@ import com.fly.fflibrary.MediaConfig;
 import com.fly.station.prorocol.Constants;
 
 public class PreferenceActivity extends AppCompatActivity {
-    public static boolean isShowFfmpegLog = false;
+    public static PreferenceObject preferenceObject = null;
 
     private ActivityPreferenceBinding binding;
-    private SharedPreferences sp;
-    private MediaConfig mediaConfig = null;
+    private static SharedPreferences sp;
+
+    public static void initPreference() {
+        sp = MainApplication.applicationContext.getSharedPreferences(SP_NAME, MODE_PRIVATE);
+        try {
+            preferenceObject = JSON.parseObject(sp.getString(PREF_APP_CONFIG, null), PreferenceObject.class);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (preferenceObject == null) {
+            preferenceObject = new PreferenceObject();
+        }
+    }
+
+    public static void savePreference() {
+        if (preferenceObject != null) {
+            sp.edit().putString(PREF_APP_CONFIG, JSON.toJSONString(preferenceObject)).apply();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,25 +47,32 @@ public class PreferenceActivity extends AppCompatActivity {
         binding = ActivityPreferenceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.swLogFfmpeg.setChecked(isShowFfmpegLog);
+        binding.swLogFfmpeg.setChecked(preferenceObject.show_ffmpeg_log);
         binding.swLogFfmpeg.setOnCheckedChangeListener((buttonView, isChecked) -> {
             FFJNI.setLog(isChecked);
-            isShowFfmpegLog = isChecked;
+            preferenceObject.show_ffmpeg_log = isChecked;
+            savePreference();
         });
 
         binding.swLogUsb.setChecked(UsbDeviceHelper.isShowLog);
         binding.swLogUsb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             UsbDeviceHelper.isShowLog = isChecked;
+            preferenceObject.show_usb_log = isChecked;
+            savePreference();
         });
 
         binding.swLogAr8030Vpn.setChecked(Constants.isShowAR8030VPNLog);
         binding.swLogAr8030Vpn.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Constants.isShowAR8030VPNLog = isChecked;
+            preferenceObject.show_ar8030_vpn_log = isChecked;
+            savePreference();
         });
 
         binding.swLogAr8030Parse.setChecked(Constants.isShowAR8030ParseLog);
         binding.swLogAr8030Parse.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Constants.isShowAR8030ParseLog = isChecked;
+            preferenceObject.show_ar8030_parse_log = isChecked;
+            savePreference();
         });
 
         /*
@@ -60,16 +85,7 @@ public class PreferenceActivity extends AppCompatActivity {
          * - notify_i_p_frame_last_bytes: 表示返回I帧（IDR和Slice中的I）和P帧的最后几个字节，一般用于存储视频帧中的AI标记信息。<=0表示不返回，>0表示返回的字节数。默认值为0。
          * - is_fast_resume: SurfaceView重新创建后是否快速恢复播放。默认值为true。原理：SurfaceView销毁后，不释放流，并缓存流信息。SurfaceView重新创建后，如果流可用，直接用缓存的流信息恢复播放。如果流不可用，降级为重新创建流，并重新解析流信息。
          */
-        sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
-        try {
-            mediaConfig = JSON.parseObject(sp.getString(PREF_MEDIA_CONFIG, null), MediaConfig.class);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        if (mediaConfig == null) {
-            mediaConfig = new MediaConfig();
-        }
-        binding.etMediaConfig.setText(JSON.toJSONString(mediaConfig));
+        binding.etMediaConfig.setText(JSON.toJSONString(preferenceObject.mediaConfig));
 
         binding.tvSaveMediaConfig.setOnClickListener(v -> {
             MediaConfig mediaConfig = null;
@@ -82,7 +98,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 Toast.makeText(PreferenceActivity.this, "mediaConfig is invalid", Toast.LENGTH_SHORT).show();
                 return;
             }
-            sp.edit().putString(PREF_MEDIA_CONFIG, JSON.toJSONString(mediaConfig)).apply();
+            preferenceObject.mediaConfig = mediaConfig;
+            savePreference();
             Toast.makeText(PreferenceActivity.this, "save mediaConfig success", Toast.LENGTH_SHORT).show();
         });
     }

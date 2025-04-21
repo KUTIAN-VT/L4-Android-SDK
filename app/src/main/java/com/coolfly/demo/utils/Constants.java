@@ -7,7 +7,7 @@ package com.coolfly.demo.utils;
  */
 public class Constants {
     public static final String SP_NAME = "config";
-    public static final String PREF_MEDIA_CONFIG = "mediaConfig";
+    public static final String PREF_APP_CONFIG = "appConfig";
     public static final String PREF_IS_HW_DECODE = "PREF_IS_HW_DECODE";
     public static final String PREF_DECODE_MODE = "PREF_DECODE_MODE";
     public static final String PREF_DECODE_MODE_RTSP = "PREF_DECODE_MODE_RTSP";

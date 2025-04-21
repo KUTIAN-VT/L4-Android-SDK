@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.databinding.ActivityMcuBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.WidgetUtils;
 import com.fly.station.chuanyun.entity.SbusConfig;
 import com.fly.station.chuanyun.entity.SbusData;
@@ -57,6 +58,9 @@ public class McuActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // MCU
+        McuManager.setDevicePath(PreferenceActivity.preferenceObject.mcu_serial_path);
+        McuManager.setBaudRate(PreferenceActivity.preferenceObject.mcu_serial_baudrate.toString());
+        McuManager.setIsShowLog(PreferenceActivity.preferenceObject.show_mcu_log);
         mcuManager = McuManager.getInstance();
         mcuManager.addListener(mcuListener);
         // Use mcuManager.setHandler to set the handler to receive the message, and the default handler is the main thread handler.
@@ -71,14 +75,11 @@ public class McuActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 McuManager.setIsShowLog(isChecked);
+                PreferenceActivity.preferenceObject.show_mcu_log = isChecked;
+                PreferenceActivity.savePreference();
             }
         });
 
-        if (Fly.isRk()) {
-            McuManager.setDevicePath("/dev/ttyS4");
-        } else {
-            McuManager.setDevicePath("/dev/ttyHS0");
-        }
         binding.tvPath.setText(McuManager.DEVICE_PATH);
         binding.tvPath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +90,8 @@ public class McuActivity extends AppCompatActivity {
                         .setItems(paths, (dialog, which) -> {
                             McuManager.setDevicePath(paths[which]);
                             binding.tvPath.setText(McuManager.DEVICE_PATH);
+                            PreferenceActivity.preferenceObject.mcu_serial_path = McuManager.DEVICE_PATH;
+                            PreferenceActivity.savePreference();
                         }).create().show();
             }
         });
@@ -103,6 +106,8 @@ public class McuActivity extends AppCompatActivity {
                         .setItems(baudrates, (dialog, which) -> {
                             McuManager.setBaudRate(baudrates[which]);
                             binding.tvBaudrate.setText(McuManager.BAUDRATE);
+                            PreferenceActivity.preferenceObject.mcu_serial_baudrate = Integer.parseInt(McuManager.BAUDRATE);
+                            PreferenceActivity.savePreference();
                         }).create().show();
             }
         });
