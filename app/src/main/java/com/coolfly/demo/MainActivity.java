@@ -47,9 +47,7 @@ import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
 import com.coolfly.demo.v3ota.V3OtaActivity;
-import com.fly.aoalibrary.AoaSwitch;
 import com.fly.aoalibrary.DEVICE_TYPE;
-import com.fly.aoalibrary.HostSwitch;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.aoalibrary.host.UsbDeviceListener;
 import com.fly.fflibrary.FFJNI;
@@ -63,6 +61,8 @@ import com.fly.medialibrary.H264Saver;
 import com.fly.medialibrary.MediaHelper;
 import com.fly.medialibrary.MediaListener;
 import com.fly.medialibrary.MuxerUtil;
+import com.fly.station.gpio.AoaSwitch;
+import com.fly.station.gpio.HostSwitch;
 import com.fly.station.prorocol.Fly;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         permissionHelper = new PermissionHelper(this);
 
         if (Fly.isRk()) {
-            binding.swAoa.setVisibility(View.GONE);
+            binding.swLink.setVisibility(View.GONE);
         }
 
         readAoa();
@@ -605,27 +605,27 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            binding.swFpv.setOnCheckedChangeListener(null);
+                            binding.swPower.setOnCheckedChangeListener(null);
 
                             switch (aoaMode) {
 
-                                case FPVOFF:
-                                    binding.swFpv.setChecked(false);
+                                case POWER_OFF:
+                                    binding.swPower.setChecked(false);
                                     break;
-                                case FPVON:
-                                    binding.swFpv.setChecked(true);
+                                case POWER_ON:
+                                    binding.swPower.setChecked(true);
                                     break;
                                 case UNKNOWN:
                                     break;
                             }
 
-                            binding.swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            HostSwitch.switchFpv(b);
+                                            HostSwitch.switchPower(b);
                                         }
                                     }).start();
                                 }
@@ -637,50 +637,50 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            binding.swAoa.setOnCheckedChangeListener(null);
-                            binding.swFpv.setOnCheckedChangeListener(null);
+                            binding.swLink.setOnCheckedChangeListener(null);
+                            binding.swPower.setOnCheckedChangeListener(null);
 
                             switch (aoaMode) {
 
-                                case USB_FPVOFF:
-                                    binding.swAoa.setChecked(false);
-                                    binding.swFpv.setChecked(false);
+                                case LINK_OFF_POWER_OFF:
+                                    binding.swLink.setChecked(false);
+                                    binding.swPower.setChecked(false);
                                     break;
-                                case USB_FPVON:
-                                    binding.swAoa.setChecked(false);
-                                    binding.swFpv.setChecked(true);
+                                case LINK_OFF_POWER_ON:
+                                    binding.swLink.setChecked(false);
+                                    binding.swPower.setChecked(true);
                                     break;
-                                case AOA_FPVOFF:
-                                    binding.swAoa.setChecked(true);
-                                    binding.swFpv.setChecked(false);
+                                case LINK_ON_POWER_OFF:
+                                    binding.swLink.setChecked(true);
+                                    binding.swPower.setChecked(false);
                                     break;
-                                case AOA_FPVON:
-                                    binding.swAoa.setChecked(true);
-                                    binding.swFpv.setChecked(true);
+                                case LINK_ON_POWER_ON:
+                                    binding.swLink.setChecked(true);
+                                    binding.swPower.setChecked(true);
                                     break;
                                 case UNKNOWN:
                                     break;
                             }
 
-                            binding.swAoa.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swLink.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            AoaSwitch.switchUsb(b);
+                                            AoaSwitch.switchLink(b);
                                         }
                                     }).start();
                                 }
                             });
 
-                            binding.swFpv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            binding.swPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            AoaSwitch.switchFpv(b);
+                                            AoaSwitch.switchPower(b);
                                         }
                                     }).start();
                                 }
