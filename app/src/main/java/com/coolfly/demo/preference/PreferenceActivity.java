@@ -57,6 +57,13 @@ public class PreferenceActivity extends AppCompatActivity {
         binding = ActivityPreferenceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.tvApply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        });
+
         binding.tvMcuPath.setText(McuManager.DEVICE_PATH);
         binding.tvMcuPath.setOnClickListener(new View.OnClickListener() {
             @Override
