@@ -3,19 +3,29 @@ package com.coolfly.demo.preference;
 import static com.coolfly.demo.utils.Constants.PREF_APP_CONFIG;
 import static com.coolfly.demo.utils.Constants.SP_NAME;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.serialport.SerialPortFinder;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
 import com.coolfly.demo.MainApplication;
+import com.coolfly.demo.R;
+import com.coolfly.demo.chuanyun.preference.SerialPortPreferences;
+import com.coolfly.demo.chuanyun.preference.SocketPreferences;
 import com.coolfly.demo.databinding.ActivityPreferenceBinding;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.MediaConfig;
+import com.fly.station.chuanyun.SensorDevice;
+import com.fly.station.mcu.McuManager;
 import com.fly.station.prorocol.Constants;
+import com.fly.station.prorocol.ProtocolHelper;
 
 public class PreferenceActivity extends AppCompatActivity {
     public static PreferenceObject preferenceObject = null;
@@ -47,6 +57,78 @@ public class PreferenceActivity extends AppCompatActivity {
         binding = ActivityPreferenceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.tvMcuPath.setText(McuManager.DEVICE_PATH);
+        binding.tvMcuPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] paths = new SerialPortFinder().getAllDevicesPath();
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("device path")
+                        .setItems(paths, (dialog, which) -> {
+                            McuManager.setDevicePath(paths[which]);
+                            binding.tvMcuPath.setText(McuManager.DEVICE_PATH);
+                            preferenceObject.mcu_serial_path = McuManager.DEVICE_PATH;
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
+        binding.tvMcuBaudrate.setText(McuManager.BAUDRATE);
+        binding.tvMcuBaudrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] baudrates = getResources().getStringArray(R.array.baudrates_value);
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("baudrate")
+                        .setItems(baudrates, (dialog, which) -> {
+                            McuManager.setBaudRate(baudrates[which]);
+                            binding.tvMcuBaudrate.setText(McuManager.BAUDRATE);
+                            preferenceObject.mcu_serial_baudrate = Integer.parseInt(McuManager.BAUDRATE);
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
+        binding.tvP201.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PreferenceActivity.this, SerialPortPreferences.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.tvP301.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PreferenceActivity.this, SocketPreferences.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.tvP401Port.setText(String.valueOf(preferenceObject.p401_port));
+        binding.tvP401Port.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] ports = getResources().getStringArray(R.array.p401portss_value);
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("port")
+                        .setItems(ports, (dialog, which) -> {
+                            int port = Integer.parseInt(ports[which]);
+                            ProtocolHelper.ar8030SetPort(port);
+                            binding.tvP401Port.setText(ports[which]);
+                            preferenceObject.p401_port = port;
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
+        binding.swLogMcu.setChecked(McuManager.isShowLog);
+        binding.swLogMcu.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            McuManager.setIsShowLog(isChecked);
+            preferenceObject.show_mcu_log = isChecked;
+            savePreference();
+        });
+
         binding.swLogFfmpeg.setChecked(preferenceObject.show_ffmpeg_log);
         binding.swLogFfmpeg.setOnCheckedChangeListener((buttonView, isChecked) -> {
             FFJNI.setLog(isChecked);
@@ -58,6 +140,13 @@ public class PreferenceActivity extends AppCompatActivity {
         binding.swLogUsb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             UsbDeviceHelper.isShowLog = isChecked;
             preferenceObject.show_usb_log = isChecked;
+            savePreference();
+        });
+
+        binding.swLogChuanyun.setChecked(SensorDevice.isShowLog);
+        binding.swLogChuanyun.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SensorDevice.isShowLog = isChecked;
+            preferenceObject.show_chuanyun_log = isChecked;
             savePreference();
         });
 

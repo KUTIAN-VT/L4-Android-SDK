@@ -1,81 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="end"
-    android:orientation="vertical"
-    android:padding="8dp"
     tools:context=".preference.PreferenceActivity">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sw_log_ffmpeg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ffmpeg log"
-        android:textColor="@android:color/white" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sw_log_usb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="USB log"
-        android:textColor="@android:color/white" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sw_log_ar8030_vpn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="AR8030 VPN log"
-        android:textColor="@android:color/white" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sw_log_ar8030_parse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="AR8030 parse log"
-        android:textColor="@android:color/white" />
-
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <EditText
-            android:id="@+id/et_media_config"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#33000000"
-            android:imeOptions="flagNoExtractUi"
-            android:padding="8dp"
-            android:textColor="#FF66FA45"
-            android:textSize="16sp"
-            tools:text="aaa" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MCU"
+                android:textColor="@android:color/white"
+                android:layout_marginHorizontal="8dp"/>
+            <TextView
+                android:id="@+id/tv_mcu_path"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:text="/dev/ttyHS0" />
+
+            <TextView
+                android:id="@+id/tv_mcu_baudrate"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:text="460800" />
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_p201"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:text="P201 chuanyun protocol"/>
+
+        <TextView
+            android:id="@+id/tv_p301"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:text="P301 chuanyun protocol"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="P401 port"
+                android:textColor="@android:color/white"
+                android:layout_marginHorizontal="8dp"/>
+            <TextView
+                android:id="@+id/tv_p401_port"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:text="3" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_mcu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="MCU log"
+            android:textColor="@android:color/white" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_ffmpeg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="ffmpeg log"
+            android:textColor="@android:color/white" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_usb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="USB log"
+            android:textColor="@android:color/white" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_chuanyun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="chuanyun protocol log"
+            android:textColor="@android:color/white" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_ar8030_vpn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="AR8030 VPN log"
+            android:textColor="@android:color/white" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_log_ar8030_parse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="AR8030 parse log"
+            android:textColor="@android:color/white" />
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.3"
-            android:gravity="center"
-            android:text="MEDIA CONFIG"
-            android:textColor="@color/light_blue_A200"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-    </FrameLayout>
+            android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/tv_save_media_config"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
-        android:background="@android:color/holo_blue_dark"
-        android:gravity="center"
-        android:text="save media config"
-        android:textColor="@android:color/white"
-        android:textSize="12sp" />
-</LinearLayout>
+            <EditText
+                android:id="@+id/et_media_config"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33000000"
+                android:imeOptions="flagNoExtractUi"
+                android:padding="8dp"
+                android:textColor="#FF66FA45"
+                android:textSize="16sp"
+                tools:text="aaa" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.3"
+                android:gravity="center"
+                android:text="MEDIA CONFIG"
+                android:textColor="@color/light_blue_A200"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_save_media_config"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="save media config"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>
