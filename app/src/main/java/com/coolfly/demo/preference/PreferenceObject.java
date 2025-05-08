@@ -23,7 +23,8 @@ public class PreferenceObject implements Serializable {
     public String p201_serial_path = SensorDevice.DEVICE_PATH;
     public Integer p201_serial_baudrate = Integer.parseInt(SensorDevice.BAUDRATE);
 
-    public Integer p401_port = 3;
+    public Integer p401_port_eth = 3;
+    public Integer p401_port_passthrough = 0;
 
     public Boolean show_mcu_log = McuManager.isShowLog;
     public Boolean show_ffmpeg_log = false;

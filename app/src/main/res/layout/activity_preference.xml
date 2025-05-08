@@ -98,11 +98,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="P401 port"
+                    android:text="P401 port eth"
                     android:textColor="@android:color/white"
                     android:layout_marginHorizontal="8dp"/>
                 <TextView
-                    android:id="@+id/tv_p401_port"
+                    android:id="@+id/tv_p401_port_eth"
                     android:layout_width="0dp"
                     android:layout_height="32dp"
                     android:layout_margin="4dp"
@@ -112,6 +112,31 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     tools:text="3" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="P401 port passthrough"
+                    android:textColor="@android:color/white"
+                    android:layout_marginHorizontal="8dp"/>
+                <TextView
+                    android:id="@+id/tv_p401_port_passthrough"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    tools:text="0" />
 
             </LinearLayout>
 

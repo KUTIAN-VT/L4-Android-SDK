@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -113,6 +114,7 @@ public class V4ConfigActivity extends AppCompatActivity {
         protocolHelper.removeListener(protocolListener);
     }
 
+    @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="p401portss_name">
+    <string-array name="p401ports_eth_value">
         <item>2</item>
         <item>3</item>
     </string-array>
-    <string-array name="p401portss_value">
-        <item>2</item>
-        <item>3</item>
+
+    <string-array name="p401ports_passthrough_value">
+        <item>0</item>
+        <item>1</item>
     </string-array>
 
 </resources>

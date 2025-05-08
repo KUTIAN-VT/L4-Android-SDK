@@ -56,7 +56,8 @@ public class MainApplication extends Application {
         /*
          * Initialize P401
          */
-        ProtocolHelper.ar8030SetPort(PreferenceActivity.preferenceObject.p401_port);
+        ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
+        ProtocolHelper.ar8030SetPortPassthrough(PreferenceActivity.preferenceObject.p401_port_passthrough);
         com.fly.station.prorocol.Constants.isShowAR8030VPNLog = PreferenceActivity.preferenceObject.show_ar8030_vpn_log;
         com.fly.station.prorocol.Constants.isShowAR8030ParseLog = PreferenceActivity.preferenceObject.show_ar8030_parse_log;
     }

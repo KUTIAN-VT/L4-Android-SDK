@@ -112,18 +112,35 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
-        binding.tvP401Port.setText(String.valueOf(preferenceObject.p401_port));
-        binding.tvP401Port.setOnClickListener(new View.OnClickListener() {
+        binding.tvP401PortEth.setText(String.valueOf(preferenceObject.p401_port_eth));
+        binding.tvP401PortEth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] ports = getResources().getStringArray(R.array.p401portss_value);
+                String[] ports = getResources().getStringArray(R.array.p401ports_eth_value);
                 new AlertDialog.Builder(PreferenceActivity.this)
-                        .setTitle("port")
+                        .setTitle("eth port")
                         .setItems(ports, (dialog, which) -> {
                             int port = Integer.parseInt(ports[which]);
-                            ProtocolHelper.ar8030SetPort(port);
-                            binding.tvP401Port.setText(ports[which]);
-                            preferenceObject.p401_port = port;
+                            ProtocolHelper.ar8030SetPortEth(port);
+                            binding.tvP401PortEth.setText(ports[which]);
+                            preferenceObject.p401_port_eth = port;
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
+        binding.tvP401PortPassthrough.setText(String.valueOf(preferenceObject.p401_port_passthrough));
+        binding.tvP401PortPassthrough.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] ports = getResources().getStringArray(R.array.p401ports_passthrough_value);
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("passthrough port")
+                        .setItems(ports, (dialog, which) -> {
+                            int port = Integer.parseInt(ports[which]);
+                            ProtocolHelper.ar8030SetPortPassthrough(port);
+                            binding.tvP401PortPassthrough.setText(ports[which]);
+                            preferenceObject.p401_port_passthrough = port;
                             PreferenceActivity.savePreference();
                         }).create().show();
             }
