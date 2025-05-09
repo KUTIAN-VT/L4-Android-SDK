@@ -1,0 +1,48 @@
+<!--debug属性用来决定是否打印logback的日志信息-->
+<configuration debug='false'>
+
+    <!--声明一个属性,用来指定log文件存放的路径-->
+    <property name="LOG_DIR" value="/sdcard/Android/data/com.coolfly.demo/files/logback"/>
+
+    <!--声明一个时间戳-->
+    <timestamp datePattern="yyyyMMdd" key="today"/>
+
+    <!--用于在控制台输出的Appender-->
+    <appender name="LOGCAT" class="ch.qos.logback.classic.android.LogcatAppender">
+        <encoder>
+            <pattern>%-5relative [%thread][%file:%M:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--声明一个RollingFileAppender-->
+    <appender name="NORMALLOG_ROLL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/normallog.roll.${today}.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%date -%n%msg%n
+            </pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/normallog.roll.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!--最大保存7天的日志-->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+
+        <!--文件大于10mb,切换文件-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!--指定normallogger采用NORMALLOG_ROLL_FILE声明的RollingFileAppender输出日志-->
+    <logger name="normallogger">
+        <appender-ref ref="NORMALLOG_ROLL_FILE"/>
+    </logger>
+
+    <!-- Write INFO (and higher-level) messages to the log file -->
+    <root level="TRACE">
+        <appender-ref ref="LOGCAT"/>
+    </root>
+
+</configuration>

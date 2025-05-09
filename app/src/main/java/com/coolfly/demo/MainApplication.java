@@ -13,6 +13,7 @@ import com.coolfly.demo.utils.ImageUtils;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.listeners.FFListener;
 import com.fly.fflibrary.listeners.FFListenerManager;
+import com.fly.loglibrary.Loggers;
 import com.fly.medialibrary.MediaHelper;
 import com.fly.station.prorocol.ProtocolHelper;
 
@@ -28,6 +29,11 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         applicationContext = this;
+
+        // We can write SDK logs to logcat/serial port/file
+        // If you do not want to show logs produced by SDK, just remove dependency of loglibrary.aar
+        Loggers.setBlackList(new String[]{Loggers.LOG_TYPE_FILE});
+
         PreferenceActivity.initPreference();
 
         /*
