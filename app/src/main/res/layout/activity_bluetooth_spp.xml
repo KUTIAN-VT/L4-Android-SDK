@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".BluetoothSPPActivity">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="蓝牙状态"
+                android:textColor="@android:color/white"
+                android:layout_marginHorizontal="8dp"/>
+
+            <TextView
+                android:id="@+id/btnEnableBluetooth"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:text="启用蓝牙" />
+
+            <TextView
+                android:id="@+id/btnScan"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_green_light"
+                android:gravity="center"
+                android:text="搜索设备"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/btnDisconnect"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_red_light"
+                android:gravity="center"
+                android:text="断开连接"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备列表"
+            android:textColor="@android:color/white"
+            android:layout_marginHorizontal="8dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/deviceListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:imeOptions="flagNoExtractUi"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/btnSend"
+                android:layout_width="60dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:background="@android:color/holo_blue_dark"
+                android:gravity="center"
+                android:text="write"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvReceived"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp"
+                    android:textColor="#FF66FA45"
+                    android:textSize="16sp"
+                    tools:text="aaa" />
+            </ScrollView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.3"
+                android:gravity="center"
+                android:text="RECEIVE"
+                android:textColor="@color/light_blue_A200"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

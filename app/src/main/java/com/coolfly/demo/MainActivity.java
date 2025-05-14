@@ -584,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnRtspMulti) {
             Intent intent = new Intent(this, RtspMultiActivity.class);
             startActivity(intent);
-        } else if (view == binding.btnUdp) {
+        } else if (view == binding.btnSdp) {
             Intent intent = new Intent(this, UdpRtpActivity.class);
             startActivity(intent);
         } else if (view == binding.btnChuanyun) {
@@ -595,6 +595,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (view == binding.btnPreference) {
             Intent intent = new Intent(this, PreferenceActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnBluetoothSpp) {
+            Intent intent = new Intent(this, BluetoothSPPActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnUdp) {
+            Intent intent = new Intent(this, UdpActivity.class);
             startActivity(intent);
         }
     }

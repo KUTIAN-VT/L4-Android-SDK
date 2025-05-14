@@ -225,11 +225,11 @@
                 android:text="RTSP multi" />
 
             <Button
-                android:id="@+id/btn_udp"
+                android:id="@+id/btn_sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="UDP" />
+                android:text="SDP" />
 
             <Button
                 android:id="@+id/btn_chuanyun"
@@ -251,6 +251,20 @@
                 android:layout_height="40dp"
                 android:onClick="onClick"
                 android:text="Preference" />
+
+            <Button
+                android:id="@+id/btn_bluetooth_spp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="Bluetooth SPP" />
+
+            <Button
+                android:id="@+id/btn_udp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="UDP" />
 
             <TextView
                 android:id="@+id/tv_sn"
