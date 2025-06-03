@@ -33,6 +33,9 @@ public class PreferenceObject implements Serializable {
     public Boolean show_ar8030_vpn_log = Constants.isShowAR8030VPNLog;
     public Boolean show_ar8030_parse_log = Constants.isShowAR8030ParseLog;
 
+    public Boolean write_log_to_file = false;
+    public Boolean write_log_to_serial = false;
+
     public MediaConfig mediaConfig = new MediaConfig();
 
     public PreferenceObject() {

@@ -30,11 +30,16 @@ public class MainApplication extends Application {
         super.onCreate();
         applicationContext = this;
 
+        PreferenceActivity.initPreference();
+
         // We can write SDK logs to logcat/serial port/file
         // If you do not want to show logs produced by SDK, just remove dependency of loglibrary.aar
-        Loggers.setBlackList(new String[]{Loggers.LOG_TYPE_FILE});
-
-        PreferenceActivity.initPreference();
+        if (!PreferenceActivity.preferenceObject.write_log_to_file) {
+            Loggers.addToBlackList(Loggers.LOG_TYPE_FILE);
+        }
+        if (!PreferenceActivity.preferenceObject.write_log_to_serial) {
+            Loggers.addToBlackList(Loggers.LOG_TYPE_SERIAL);
+        }
 
         /*
          * Initialize media

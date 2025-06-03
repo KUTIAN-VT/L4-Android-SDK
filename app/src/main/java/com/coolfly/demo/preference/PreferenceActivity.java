@@ -22,6 +22,7 @@ import com.coolfly.demo.databinding.ActivityPreferenceBinding;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.fflibrary.FFJNI;
 import com.fly.fflibrary.MediaConfig;
+import com.fly.loglibrary.Loggers;
 import com.fly.station.chuanyun.SensorDevice;
 import com.fly.station.mcu.McuManager;
 import com.fly.station.prorocol.Constants;
@@ -185,6 +186,28 @@ public class PreferenceActivity extends AppCompatActivity {
         binding.swLogAr8030Parse.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Constants.isShowAR8030ParseLog = isChecked;
             preferenceObject.show_ar8030_parse_log = isChecked;
+            savePreference();
+        });
+
+        binding.swLogsFile.setChecked(preferenceObject.write_log_to_file);
+        binding.swLogsFile.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                Loggers.addToBlackList(Loggers.LOG_TYPE_FILE);
+            } else {
+                Loggers.removeFromBlackList(Loggers.LOG_TYPE_FILE);
+            }
+            preferenceObject.write_log_to_file = isChecked;
+            savePreference();
+        });
+
+        binding.swLogsSerial.setChecked(preferenceObject.write_log_to_serial);
+        binding.swLogsSerial.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                Loggers.addToBlackList(Loggers.LOG_TYPE_SERIAL);
+            } else {
+                Loggers.removeFromBlackList(Loggers.LOG_TYPE_SERIAL);
+            }
+            preferenceObject.write_log_to_serial = isChecked;
             savePreference();
         });
 
