@@ -16,12 +16,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.coolfly.demo.databinding.ActivityBluetoothSppBinding;
 import com.fly.station.bluetooth.BluetoothSppManager;
+import com.fly.station.tty.TtyManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,9 @@ public class BluetoothSPPActivity extends AppCompatActivity {
     private BluetoothSppManager bluetoothManager;
     private final List<BluetoothDevice> discoveredDevices = new ArrayList<>();
     private DeviceAdapter deviceAdapter;
+
+    // For tty passthrough
+    private TtyManager ttyManager;
 
     // 请求蓝牙权限的请求码
     private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
@@ -57,6 +62,9 @@ public class BluetoothSPPActivity extends AppCompatActivity {
 
         // 初始化蓝牙管理器
         bluetoothManager = BluetoothSppManager.getInstance(this);
+
+        ttyManager = TtyManager.getInstance();
+        ttyManager.onLine();
 
         // 设置设备列表适配器
         deviceAdapter = new DeviceAdapter(discoveredDevices, device -> {
@@ -93,11 +101,20 @@ public class BluetoothSPPActivity extends AppCompatActivity {
             }
         });
 
+        binding.btnAccept.setOnClickListener(v -> {
+            if (bluetoothManager.isBluetoothEnabled()) {
+                bluetoothManager.accept();
+            } else {
+                Toast.makeText(this, "请先启用蓝牙", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         binding.btnSend.setOnClickListener(v -> {
             EditText messageInput = binding.etMessage;
             String message = messageInput.getText().toString();
             if (!message.isEmpty() && bluetoothManager.isConnected()) {
-                bluetoothManager.sendData(message.getBytes());
+                byte[] data = message.getBytes();
+                bluetoothManager.sendData(data, data.length);
                 messageInput.setText("");
             } else if (!bluetoothManager.isConnected()) {
                 Toast.makeText(this, "请先连接设备", Toast.LENGTH_SHORT).show();
@@ -106,6 +123,14 @@ public class BluetoothSPPActivity extends AppCompatActivity {
 
         binding.btnDisconnect.setOnClickListener(v -> {
             bluetoothManager.disconnect();
+        });
+
+        binding.swPassthrough.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                ttyManager.addPassthrough(bluetoothManager);
+            } else {
+                ttyManager.removePassthrough(bluetoothManager);
+            }
         });
 
         // 添加蓝牙事件监听器
@@ -126,7 +151,7 @@ public class BluetoothSPPActivity extends AppCompatActivity {
     // 请求蓝牙权限
     private void requestBluetoothPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String[] permissions = bluetoothManager.getRequiredBluetoothPermissions();
+            String[] permissions = BluetoothSppManager.getRequiredBluetoothPermissions();
             requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSIONS);
         }
     }
@@ -149,7 +174,10 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         }
     }
 
-    private String getDeviceName(BluetoothDevice device) {
+    private String getDeviceName(@Nullable BluetoothDevice device) {
+        if (device == null) {
+            return "SPP Server";
+        }
         @SuppressLint("MissingPermission")
         String name = device.getName();
         return name != null ? name : device.getAddress();
@@ -195,14 +223,18 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onConnecting(BluetoothDevice device) {
+        public void onConnecting(@Nullable BluetoothDevice device) {
             runOnUiThread(() -> {
-                binding.tvStatus.setText("正在连接到 " + getDeviceName(device) + "...");
+                if (device != null) {
+                    binding.tvStatus.setText("正在连接到 " + getDeviceName(device) + "...");
+                } else {
+                    binding.tvStatus.setText("Server正在等待连接请求");
+                }
             });
         }
 
         @Override
-        public void onConnected(BluetoothDevice device) {
+        public void onConnected(@Nullable BluetoothDevice device) {
             runOnUiThread(() -> {
                 binding.tvStatus.setText("已连接到 " + getDeviceName(device));
                 Toast.makeText(BluetoothSPPActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
@@ -218,6 +250,13 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onAcceptFailed(String message) {
+            runOnUiThread(() -> {
+                binding.tvStatus.setText("Server已停止");
+            });
+        }
+
+        @Override
         public void onDisconnected() {
             runOnUiThread(() -> {
                 binding.tvStatus.setText("已断开连接");
@@ -228,7 +267,18 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         public void onDataReceived(byte[] data, int length) {
             runOnUiThread(() -> {
                 String message = new String(data, 0, length);
-                binding.tvReceived.append(message + "\n");
+                binding.tvReceived.append("rev: " + message + "\n");
+
+                // 自动滚动到底部
+                binding.scrollView.fullScroll(View.FOCUS_DOWN);
+            });
+        }
+
+        @Override
+        public void onDataSent(byte[] data, int length) {
+            runOnUiThread(() -> {
+                String message = new String(data, 0, length);
+                binding.tvReceived.append("send: " + message + "\n");
 
                 // 自动滚动到底部
                 binding.scrollView.fullScroll(View.FOCUS_DOWN);
@@ -248,6 +298,9 @@ public class BluetoothSPPActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // 释放资源
+        if (binding.swPassthrough.isChecked()) {
+            ttyManager.removePassthrough(bluetoothManager);
+        }
         bluetoothManager.removeListener(bluetoothListener);
         bluetoothManager.release();
     }

@@ -20,6 +20,7 @@
     <string name="bandwidth_v4">带宽V4</string>
     <string name="config_v4">配置V4</string>
     <string name="passthrough_v4">透传V4</string>
+    <string name="switch_dev_v4">切换DEV V4</string>
     <string name="sysinfo_v4">版本V4</string>
 
     <string name="restart_to_work">APP重启之后生效</string>

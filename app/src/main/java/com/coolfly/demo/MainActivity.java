@@ -576,6 +576,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnPassthroughV4) {
             Intent intent = new Intent(this, V4PassthroughActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnSwitchDevV4) {
+            Intent intent = new Intent(this, V4SwitchDevActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnSysinfoV4) {
             protocolHelper.ar8030GetSysInfo(false);
         } else if (view == binding.btnRtsp) {

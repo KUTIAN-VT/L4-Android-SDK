@@ -20,6 +20,7 @@
     <string name="bandwidth_v4">V4 bandwidth</string>
     <string name="config_v4">V4 config</string>
     <string name="passthrough_v4">V4 passthrough</string>
+    <string name="switch_dev_v4">V4 switch dev</string>
     <string name="sysinfo_v4">V4 info</string>
 
     <string name="restart_to_work">It takes effect after restarting the APP</string>

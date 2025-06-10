@@ -81,6 +81,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".V4SwitchDevActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".BluetoothSPPActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />

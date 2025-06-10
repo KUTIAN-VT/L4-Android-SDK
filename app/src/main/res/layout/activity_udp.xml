@@ -147,6 +147,14 @@
                 android:text="write"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_passthrough"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="透传"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <FrameLayout
@@ -173,7 +181,7 @@
                 android:layout_height="match_parent"
                 android:alpha="0.3"
                 android:gravity="center"
-                android:text="RECEIVE"
+                android:text="DATA"
                 android:textColor="@color/light_blue_A200"
                 android:textSize="40sp"
                 android:textStyle="bold" />

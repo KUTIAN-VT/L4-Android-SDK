@@ -204,6 +204,13 @@
                 android:text="@string/passthrough_v4" />
 
             <Button
+                android:id="@+id/btn_switch_dev_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="@string/switch_dev_v4" />
+
+            <Button
                 android:id="@+id/btn_sysinfo_v4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"

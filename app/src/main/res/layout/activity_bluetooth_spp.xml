@@ -19,14 +19,6 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="蓝牙状态"
-                android:textColor="@android:color/white"
-                android:layout_marginHorizontal="8dp"/>
-
-            <TextView
                 android:id="@+id/btnEnableBluetooth"
                 android:layout_width="0dp"
                 android:layout_height="32dp"
@@ -34,9 +26,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/holo_orange_light"
                 android:gravity="center"
+                android:text="启用蓝牙"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:text="启用蓝牙" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/btnScan"
@@ -47,6 +39,18 @@
                 android:background="@android:color/holo_green_light"
                 android:gravity="center"
                 android:text="搜索设备"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/btnAccept"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_green_light"
+                android:gravity="center"
+                android:text="创建Server"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
 
@@ -65,11 +69,19 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:text="蓝牙状态"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
             android:text="设备列表"
-            android:textColor="@android:color/white"
-            android:layout_marginHorizontal="8dp"/>
+            android:textColor="@android:color/white" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -98,6 +110,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,6 +135,14 @@
                 android:text="write"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_passthrough"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="透传"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <FrameLayout
@@ -148,7 +169,7 @@
                 android:layout_height="match_parent"
                 android:alpha="0.3"
                 android:gravity="center"
-                android:text="RECEIVE"
+                android:text="DATA"
                 android:textColor="@color/light_blue_A200"
                 android:textSize="40sp"
                 android:textStyle="bold" />
