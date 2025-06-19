@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".V41VNActivity">
+
+    <TextView
+        android:id="@+id/tv_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textColor="@android:color/white"
+        android:text="Current mde:"/>
+
+    <TextView
+        android:id="@+id/tv_1vn"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="Switch to 1V4 mode, must reboot Android system!"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_1v1"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/holo_green_light"
+        android:gravity="center"
+        android:text="Restore to 1V1 mode, must reboot Android system!"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_slot0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/holo_red_light"
+            android:text="slot0"/>
+
+        <EditText
+            android:id="@+id/et_mac0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/white"
+            android:maxLength="8"
+            tools:text="AABBCCDD"/>
+
+        <TextView
+            android:id="@+id/tv_pair0"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Pair"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_read_mac0"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Read mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_write_mac0"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Write mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_clear_mac_0"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Clear mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_slot1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/holo_red_light"
+            android:text="slot1"/>
+
+        <EditText
+            android:id="@+id/et_mac1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/white"
+            android:maxLength="8"
+            tools:text="AABBCCDD"/>
+
+        <TextView
+            android:id="@+id/tv_pair1"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Pair"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_read_mac1"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Read mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_write_mac1"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Write mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_clear_mac_1"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Clear mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_slot2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/holo_red_light"
+            android:text="slot2"/>
+
+        <EditText
+            android:id="@+id/et_mac2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/white"
+            android:maxLength="8"
+            tools:text="AABBCCDD"/>
+
+        <TextView
+            android:id="@+id/tv_pair2"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Pair"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_read_mac2"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Read mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_write_mac2"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Write mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_clear_mac_2"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Clear mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_slot3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@android:color/holo_red_light"
+            android:text="slot3"/>
+
+        <EditText
+            android:id="@+id/et_mac3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/white"
+            android:maxLength="8"
+            tools:text="AABBCCDD"/>
+
+        <TextView
+            android:id="@+id/tv_pair3"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Pair"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_read_mac3"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Read mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_write_mac3"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Write mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_clear_mac_3"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Clear mac"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

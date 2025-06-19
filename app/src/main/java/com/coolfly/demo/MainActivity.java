@@ -579,6 +579,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnSwitchDevV4) {
             Intent intent = new Intent(this, V4SwitchDevActivity.class);
             startActivity(intent);
+        } else if (view == binding.btn1vnV4) {
+            Intent intent = new Intent(this, V41VNActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnSysinfoV4) {
             protocolHelper.ar8030GetSysInfo(false);
         } else if (view == binding.btnRtsp) {
@@ -875,34 +878,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairTimeOut(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onPairTimeOut(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot) {
             // Now only for 8030, pair manually time out
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(MainActivity.this, "Pair time out", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Pair timeout on slot " + slot, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onPairSuccess(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onPairSuccess(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot) {
             // Now only for 8030, pair manually success
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(MainActivity.this, "Pair success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Pair success on slot " + slot, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onLinked(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onLinked(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot) {
             // Now only for 8030, link ready automatically
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(MainActivity.this, "Link ready", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Link ready on slot " + slot, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onLinkLost(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+        public void onLinkLost(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot) {
             // Now only for 8030, link lost automatically
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(MainActivity.this, "Link lost", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Link lost on slot " + slot, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -919,6 +922,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResetConfigJson(boolean result, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onSlotMac(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot, String mac) {
+
         }
 
     };

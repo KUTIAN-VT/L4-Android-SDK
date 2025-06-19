@@ -13,6 +13,10 @@ import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 
+/**
+ * Switch dev for slot0. If you are in 1v1 mode, you can use this.
+ * If you are in 1vN mode, you can use the V41VNActivity to switch dev for other slots.
+ */
 public class V4SwitchDevActivity extends AppCompatActivity {
 
     private ActivityV4SwitchDevBinding binding;
@@ -34,7 +38,7 @@ public class V4SwitchDevActivity extends AppCompatActivity {
                 return;
             }
             String mac = binding.etMac.getText().toString();
-            if (!protocolHelper.ar8030SetSlotMac(mac)) {
+            if (!protocolHelper.ar8030SetSlotMac(0, mac)) {
                 Toast.makeText(V4SwitchDevActivity.this, "mac parse error", Toast.LENGTH_SHORT).show();
             }
         });
@@ -61,22 +65,22 @@ public class V4SwitchDevActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairTimeOut(DEVICE_TYPE deviceType) {
+        public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onPairSuccess(DEVICE_TYPE deviceType) {
+        public void onPairSuccess(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinked(DEVICE_TYPE deviceType) {
+        public void onLinked(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinkLost(DEVICE_TYPE deviceType) {
+        public void onLinkLost(DEVICE_TYPE deviceType, int i) {
 
         }
 
@@ -93,6 +97,11 @@ public class V4SwitchDevActivity extends AppCompatActivity {
         @Override
         public void onResetConfigJson(boolean result, DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+
         }
     };
 

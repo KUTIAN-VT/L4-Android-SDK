@@ -69,7 +69,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            protocolHelper.ar8030WritePassthroughData(bytesToWrite, bytesToWrite.length);
+                            protocolHelper.ar8030WritePassthroughData(0, bytesToWrite, bytesToWrite.length);
                         }
                     }).start();
                 } else {
@@ -109,22 +109,22 @@ public class V4PassthroughActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairTimeOut(DEVICE_TYPE deviceType) {
+        public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onPairSuccess(DEVICE_TYPE deviceType) {
+        public void onPairSuccess(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinked(DEVICE_TYPE deviceType) {
+        public void onLinked(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinkLost(DEVICE_TYPE deviceType) {
+        public void onLinkLost(DEVICE_TYPE deviceType, int i) {
 
         }
 
@@ -141,6 +141,11 @@ public class V4PassthroughActivity extends AppCompatActivity {
         @Override
         public void onResetConfigJson(boolean result, DEVICE_TYPE deviceType, boolean isRemote) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+
         }
     };
 }

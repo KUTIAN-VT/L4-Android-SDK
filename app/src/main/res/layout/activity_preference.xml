@@ -140,6 +140,85 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="P401 1VN"
+                    android:textColor="@android:color/white"
+                    android:layout_marginHorizontal="8dp"/>
+                <TextView
+                    android:id="@+id/tv_p401_dev_count"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    tools:text="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="P401 rx buffer"
+                    android:textColor="@android:color/white"
+                    android:layout_marginHorizontal="8dp"/>
+                <EditText
+                    android:id="@+id/et_p401_rx_buffer"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:inputType="number"
+                    tools:text="60000" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="tx buffer"
+                    android:textColor="@android:color/white"
+                    android:layout_marginHorizontal="8dp"/>
+                <EditText
+                    android:id="@+id/et_p401_tx_buffer"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:inputType="number"
+                    tools:text="40000" />
+                <TextView
+                    android:id="@+id/tv_p401_buffer_save"
+                    android:layout_width="80dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:text="save" />
+
+            </LinearLayout>
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_log_mcu"
                 android:layout_width="wrap_content"

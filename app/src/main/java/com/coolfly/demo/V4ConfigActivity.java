@@ -127,22 +127,22 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPairTimeOut(DEVICE_TYPE deviceType) {
+        public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onPairSuccess(DEVICE_TYPE deviceType) {
+        public void onPairSuccess(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinked(DEVICE_TYPE deviceType) {
+        public void onLinked(DEVICE_TYPE deviceType, int i) {
 
         }
 
         @Override
-        public void onLinkLost(DEVICE_TYPE deviceType) {
+        public void onLinkLost(DEVICE_TYPE deviceType, int i) {
 
         }
 
@@ -174,6 +174,11 @@ public class V4ConfigActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(V4ConfigActivity.this, "reset config json failed", Toast.LENGTH_SHORT).show();
             }
+        }
+
+        @Override
+        public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+
         }
     };
 

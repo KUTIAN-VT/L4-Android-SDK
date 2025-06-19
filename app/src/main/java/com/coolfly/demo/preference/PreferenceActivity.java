@@ -147,6 +147,39 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvP401DevCount.setText(String.valueOf(preferenceObject.p401_dev_count));
+        binding.tvP401DevCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] counts = getResources().getStringArray(R.array.p401dev_count_value);
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("dev count")
+                        .setItems(counts, (dialog, which) -> {
+                            int count = Integer.parseInt(counts[which]);
+                            // devCount不能中途更改，只能在初始化时设置一次，修改后需要重启，并在初始化的时候生效
+//                            ProtocolHelper.ar8030Set1VNMode(count);
+                            binding.tvP401DevCount.setText(counts[which]);
+                            preferenceObject.p401_dev_count = count;
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
+        binding.etP401RxBuffer.setText(String.valueOf(preferenceObject.p401_rx_buffer));
+        binding.etP401TxBuffer.setText(String.valueOf(preferenceObject.p401_tx_buffer));
+        binding.tvP401BufferSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int rxBuffer = Integer.parseInt(binding.etP401RxBuffer.getText().toString());
+                int txBuffer = Integer.parseInt(binding.etP401TxBuffer.getText().toString());
+
+                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer);
+                preferenceObject.p401_rx_buffer = rxBuffer;
+                preferenceObject.p401_tx_buffer = txBuffer;
+                PreferenceActivity.savePreference();
+            }
+        });
+
         binding.swLogMcu.setChecked(McuManager.isShowLog);
         binding.swLogMcu.setOnCheckedChangeListener((buttonView, isChecked) -> {
             McuManager.setIsShowLog(isChecked);

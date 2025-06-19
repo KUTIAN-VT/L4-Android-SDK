@@ -25,6 +25,9 @@ public class PreferenceObject implements Serializable {
 
     public Integer p401_port_eth = 3;
     public Integer p401_port_passthrough = 0;
+    public Integer p401_dev_count = 1;
+    public Integer p401_rx_buffer = 60000;
+    public Integer p401_tx_buffer =40000;
 
     public Boolean show_mcu_log = McuManager.isShowLog;
     public Boolean show_ffmpeg_log = false;
