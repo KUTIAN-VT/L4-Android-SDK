@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityV4PassthroughBinding;
 import com.coolfly.demo.preference.PreferenceActivity;
-import com.fly.station.mcu.McuManager;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
@@ -29,7 +28,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
         binding = ActivityV4PassthroughBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.tvP401PortPassthrough.setText(McuManager.DEVICE_PATH);
+        binding.tvP401PortPassthrough.setText(PreferenceActivity.preferenceObject.p401_port_passthrough);
         binding.tvP401PortPassthrough.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,11 +90,10 @@ public class V4PassthroughActivity extends AppCompatActivity {
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
-            if (baseFlyPacket instanceof PassthroughData8030) {
-                PassthroughData8030 usbPacket = (PassthroughData8030) baseFlyPacket;
-                final StringBuilder stringBuilder = new StringBuilder(usbPacket.length * 3);
-                for (int i = 0; i < usbPacket.length; i++) {
-                    stringBuilder.append(String.format("%02X ", usbPacket.data[i]));
+            if (baseFlyPacket instanceof PassthroughData8030 passthroughData) {
+                final StringBuilder stringBuilder = new StringBuilder(passthroughData.length * 3);
+                for (int i = 0; i < passthroughData.length; i++) {
+                    stringBuilder.append(String.format("%02X ", passthroughData.data[i]));
                 }
                 runOnUiThread(() -> {
                     binding.tvRead.setText(stringBuilder.toString());
