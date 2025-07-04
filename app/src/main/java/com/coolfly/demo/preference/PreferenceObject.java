@@ -24,7 +24,7 @@ public class PreferenceObject implements Serializable {
     public Integer p201_serial_baudrate = Integer.parseInt(SensorDevice.BAUDRATE);
 
     public Integer p401_port_eth = 3;
-    public Integer p401_port_passthrough = 0;
+    public Integer p401_port_passthrough = 2;
     public Integer p401_dev_count = 1;
     public Integer p401_rx_buffer = 60000;
     public Integer p401_tx_buffer =40000;

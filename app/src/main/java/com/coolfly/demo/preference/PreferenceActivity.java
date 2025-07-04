@@ -122,10 +122,14 @@ public class PreferenceActivity extends AppCompatActivity {
                         .setTitle("eth port")
                         .setItems(ports, (dialog, which) -> {
                             int port = Integer.parseInt(ports[which]);
-                            ProtocolHelper.ar8030SetPortEth(port);
-                            binding.tvP401PortEth.setText(ports[which]);
-                            preferenceObject.p401_port_eth = port;
-                            PreferenceActivity.savePreference();
+                            boolean res = ProtocolHelper.ar8030SetPortEth(port);
+                            if (res) {
+                                binding.tvP401PortEth.setText(ports[which]);
+                                preferenceObject.p401_port_eth = port;
+                                PreferenceActivity.savePreference();
+                            } else {
+                                Toast.makeText(PreferenceActivity.this, "set eth port failed", Toast.LENGTH_SHORT).show();
+                            }
                         }).create().show();
             }
         });
@@ -139,10 +143,14 @@ public class PreferenceActivity extends AppCompatActivity {
                         .setTitle("passthrough port")
                         .setItems(ports, (dialog, which) -> {
                             int port = Integer.parseInt(ports[which]);
-                            ProtocolHelper.ar8030SetPortPassthrough(port);
-                            binding.tvP401PortPassthrough.setText(ports[which]);
-                            preferenceObject.p401_port_passthrough = port;
-                            PreferenceActivity.savePreference();
+                            boolean res = ProtocolHelper.ar8030SetPortPassthrough(port);
+                            if (res) {
+                                binding.tvP401PortPassthrough.setText(ports[which]);
+                                preferenceObject.p401_port_passthrough = port;
+                                PreferenceActivity.savePreference();
+                            } else {
+                                Toast.makeText(PreferenceActivity.this, "set passthrough port failed", Toast.LENGTH_SHORT).show();
+                            }
                         }).create().show();
             }
         });
