@@ -565,8 +565,9 @@ public class MainActivity extends AppCompatActivity {
             getUpgradeFis(REQ_OTA_V4);
         } else if (view == binding.btnPairV4) {
             protocolHelper.ar8030StartPair();
-        } else if (view == binding.btnGetChannelInfoV4) {
-            protocolHelper.ar8030GetChannelInfo(false);
+        } else if (view == binding.btnSetChannelInfoV4) {
+            Intent intent = new Intent(this, V4SetChannelActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnSetBandwidthV4) {
             Intent intent = new Intent(this, V4BandwidthActivity.class);
             startActivity(intent);
