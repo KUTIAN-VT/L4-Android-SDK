@@ -28,7 +28,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
         binding = ActivityV4PassthroughBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.tvP401PortPassthrough.setText(PreferenceActivity.preferenceObject.p401_port_passthrough);
+        binding.tvP401PortPassthrough.setText("" + PreferenceActivity.preferenceObject.p401_port_passthrough);
         binding.tvP401PortPassthrough.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
