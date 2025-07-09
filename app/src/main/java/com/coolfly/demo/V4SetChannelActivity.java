@@ -84,6 +84,34 @@ public class V4SetChannelActivity extends AppCompatActivity {
                     }).create().show();
         });
 
+        binding.tvSetBandMinidbLocal.setOnClickListener(v -> {
+            String[] channels = new String[3];
+            channels[0] = "2G";
+            channels[1] = "5G";
+            channels[2] = "Auto";
+            new AlertDialog.Builder(V4SetChannelActivity.this)
+                    .setTitle("set band in local minidb")
+                    .setItems(channels, (dialog, which) -> {
+                        boolean isAuto = which == 2;
+                        int bandIndex = which + 1;
+                        protocolHelper.ar8030SetBandMiniDb(isAuto, bandIndex, false);
+                    }).create().show();
+        });
+
+        binding.tvSetBandMinidbPeer.setOnClickListener(v -> {
+            String[] channels = new String[3];
+            channels[0] = "2G";
+            channels[1] = "5G";
+            channels[2] = "Auto";
+            new AlertDialog.Builder(V4SetChannelActivity.this)
+                    .setTitle("set band in peer minidb")
+                    .setItems(channels, (dialog, which) -> {
+                        boolean isAuto = which == 2;
+                        int bandIndex = which + 1;
+                        protocolHelper.ar8030SetBandMiniDb(isAuto, bandIndex, true);
+                    }).create().show();
+        });
+
         protocolHelper.addListener(protocolListener);
     }
 
