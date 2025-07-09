@@ -584,7 +584,14 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, V41VNActivity.class);
             startActivity(intent);
         } else if (view == binding.btnSysinfoV4) {
-            protocolHelper.ar8030GetSysInfo(false);
+            String[] sides = new String[2];
+            sides[0] = "AP";
+            sides[1] = "DEV";
+            new android.app.AlertDialog.Builder(MainActivity.this)
+                    .setTitle("get fw version")
+                    .setItems(sides, (dialog, which) -> {
+                        protocolHelper.ar8030GetSysInfo(which == 1);
+                    }).create().show();
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
