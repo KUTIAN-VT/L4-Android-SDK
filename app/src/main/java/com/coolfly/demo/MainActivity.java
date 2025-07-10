@@ -66,6 +66,7 @@ import com.fly.station.gpio.HostSwitch;
 import com.fly.station.prorocol.Fly;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
+import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.UpgradeHelper;
 import com.fly.station.prorocol.bean.ACK;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
@@ -934,7 +935,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot, String mac) {
+            // Now only for 8030
+        }
 
+        @Override
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+            // Now only for 8030
         }
 
     };

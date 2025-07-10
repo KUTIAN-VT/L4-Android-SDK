@@ -2,6 +2,7 @@ package com.coolfly.demo;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.coolfly.demo.databinding.ActivityV4SetChannelBinding;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
+import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BandInfo8030;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.ChanInfo8030;
@@ -233,7 +235,15 @@ public class V4SetChannelActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+            // Now only for 8030
+        }
 
+        @Override
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+            // Now only for 8030
+            binding.tvCallback.append("set radio: radioType = " + radioType + ", isSuccess = " + isSuccess + "\n");
+            // 自动滚动到底部
+            binding.scrollView.fullScroll(View.FOCUS_DOWN);
         }
     };
 

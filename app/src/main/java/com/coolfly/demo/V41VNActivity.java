@@ -13,6 +13,7 @@ import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
+import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 
 /**
@@ -286,6 +287,7 @@ public class V41VNActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int slot, String mac) {
+            // Now only for 8030
             switch (slot) {
                 case 0:
                     binding.etMac0.setText(mac);
@@ -300,6 +302,11 @@ public class V41VNActivity extends AppCompatActivity {
                     binding.etMac3.setText(mac);
                     break;
             }
+        }
+
+        @Override
+        public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+            // Now only for 8030
         }
     };
 

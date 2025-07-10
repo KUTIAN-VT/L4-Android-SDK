@@ -14,6 +14,7 @@ import com.coolfly.demo.databinding.ActivityV4ConfigBinding;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
+import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 
 import java.io.FileInputStream;
@@ -178,7 +179,12 @@ public class V4ConfigActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+            // Now only for 8030
+        }
 
+        @Override
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+            // Now only for 8030
         }
     };
 
