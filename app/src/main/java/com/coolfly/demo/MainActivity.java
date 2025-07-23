@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
         });
         // decode mode ends
 
+        UsbDeviceHelper.isShowLog = PreferenceActivity.preferenceObject.show_usb_log;
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
         usbDeviceHelper.addListener(usbDeviceListener);
 
