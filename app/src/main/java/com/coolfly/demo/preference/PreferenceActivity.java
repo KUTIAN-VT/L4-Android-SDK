@@ -155,6 +155,18 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.etP401Mtu.setText(String.valueOf(preferenceObject.p401_mtu));
+        binding.tvP401MtuSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int mtu = Integer.parseInt(binding.etP401Mtu.getText().toString());
+
+                ProtocolHelper.ar8030SetMTU(mtu);
+                preferenceObject.p401_mtu = mtu;
+                PreferenceActivity.savePreference();
+            }
+        });
+
         binding.tvP401DevCount.setText(String.valueOf(preferenceObject.p401_dev_count));
         binding.tvP401DevCount.setOnClickListener(new View.OnClickListener() {
             @Override

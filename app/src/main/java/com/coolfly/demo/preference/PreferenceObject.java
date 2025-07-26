@@ -30,6 +30,7 @@ public class PreferenceObject implements Serializable {
     public Integer p401_tx_buffer_slot0_port2 = 40000;
     public Integer p401_rx_buffer_slot0_port3 = 60000;
     public Integer p401_tx_buffer_slot0_port3 = 40000;
+    public Integer p401_mtu = 2500;
 
     public Boolean show_mcu_log = McuManager.isShowLog;
     public Boolean show_ffmpeg_log = false;

@@ -71,6 +71,8 @@ public class MainApplication extends Application {
         ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
         // Set port for USB passthrough, default is 2.
         ProtocolHelper.ar8030SetPortPassthrough(PreferenceActivity.preferenceObject.p401_port_passthrough);
+        // Set MTU for P401. Default value is 2500.
+        ProtocolHelper.ar8030SetMTU(PreferenceActivity.preferenceObject.p401_mtu);
         // 1 means 1v1 mode. >1 means 1vN mode, where N is the number of dev.
         // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
         ProtocolHelper.ar8030Set1VNMode(PreferenceActivity.preferenceObject.p401_dev_count);
