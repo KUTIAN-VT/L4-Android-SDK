@@ -173,17 +173,32 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
-        binding.etP401RxBuffer.setText(String.valueOf(preferenceObject.p401_rx_buffer));
-        binding.etP401TxBuffer.setText(String.valueOf(preferenceObject.p401_tx_buffer));
-        binding.tvP401BufferSave.setOnClickListener(new View.OnClickListener() {
+        binding.etP401RxBufferPort2.setText(String.valueOf(preferenceObject.p401_rx_buffer_slot0_port2));
+        binding.etP401TxBufferPort2.setText(String.valueOf(preferenceObject.p401_tx_buffer_slot0_port2));
+        binding.tvP401BufferPort2Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int rxBuffer = Integer.parseInt(binding.etP401RxBuffer.getText().toString());
-                int txBuffer = Integer.parseInt(binding.etP401TxBuffer.getText().toString());
+                int rxBuffer = Integer.parseInt(binding.etP401RxBufferPort2.getText().toString());
+                int txBuffer = Integer.parseInt(binding.etP401TxBufferPort2.getText().toString());
 
-                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer);
-                preferenceObject.p401_rx_buffer = rxBuffer;
-                preferenceObject.p401_tx_buffer = txBuffer;
+                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 2);
+                preferenceObject.p401_rx_buffer_slot0_port2 = rxBuffer;
+                preferenceObject.p401_tx_buffer_slot0_port2 = txBuffer;
+                PreferenceActivity.savePreference();
+            }
+        });
+
+        binding.etP401RxBufferPort3.setText(String.valueOf(preferenceObject.p401_rx_buffer_slot0_port3));
+        binding.etP401TxBufferPort3.setText(String.valueOf(preferenceObject.p401_tx_buffer_slot0_port3));
+        binding.tvP401BufferPort3Save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int rxBuffer = Integer.parseInt(binding.etP401RxBufferPort3.getText().toString());
+                int txBuffer = Integer.parseInt(binding.etP401TxBufferPort3.getText().toString());
+
+                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 3);
+                preferenceObject.p401_rx_buffer_slot0_port3 = rxBuffer;
+                preferenceObject.p401_tx_buffer_slot0_port3 = txBuffer;
                 PreferenceActivity.savePreference();
             }
         });

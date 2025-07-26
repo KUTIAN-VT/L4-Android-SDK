@@ -67,13 +67,19 @@ public class MainApplication extends Application {
         /*
          * Initialize P401
          */
+        // Set port for eth, default is 3.
         ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
+        // Set port for USB passthrough, default is 2.
         ProtocolHelper.ar8030SetPortPassthrough(PreferenceActivity.preferenceObject.p401_port_passthrough);
         // 1 means 1v1 mode. >1 means 1vN mode, where N is the number of dev.
         // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
         ProtocolHelper.ar8030Set1VNMode(PreferenceActivity.preferenceObject.p401_dev_count);
-        ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer, PreferenceActivity.preferenceObject.p401_tx_buffer);
+        // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
+        ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2, PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2, 0,2);
+        ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3, PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3, 0,3);
+        // Switch log of VPN
         com.fly.station.prorocol.Constants.isShowAR8030VPNLog = PreferenceActivity.preferenceObject.show_ar8030_vpn_log;
+        // Switch log of package parsing
         com.fly.station.prorocol.Constants.isShowAR8030ParseLog = PreferenceActivity.preferenceObject.show_ar8030_parse_log;
     }
 

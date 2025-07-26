@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="P401 port passthrough"
+            android:text="P401 slot 0 passthrough port"
             android:textColor="@android:color/white"
             android:layout_marginHorizontal="8dp"/>
 
