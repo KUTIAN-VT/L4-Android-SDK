@@ -161,9 +161,13 @@ public class PreferenceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int mtu = Integer.parseInt(binding.etP401Mtu.getText().toString());
 
-                ProtocolHelper.ar8030SetMTU(mtu);
-                preferenceObject.p401_mtu = mtu;
-                PreferenceActivity.savePreference();
+                boolean res = ProtocolHelper.ar8030SetMTU(mtu);
+                if (res) {
+                    preferenceObject.p401_mtu = mtu;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -193,10 +197,14 @@ public class PreferenceActivity extends AppCompatActivity {
                 int rxBuffer = Integer.parseInt(binding.etP401RxBufferPort2.getText().toString());
                 int txBuffer = Integer.parseInt(binding.etP401TxBufferPort2.getText().toString());
 
-                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 2);
-                preferenceObject.p401_rx_buffer_slot0_port2 = rxBuffer;
-                preferenceObject.p401_tx_buffer_slot0_port2 = txBuffer;
-                PreferenceActivity.savePreference();
+                boolean res = ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 2);
+                if (res) {
+                    preferenceObject.p401_rx_buffer_slot0_port2 = rxBuffer;
+                    preferenceObject.p401_tx_buffer_slot0_port2 = txBuffer;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -208,10 +216,14 @@ public class PreferenceActivity extends AppCompatActivity {
                 int rxBuffer = Integer.parseInt(binding.etP401RxBufferPort3.getText().toString());
                 int txBuffer = Integer.parseInt(binding.etP401TxBufferPort3.getText().toString());
 
-                ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 3);
-                preferenceObject.p401_rx_buffer_slot0_port3 = rxBuffer;
-                preferenceObject.p401_tx_buffer_slot0_port3 = txBuffer;
-                PreferenceActivity.savePreference();
+                boolean res = ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, 0, 3);
+                if (res) {
+                    preferenceObject.p401_rx_buffer_slot0_port3 = rxBuffer;
+                    preferenceObject.p401_tx_buffer_slot0_port3 = txBuffer;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
