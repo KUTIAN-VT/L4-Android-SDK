@@ -49,14 +49,16 @@ public class V4PassthroughActivity extends AppCompatActivity {
         binding.tvConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                protocolHelper.ar8030OpenPassthrough();
+                // Open passthrough connection for slot 0
+                protocolHelper.ar8030OpenPassthrough(0);
             }
         });
 
         binding.tvDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                protocolHelper.ar8030ClosePassthrough();
+                // Close passthrough connection for slot 0
+                protocolHelper.ar8030ClosePassthrough(0);
             }
         });
 
@@ -69,6 +71,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            // Write passthrough data to slot 0
                             protocolHelper.ar8030WritePassthroughData(0, bytesToWrite, bytesToWrite.length);
                         }
                     }).start();
