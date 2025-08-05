@@ -42,6 +42,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.coolfly.demo.chuanyun.ChuanYunActivity;
 import com.coolfly.demo.databinding.ActivityMainBinding;
+import com.coolfly.demo.debug.DebugViewManager;
 import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
@@ -319,6 +320,14 @@ public class MainActivity extends AppCompatActivity {
                         videoMock2 = null;
                     }
                 }
+            }
+        });
+
+        binding.swV4Debug.setChecked(DebugViewManager.INSTANCE.isShowing());
+        binding.swV4Debug.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                DebugViewManager.INSTANCE.show(isChecked, MainActivity.this);
             }
         });
     }
