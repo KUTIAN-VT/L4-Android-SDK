@@ -171,6 +171,38 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.etP401Ip.setText(preferenceObject.p401_ip);
+        binding.tvP401IpSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = binding.etP401Ip.getText().toString();
+
+                boolean res = ProtocolHelper.ar8030SetIP(ip);
+                if (res) {
+                    preferenceObject.p401_ip = ip;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        binding.etP401SubnetMask.setText(preferenceObject.p401_subnet_mask);
+        binding.tvP401SubnetMaskSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String subnetMask = binding.etP401SubnetMask.getText().toString();
+
+                boolean res = ProtocolHelper.ar8030SetSubnetMask(subnetMask);
+                if (res) {
+                    preferenceObject.p401_subnet_mask = subnetMask;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         binding.tvP401DevCount.setText(String.valueOf(preferenceObject.p401_dev_count));
         binding.tvP401DevCount.setOnClickListener(new View.OnClickListener() {
             @Override
