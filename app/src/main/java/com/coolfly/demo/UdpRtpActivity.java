@@ -51,8 +51,6 @@ public class UdpRtpActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
-
         String[] codecArr = new String[]{MediaHelper.ENCODING.H264.name(), MediaHelper.ENCODING.H265.name()};
         ArrayAdapter<String> decodeModeAdapter = new ArrayAdapter<String>(this, R.layout.item_select, codecArr);
         decodeModeAdapter.setDropDownViewResource(R.layout.item_dropdown);

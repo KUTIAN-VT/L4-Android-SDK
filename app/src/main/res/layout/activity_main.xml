@@ -247,11 +247,18 @@
                 android:text="RTSP multi" />
 
             <Button
-                android:id="@+id/btn_sdp"
+                android:id="@+id/btn_rtp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:onClick="onClick"
-                android:text="SDP" />
+                android:text="RTP" />
+
+            <Button
+                android:id="@+id/btn_rtp_multi"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="RTP multi" />
 
             <Button
                 android:id="@+id/btn_chuanyun"

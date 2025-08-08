@@ -66,6 +66,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".UdpRtpMultiActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".preference.PreferenceActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
