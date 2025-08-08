@@ -100,7 +100,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
                     stringBuilder.append(String.format("%02X ", passthroughData.data[i]));
                 }
                 runOnUiThread(() -> {
-                    binding.tvRead.setText(stringBuilder.toString());
+                    binding.tvRead.setText("received " + passthroughData.length + " bytes:\n" + stringBuilder);
                 });
             }
         }

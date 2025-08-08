@@ -8,7 +8,6 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
-import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.coolfly.demo.MainApplication
 import com.coolfly.demo.databinding.ViewDebug8030Binding
@@ -33,6 +32,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 
 /**
  * @Description:
@@ -48,27 +49,6 @@ class Debug8030View : LinearLayout {
     private lateinit var handler: Handler
 
     constructor(context: Context) : super(context) {
-        init(context)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init(context)
-    }
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
         init(context)
     }
 
@@ -214,11 +194,33 @@ class Debug8030View : LinearLayout {
         recordJob = null
     }
 
+    private var read8030ChannelInfoTimer: Timer? = null
+
+    private fun startRead8030ChannelInfoTimer() {
+        if (read8030ChannelInfoTimer == null) {
+            read8030ChannelInfoTimer = Timer()
+            val task: TimerTask = object : TimerTask() {
+                override fun run() {
+                    protocolHelper.ar8030GetChannelInfo(false)
+                }
+            }
+            read8030ChannelInfoTimer!!.schedule(task, 2000, 2000)
+        }
+    }
+
+    private fun stopRead8030ChannelInfoTimer() {
+        read8030ChannelInfoTimer?.let {
+            it.cancel()
+            it.purge()
+            read8030ChannelInfoTimer = null
+        }
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         usbDeviceHelper.addListener(usbDeviceListener)
         protocolHelper.addListener(protocolListener)
+        startRead8030ChannelInfoTimer()
     }
 
     override fun onDetachedFromWindow() {
@@ -227,6 +229,7 @@ class Debug8030View : LinearLayout {
         protocolHelper.removeListener(protocolListener)
         stopRecord()
         viewJob.cancel()
+        stopRead8030ChannelInfoTimer()
     }
 
     private fun updateData(status: RcStatus8030) {

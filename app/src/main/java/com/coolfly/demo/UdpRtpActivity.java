@@ -1,9 +1,7 @@
 package com.coolfly.demo;
 
-import static com.coolfly.demo.utils.Constants.SP_NAME;
 import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
 
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
