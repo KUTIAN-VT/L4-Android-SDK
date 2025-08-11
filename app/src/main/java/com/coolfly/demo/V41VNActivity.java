@@ -305,7 +305,7 @@ public class V41VNActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+        public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
             // Now only for 8030
         }
     };

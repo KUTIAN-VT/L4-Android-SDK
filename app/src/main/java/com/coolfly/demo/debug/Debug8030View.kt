@@ -401,9 +401,10 @@ class Debug8030View : LinearLayout {
         }
 
         override fun onSetRadio(
-            p0: com.fly.station.prorocol.DEVICE_TYPE?,
-            p1: RADIO_TYPE?,
-            p2: Boolean
+            deviceType: com.fly.station.prorocol.DEVICE_TYPE?,
+            radioType: RADIO_TYPE?,
+            isSuccess: Boolean,
+            isRemote: Boolean
         ) {
 
         }

@@ -952,7 +952,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess) {
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
             // Now only for 8030
         }
 
