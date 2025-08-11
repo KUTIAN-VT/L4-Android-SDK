@@ -588,6 +588,12 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnPassthroughV4) {
             Intent intent = new Intent(this, V4PassthroughActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnFreqListV4) {
+            Intent intent = new Intent(this, V4FreqListActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnPwrV4) {
+            Intent intent = new Intent(this, V4PwrActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnSwitchDevV4) {
             Intent intent = new Intent(this, V4SwitchDevActivity.class);
             startActivity(intent);

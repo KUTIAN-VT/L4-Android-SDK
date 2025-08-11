@@ -212,6 +212,20 @@
                 android:text="@string/passthrough_v4" />
 
             <Button
+                android:id="@+id/btn_freq_list_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="V4 Freq List" />
+
+            <Button
+                android:id="@+id/btn_pwr_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="V4 Power" />
+
+            <Button
                 android:id="@+id/btn_switch_dev_v4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"

@@ -86,6 +86,14 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".V4FreqListActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".V4PwrActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".V4SwitchDevActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
