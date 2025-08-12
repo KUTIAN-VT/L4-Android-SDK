@@ -307,6 +307,16 @@ public class V41VNActivity extends AppCompatActivity {
         @Override
         public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
             // Now only for 8030
+            switch (radioType) {
+                case SLOT_MAC:
+                    Toast.makeText(V41VNActivity.this, "set slot mac, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    break;
+                case CANDIDATES:
+                    Toast.makeText(V41VNActivity.this, "set candidates, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
