@@ -609,6 +609,9 @@ public class MainActivity extends AppCompatActivity {
                     .setItems(sides, (dialog, which) -> {
                         protocolHelper.ar8030GetSysInfo(which == 1);
                     }).create().show();
+        } else if (view == binding.btnStatusV4) {
+            Intent intent = new Intent(this, V4StatusActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
             startActivity(intent);
