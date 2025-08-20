@@ -7,7 +7,7 @@ def versionTime = new Date().format("yyyy-MM-dd-HH-mm")
 
 android {
     namespace 'com.coolfly.demo'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.coolfly.demo"
@@ -62,13 +62,13 @@ dependencies {
     implementation project(path: ':medialibrary')
     implementation project(path: ':loglibrary')
 
-    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'com.alibaba:fastjson:1.2.83'
     implementation 'com.licheedev:android-serialport:2.1.5'
     implementation 'com.jcraft:jsch:0.1.55'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
