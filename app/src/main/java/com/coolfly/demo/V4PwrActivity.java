@@ -122,11 +122,11 @@ public class V4PwrActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
             switch (radioType) {
                 case POWER:
-                    Toast.makeText(V4PwrActivity.this, "set power, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(V4PwrActivity.this, "set power, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

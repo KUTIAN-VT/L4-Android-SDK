@@ -132,14 +132,14 @@ public class V4BandwidthActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
             switch (radioType) {
                 case BANDWIDTH:
-                    Toast.makeText(V4BandwidthActivity.this, "set bandwidth, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(V4BandwidthActivity.this, "set bandwidth, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
                     break;
                 case FRAME_CHANGE:
-                    Toast.makeText(V4BandwidthActivity.this, "set frame change, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(V4BandwidthActivity.this, "set frame change, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

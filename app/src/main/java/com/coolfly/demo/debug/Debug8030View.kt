@@ -404,6 +404,8 @@ class Debug8030View : LinearLayout {
             deviceType: com.fly.station.prorocol.DEVICE_TYPE?,
             radioType: RADIO_TYPE?,
             isSuccess: Boolean,
+            errcode: Int,
+            errMessage: String?,
             isRemote: Boolean
         ) {
 

@@ -89,7 +89,7 @@ public class V4StatusActivity extends AppCompatActivity {
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) { }
 
         @Override
-        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) { }
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) { }
     };
 }
 

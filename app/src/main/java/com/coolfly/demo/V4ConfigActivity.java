@@ -183,11 +183,11 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, boolean isRemote) {
+        public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
             switch (radioType) {
                 case RESET_MINIDB:
-                    Toast.makeText(V4ConfigActivity.this, "reset minidb, isSuccess = " + isSuccess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(V4ConfigActivity.this, "reset minidb, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
