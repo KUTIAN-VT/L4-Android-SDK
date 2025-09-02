@@ -254,6 +254,13 @@
                 android:text="V4 Status" />
 
             <Button
+                android:id="@+id/btn_radio_test"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="V4 Radio Test" />
+
+            <Button
                 android:id="@+id/btn_rtsp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"

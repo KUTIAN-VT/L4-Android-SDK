@@ -594,6 +594,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnPwrV4) {
             Intent intent = new Intent(this, V4PwrActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnRadioTest) {
+            Intent intent = new Intent(this, RadioTestActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnSwitchDevV4) {
             Intent intent = new Intent(this, V4SwitchDevActivity.class);
             startActivity(intent);
