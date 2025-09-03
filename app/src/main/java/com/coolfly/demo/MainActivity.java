@@ -642,6 +642,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnUdp) {
             Intent intent = new Intent(this, UdpActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnMqtt) {
+            Intent intent = new Intent(this, MqttActivity.class);
+            startActivity(intent);
         }
     }
 

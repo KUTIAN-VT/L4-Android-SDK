@@ -52,3 +52,9 @@
 -keep class org.slf4j.** { *; }
 -keepattributes *Annotation*
 -dontwarn ch.qos.logback.core.net.*
+
+#mqtt
+-keep class org.eclipse.paho.** { *; }
+-dontwarn org.eclipse.paho.*
+-keep class info.mqtt.android.service.** { *; }
+-dontwarn info.mqtt.android.service.*

@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/black"
+    tools:context=".MqttActivity">
+
+    <!-- 左侧配置面板 -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- MQTT连接配置 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MQTT连接配置"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Broker地址 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Broker地址"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etBrokerHost"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:hint="如: 192.168.1.100"
+                    android:textColorHint="@android:color/darker_gray" />
+
+            </LinearLayout>
+
+            <!-- 端口 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="端口"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etBrokerPort"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:inputType="number"
+                    android:hint="1883" />
+
+            </LinearLayout>
+
+            <!-- 客户端ID -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="客户端ID"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etClientId"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:hint="客户端唯一标识" />
+
+            </LinearLayout>
+
+            <!-- 用户名 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="用户名"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:hint="可选" />
+
+            </LinearLayout>
+
+            <!-- 密码 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="密码"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:inputType="textPassword"
+                    android:hint="可选" />
+
+            </LinearLayout>
+
+            <!-- 连接状态和按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="状态: 未连接"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnConnect"
+                    android:layout_width="80dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_light"
+                    android:text="连接"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <!-- 分隔线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp" />
+
+            <!-- 主题订阅配置 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="主题订阅"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- 主题 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="主题"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etTopic"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:hint="如: test/topic" />
+
+            </LinearLayout>
+
+            <!-- QoS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="QoS"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etQos"
+                    android:layout_width="60dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:inputType="number"
+                    android:hint="0-2" />
+
+                <Button
+                    android:id="@+id/btnSubscribe"
+                    android:layout_width="60dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_light"
+                    android:text="订阅"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:enabled="false" />
+
+                <Button
+                    android:id="@+id/btnUnsubscribe"
+                    android:layout_width="80dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_orange_light"
+                    android:text="取消订阅"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+            <!-- 已订阅主题列表 -->
+            <TextView
+                android:id="@+id/tvSubscribedTopics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="已订阅主题: 无"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <!-- 分隔线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp" />
+
+            <!-- 消息发布配置 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="消息发布"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- 消息类型选择 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="消息类型"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Spinner
+                    android:id="@+id/spMessageType"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp" />
+
+            </LinearLayout>
+
+            <!-- 消息内容 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="消息内容"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:gravity="top|start"
+                    android:hint="输入要发送的消息..." />
+
+            </LinearLayout>
+
+            <!-- 保留消息选项 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/cbRetained"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="保留消息"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnPublish"
+                    android:layout_width="60dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_red_light"
+                    android:text="发布"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- 右侧消息显示面板 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 顶部工具栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="消息记录"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnClear"
+                android:layout_width="60dp"
+                android:layout_height="32dp"
+                android:background="@android:color/darker_gray"
+                android:text="清空"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- 消息显示区域 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvMessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="#FF66FA45"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:text="等待MQTT消息...\n" />
+
+            </ScrollView>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

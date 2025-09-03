@@ -32,4 +32,13 @@ public class Constants {
     public static final int DECODE_MODE_RTSP_FF_GL = 1;
     public static final int DECODE_MODE_RTSP_FF_SW_SWS = 2;
     public static final int DECODE_MODE_RTSP_FF_JNI_MEDIACODEC = 3;
+
+    // MQTT配置相关常量
+    public static final String PREF_MQTT_BROKER_HOST = "MQTT_BROKER_HOST";
+    public static final String PREF_MQTT_BROKER_PORT = "MQTT_BROKER_PORT";
+    public static final String PREF_MQTT_CLIENT_ID = "MQTT_CLIENT_ID";
+    public static final String PREF_MQTT_USERNAME = "MQTT_USERNAME";
+    public static final String PREF_MQTT_PASSWORD = "MQTT_PASSWORD";
+    public static final String PREF_MQTT_TOPIC = "MQTT_TOPIC";
+    public static final String PREF_MQTT_QOS = "MQTT_QOS";
 }

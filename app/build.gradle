@@ -80,4 +80,8 @@ dependencies {
     // If you do not want to show logs produced by SDK, just remove dependency of loglibrary.aar and following dependencies.
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
+
+    // MQTT dependencies
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'com.github.hannesa2:paho.mqtt.android:4.4.1'
 }
