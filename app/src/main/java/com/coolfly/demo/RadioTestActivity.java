@@ -277,7 +277,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 appendStatus("✓ 信道设置成功");
                 appendStatus("步骤5: 设置功率为 " + powerValue + " dBm");
                 currentSetStep = SetStep.SET_POWER;
-                protocolHelper.ar8030SetPwr(false, powerValue, 0, 0, false);
+                protocolHelper.ar8030SetPwrMiniDb(false, powerValue, 0, 0, false);
                 break;
                 
             case SET_POWER:
@@ -307,7 +307,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 appendStatus("✓ 信道模式重置成功");
                 appendStatus("步骤3: 重置功率设置");
                 currentResetStep = ResetStep.SET_POWER;
-                protocolHelper.ar8030SetPwr(true, 0, 6, 24, false);
+                protocolHelper.ar8030SetPwrMiniDb(true, 0, 6, 24, false);
                 break;
                 
             case SET_POWER:

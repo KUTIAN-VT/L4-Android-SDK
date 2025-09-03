@@ -53,7 +53,7 @@ public class V4PwrActivity extends AppCompatActivity {
                     pwrMin = Integer.parseInt(etPwrMin.getText().toString());
                     pwrMax = Integer.parseInt(etPwrMax.getText().toString());
                 }
-                protocolHelper.ar8030SetPwr(auto, pwrInit, pwrMin, pwrMax, remote);
+                protocolHelper.ar8030SetPwrMiniDb(auto, pwrInit, pwrMin, pwrMax, remote);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "format error", Toast.LENGTH_SHORT).show();
@@ -125,7 +125,7 @@ public class V4PwrActivity extends AppCompatActivity {
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
             switch (radioType) {
-                case POWER:
+                case POWER_MINIDB:
                     Toast.makeText(V4PwrActivity.this, "set power, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
                     break;
                 default:
