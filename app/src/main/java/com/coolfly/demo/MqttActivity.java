@@ -149,6 +149,20 @@ public class MqttActivity extends AppCompatActivity {
                 updatePublishButtonState();
             }
         });
+        
+        // 发布主题输入框变化监听
+        binding.etPublishTopic.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                updatePublishButtonState();
+            }
+        });
     }
 
     private void connectMqtt() {
@@ -275,13 +289,13 @@ public class MqttActivity extends AppCompatActivity {
     }
 
     private void publishMessage() {
-        String topic = binding.etTopic.getText().toString().trim();
+        String topic = binding.etPublishTopic.getText().toString().trim();
         String message = binding.etMessage.getText().toString();
         String qosStr = binding.etQos.getText().toString().trim();
         boolean retained = binding.cbRetained.isChecked();
         
         if (TextUtils.isEmpty(topic)) {
-            Toast.makeText(this, "请输入主题", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请输入发布主题", Toast.LENGTH_SHORT).show();
             return;
         }
         
@@ -307,6 +321,8 @@ public class MqttActivity extends AppCompatActivity {
             appendMessage("发送 -> 主题: " + topic + "\n类型: 明文\n消息: " + message + "\nQoS: " + qos + 
                     "\n保留: " + (retained ? "是" : "否") + "\n时间: " + 
                     new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date()) + "\n\n");
+            // 保存发布主题配置
+            savePublishTopicConfig(topic);
         } else {
             // 发送二进制消息（将十六进制字符串转换为字节数组）
             try {
@@ -316,6 +332,8 @@ public class MqttActivity extends AppCompatActivity {
                         "\n长度: " + payload.length + " bytes\nQoS: " + qos + 
                         "\n保留: " + (retained ? "是" : "否") + "\n时间: " + 
                         new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date()) + "\n\n");
+                // 保存发布主题配置
+                savePublishTopicConfig(topic);
             } catch (Exception e) {
                 Toast.makeText(this, "二进制数据格式错误，请输入十六进制字符串，如：48656C6C6F", Toast.LENGTH_SHORT).show();
                 return;
@@ -372,7 +390,7 @@ public class MqttActivity extends AppCompatActivity {
 
     private void updatePublishButtonState() {
         boolean canPublish = mqttHelper != null && mqttHelper.isConnected() && 
-                !TextUtils.isEmpty(binding.etTopic.getText().toString().trim()) &&
+                !TextUtils.isEmpty(binding.etPublishTopic.getText().toString().trim()) &&
                 !TextUtils.isEmpty(binding.etMessage.getText().toString());
         binding.btnPublish.setEnabled(canPublish);
     }
@@ -465,9 +483,11 @@ public class MqttActivity extends AppCompatActivity {
         // 加载主题配置
         String savedTopic = sp.getString(Constants.PREF_MQTT_TOPIC, "test/topic");
         String savedQos = sp.getString(Constants.PREF_MQTT_QOS, "1");
+        String savedPublishTopic = sp.getString(Constants.PREF_MQTT_PUBLISH_TOPIC, "publish/topic");
         
         binding.etTopic.setText(savedTopic);
         binding.etQos.setText(savedQos);
+        binding.etPublishTopic.setText(savedPublishTopic);
     }
 
     /**
@@ -497,6 +517,19 @@ public class MqttActivity extends AppCompatActivity {
         
         editor.putString(Constants.PREF_MQTT_TOPIC, topic);
         editor.putString(Constants.PREF_MQTT_QOS, String.valueOf(qos));
+        
+        editor.apply();
+    }
+
+    /**
+     * 保存发布主题配置
+     * @param publishTopic 发布主题名称
+     */
+    private void savePublishTopicConfig(String publishTopic) {
+        SharedPreferences sp = getSharedPreferences(Constants.SP_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        
+        editor.putString(Constants.PREF_MQTT_PUBLISH_TOPIC, publishTopic);
         
         editor.apply();
     }

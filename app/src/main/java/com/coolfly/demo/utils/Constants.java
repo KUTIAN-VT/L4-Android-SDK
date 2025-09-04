@@ -41,4 +41,5 @@ public class Constants {
     public static final String PREF_MQTT_PASSWORD = "MQTT_PASSWORD";
     public static final String PREF_MQTT_TOPIC = "MQTT_TOPIC";
     public static final String PREF_MQTT_QOS = "MQTT_QOS";
+    public static final String PREF_MQTT_PUBLISH_TOPIC = "MQTT_PUBLISH_TOPIC";
 }

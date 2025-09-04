@@ -339,6 +339,33 @@
 
             </LinearLayout>
 
+            <!-- 发布主题 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="发布主题"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etPublishTopic"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:hint="如: publish/topic" />
+
+            </LinearLayout>
+
             <!-- 消息内容 -->
             <LinearLayout
                 android:layout_width="match_parent"
