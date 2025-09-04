@@ -46,6 +46,7 @@ public class RadioTestActivity extends AppCompatActivity {
         SET_BAND,
         SET_CHANNEL_MODE,
         SET_CHANNEL,
+        SET_POWER_AUTO,
         SET_POWER,
         START_PAIR,
         COMPLETED
@@ -55,7 +56,7 @@ public class RadioTestActivity extends AppCompatActivity {
     private enum ResetStep {
         SET_BAND_MODE,
         SET_CHANNEL_MODE,
-        SET_POWER,
+        SET_POWER_AUTO,
         COMPLETED
     }
     
@@ -275,16 +276,33 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_CHANNEL:
                 appendStatus("✓ 信道设置成功");
-                appendStatus("步骤5: 设置功率为 " + powerValue + " dBm");
+                appendStatus("步骤5: 设置功率为手动模式");
+                currentSetStep = SetStep.SET_POWER_AUTO;
+                protocolHelper.ar8030SetPwrAuto(false, false);
+                break;
+                
+            case SET_POWER_AUTO:
+                appendStatus("✓ 功率模式设置成功");
+                appendStatus("步骤6: 设置功率为 " + powerValue + " dBm");
                 currentSetStep = SetStep.SET_POWER;
-                protocolHelper.ar8030SetPwrMiniDb(false, powerValue, 0, 0, false);
+                protocolHelper.ar8030SetPwr(powerValue, false);
                 break;
                 
             case SET_POWER:
                 appendStatus("✓ 功率设置成功");
-                appendStatus("步骤6: 开始对频");
-                currentSetStep = SetStep.START_PAIR;
-                protocolHelper.ar8030StartPair();
+                appendStatus("步骤7: 检查对频状态");
+                
+                // 检查是否已经对频
+                if (protocolHelper.ar8030IsPaired(0)) {
+                    appendStatus("✓ 已经对频，跳过对频步骤");
+                    appendStatus("🎉 所有设置已完成！");
+                    currentSetStep = SetStep.COMPLETED;
+                    finishSetOperation(true);
+                } else {
+                    appendStatus("未对频，开始对频...");
+                    currentSetStep = SetStep.START_PAIR;
+                    protocolHelper.ar8030StartPair();
+                }
                 break;
                 
             case START_PAIR:
@@ -305,12 +323,12 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_CHANNEL_MODE:
                 appendStatus("✓ 信道模式重置成功");
-                appendStatus("步骤3: 重置功率设置");
-                currentResetStep = ResetStep.SET_POWER;
-                protocolHelper.ar8030SetPwrMiniDb(true, 0, 6, 24, false);
+                appendStatus("步骤3: 重置功率设置为自动模式");
+                currentResetStep = ResetStep.SET_POWER_AUTO;
+                protocolHelper.ar8030SetPwrAuto(true, false);
                 break;
                 
-            case SET_POWER:
+            case SET_POWER_AUTO:
                 appendStatus("✓ 功率重置成功");
                 appendStatus("🎉 所有重置已完成！");
                 currentResetStep = ResetStep.COMPLETED;
