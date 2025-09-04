@@ -240,6 +240,13 @@
                 android:text="V4 1VN" />
 
             <Button
+                android:id="@+id/btn_mac_settings_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="V4 MAC Settings" />
+
+            <Button
                 android:id="@+id/btn_sysinfo_v4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"

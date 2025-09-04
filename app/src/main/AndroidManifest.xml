@@ -110,6 +110,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".V4MacSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".BluetoothSPPActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
