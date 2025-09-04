@@ -39,6 +39,8 @@ public class RadioTestActivity extends AppCompatActivity {
     private long[] freq = null;
     private String[] frequencyOptions = null;
     private int selectedFrequencyIndex = 0;
+
+    private static final int INTERVAL = 500; // 500ms间隔
     
     // 设置操作的状态管理
     private enum SetStep {
@@ -250,10 +252,11 @@ public class RadioTestActivity extends AppCompatActivity {
         });
     }
 
-    private void handleSetStepSuccess() {
+    private void handleSetStepSuccess() throws InterruptedException {
         switch (currentSetStep) {
             case SET_BAND_MODE:
                 appendStatus("✓ 频段模式设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤2: 设置频段为 " + bands[selectedBandIndex]);
                 currentSetStep = SetStep.SET_BAND;
                 protocolHelper.ar8030SetBand(selectedBandIndex);
@@ -261,6 +264,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_BAND:
                 appendStatus("✓ 频段设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤3: 设置信道模式为手动");
                 currentSetStep = SetStep.SET_CHANNEL_MODE;
                 protocolHelper.ar8030SetChanMode(false);
@@ -268,6 +272,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_CHANNEL_MODE:
                 appendStatus("✓ 信道模式设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤4: 设置信道频率");
                 currentSetStep = SetStep.SET_CHANNEL;
                 // 这里使用频率值作为信道索引，实际项目中可能需要转换
@@ -276,6 +281,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_CHANNEL:
                 appendStatus("✓ 信道设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤5: 设置功率为手动模式");
                 currentSetStep = SetStep.SET_POWER_AUTO;
                 protocolHelper.ar8030SetPwrAuto(false, false);
@@ -283,6 +289,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_POWER_AUTO:
                 appendStatus("✓ 功率模式设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤6: 设置功率为 " + powerValue + " dBm");
                 currentSetStep = SetStep.SET_POWER;
                 protocolHelper.ar8030SetPwr(powerValue, false);
@@ -290,6 +297,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_POWER:
                 appendStatus("✓ 功率设置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤7: 检查对频状态");
                 
                 // 检查是否已经对频
@@ -300,6 +308,7 @@ public class RadioTestActivity extends AppCompatActivity {
                     finishSetOperation(true);
                 } else {
                     appendStatus("未对频，开始对频...");
+                    Thread.sleep(INTERVAL);
                     currentSetStep = SetStep.START_PAIR;
                     protocolHelper.ar8030StartPair();
                 }
@@ -312,10 +321,11 @@ public class RadioTestActivity extends AppCompatActivity {
         }
     }
 
-    private void handleResetStepSuccess() {
+    private void handleResetStepSuccess() throws InterruptedException {
         switch (currentResetStep) {
             case SET_BAND_MODE:
                 appendStatus("✓ 频段模式重置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤2: 设置信道模式为自动");
                 currentResetStep = ResetStep.SET_CHANNEL_MODE;
                 protocolHelper.ar8030SetChanMode(true);
@@ -323,6 +333,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 
             case SET_CHANNEL_MODE:
                 appendStatus("✓ 信道模式重置成功");
+                Thread.sleep(INTERVAL);
                 appendStatus("步骤3: 重置功率设置为自动模式");
                 currentResetStep = ResetStep.SET_POWER_AUTO;
                 protocolHelper.ar8030SetPwrAuto(true, false);
@@ -474,31 +485,42 @@ public class RadioTestActivity extends AppCompatActivity {
         @Override
         public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // 这是主要的回调方法，处理所有无线电设置的结果
-            runOnUiThread(() -> {
-                String message = "回调: " + radioType + ", 成功: " + isSuccess;
-                if (!isSuccess) {
-                    message += ", 错误: " + errMessage;
-                }
-                appendStatus(message);
-                
-                if (isSuccess) {
-                    // 根据当前操作继续下一步
-                    if (isSettingInProgress) {
-                        handleSetStepSuccess();
-                    } else if (isResetInProgress) {
-                        handleResetStepSuccess();
+            String message = "回调: " + radioType + ", 成功: " + isSuccess;
+            if (!isSuccess) {
+                message += ", 错误: " + errMessage;
+            }
+            appendStatus(message);
+
+            if (isSuccess) {
+                // 根据当前操作继续下一步，延迟500ms执行
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isSettingInProgress) {
+                            try {
+                                handleSetStepSuccess();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (isResetInProgress) {
+                            try {
+                                handleResetStepSuccess();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
-                } else {
-                    // 操作失败，停止当前流程
-                    if (isSettingInProgress) {
-                        appendStatus("❌ 设置失败: " + errMessage);
-                        finishSetOperation(false);
-                    } else if (isResetInProgress) {
-                        appendStatus("❌ 重置失败: " + errMessage);
-                        finishResetOperation(false);
-                    }
+                }).start();
+            } else {
+                // 操作失败，停止当前流程
+                if (isSettingInProgress) {
+                    appendStatus("❌ 设置失败: " + errMessage);
+                    finishSetOperation(false);
+                } else if (isResetInProgress) {
+                    appendStatus("❌ 重置失败: " + errMessage);
+                    finishResetOperation(false);
                 }
-            });
+            }
         }
     };
 }
