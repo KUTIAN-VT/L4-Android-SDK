@@ -1,5 +1,7 @@
 package com.coolfly.demo;
 
+import static com.coolfly.demo.utils.Constants.SP_NAME;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,8 +22,6 @@ import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.ChanInfo8030;
 import com.fly.station.prorocol.bean.RcStatus8030;
-
-import static com.coolfly.demo.utils.Constants.SP_NAME;
 
 public class RadioTestActivity extends AppCompatActivity {
 
@@ -252,6 +252,7 @@ public class RadioTestActivity extends AppCompatActivity {
         });
     }
 
+    // 在非UI线程执行
     private void handleSetStepSuccess() throws InterruptedException {
         switch (currentSetStep) {
             case SET_BAND_MODE:
@@ -321,6 +322,7 @@ public class RadioTestActivity extends AppCompatActivity {
         }
     }
 
+    // 在非UI线程执行
     private void handleResetStepSuccess() throws InterruptedException {
         switch (currentResetStep) {
             case SET_BAND_MODE:
@@ -349,29 +351,33 @@ public class RadioTestActivity extends AppCompatActivity {
     }
 
     private void finishSetOperation(boolean success) {
-        isSettingInProgress = false;
-        binding.btnSet.setEnabled(true);
-        binding.btnReset.setEnabled(true);
-        
-        if (success) {
-            Toast.makeText(this, "设置完成", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "设置失败", Toast.LENGTH_SHORT).show();
-            appendStatus("❌ 设置操作失败");
-        }
+        runOnUiThread(() -> {
+            isSettingInProgress = false;
+            binding.btnSet.setEnabled(true);
+            binding.btnReset.setEnabled(true);
+
+            if (success) {
+                Toast.makeText(this, "设置完成", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "设置失败", Toast.LENGTH_SHORT).show();
+                appendStatus("❌ 设置操作失败");
+            }
+        });
     }
 
     private void finishResetOperation(boolean success) {
-        isResetInProgress = false;
-        binding.btnSet.setEnabled(true);
-        binding.btnReset.setEnabled(true);
-        
-        if (success) {
-            Toast.makeText(this, "重置完成", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "重置失败", Toast.LENGTH_SHORT).show();
-            appendStatus("❌ 重置操作失败");
-        }
+        runOnUiThread(() -> {
+            isResetInProgress = false;
+            binding.btnSet.setEnabled(true);
+            binding.btnReset.setEnabled(true);
+
+            if (success) {
+                Toast.makeText(this, "重置完成", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "重置失败", Toast.LENGTH_SHORT).show();
+                appendStatus("❌ 重置操作失败");
+            }
+        });
     }
 
     @Override
@@ -426,30 +432,26 @@ public class RadioTestActivity extends AppCompatActivity {
         @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
             // 配对超时
-            runOnUiThread(() -> {
-                appendStatus("❌ 对频超时 (slot: " + i + ")");
-                
-                // 如果正在执行设置流程的对频步骤，结束设置流程
-                if (isSettingInProgress && currentSetStep == SetStep.START_PAIR) {
-                    appendStatus("❌ 设置失败: 对频超时");
-                    finishSetOperation(false);
-                }
-            });
+            appendStatus("❌ 对频超时 (slot: " + i + ")");
+
+            // 如果正在执行设置流程的对频步骤，结束设置流程
+            if (isSettingInProgress && currentSetStep == SetStep.START_PAIR) {
+                appendStatus("❌ 设置失败: 对频超时");
+                finishSetOperation(false);
+            }
         }
 
         @Override
         public void onPairSuccess(DEVICE_TYPE deviceType, int i) {
             // 配对成功
-            runOnUiThread(() -> {
-                appendStatus("✓ 对频成功 (slot: " + i + ")");
-                
-                // 如果正在执行设置流程的对频步骤，继续下一步
-                if (isSettingInProgress && currentSetStep == SetStep.START_PAIR) {
-                    appendStatus("🎉 所有设置已完成！");
-                    currentSetStep = SetStep.COMPLETED;
-                    finishSetOperation(true);
-                }
-            });
+            appendStatus("✓ 对频成功 (slot: " + i + ")");
+
+            // 如果正在执行设置流程的对频步骤，继续下一步
+            if (isSettingInProgress && currentSetStep == SetStep.START_PAIR) {
+                appendStatus("🎉 所有设置已完成！");
+                currentSetStep = SetStep.COMPLETED;
+                finishSetOperation(true);
+            }
         }
 
         @Override
