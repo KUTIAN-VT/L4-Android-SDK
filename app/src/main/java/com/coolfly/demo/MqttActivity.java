@@ -25,23 +25,26 @@ public class MqttActivity extends AppCompatActivity {
 
     private ActivityMqttBinding binding;
     private MqttHelper mqttHelper;
-    
+
+    // 消息显示模式
+    private boolean isLatestMessageMode = false;
+
     // 消息类型
     private enum MessageType {
         TEXT("明文"), BINARY("二进制");
-        
+
         private final String displayName;
-        
+
         MessageType(String displayName) {
             this.displayName = displayName;
         }
-        
+
         @Override
         public String toString() {
             return displayName;
         }
     }
-    
+
     private MessageType currentMessageType = MessageType.TEXT;
 
     @Override
@@ -107,6 +110,17 @@ public class MqttActivity extends AppCompatActivity {
         // 清空消息显示
         binding.btnClear.setOnClickListener(v -> {
             binding.tvMessages.setText("");
+        });
+
+        // 消息显示模式切换
+        binding.switchLatestMessage.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isLatestMessageMode = isChecked;
+            if (isChecked) {
+                // 切换到最新消息模式时，清空当前显示，只保留最后一条消息的逻辑
+                // 不需要额外操作，因为appendMessage会处理
+            } else {
+                // 切换回列表模式时，保持当前内容
+            }
         });
         
         // 消息类型选择
@@ -360,7 +374,13 @@ public class MqttActivity extends AppCompatActivity {
     }
 
     private void appendMessage(String message) {
-        binding.tvMessages.append(message);
+        if (isLatestMessageMode) {
+            // 最新消息模式：只显示最新一条消息
+            binding.tvMessages.setText(message);
+        } else {
+            // 列表模式：累积显示所有消息
+            binding.tvMessages.append(message);
+        }
         // 自动滚动到底部
         binding.scrollView.fullScroll(View.FOCUS_DOWN);
     }
