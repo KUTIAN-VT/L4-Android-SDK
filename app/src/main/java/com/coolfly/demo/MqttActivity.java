@@ -272,7 +272,9 @@ public class MqttActivity extends AppCompatActivity {
         MqttHelper.MqttTopicListener listener = createTopicListener();
         
         // 订阅主题
-        mqttHelper.subscribe(topic, qos, listener);
+        MqttHelper.MessageType messageType = currentMessageType == MessageType.TEXT ?
+                MqttHelper.MessageType.TEXT : MqttHelper.MessageType.BINARY;
+        mqttHelper.subscribe(topic, qos, listener, messageType);
         updateSubscribedTopicsList();
         
         // 保存主题配置
