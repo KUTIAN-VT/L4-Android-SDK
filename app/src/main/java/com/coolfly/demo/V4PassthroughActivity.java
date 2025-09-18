@@ -3,6 +3,7 @@ package com.coolfly.demo;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Keep;
@@ -19,6 +20,8 @@ import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.PassthroughData8030;
 
 public class V4PassthroughActivity extends AppCompatActivity {
+
+    private static final String TAG = "V4Passthrough";
 
     private ActivityV4PassthroughBinding binding;
     private final ProtocolHelper protocolHelper = ProtocolHelper.getInstance();
@@ -82,12 +85,33 @@ public class V4PassthroughActivity extends AppCompatActivity {
         });
 
         protocolHelper.addListener(protocolListener);
+
+        // 设置开关状态监听器
+        binding.switchLogMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updateLogStatusDisplay(isChecked);
+        });
+
+        // 初始化状态显示
+        updateLogStatusDisplay(binding.switchLogMode.isChecked());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         protocolHelper.removeListener(protocolListener);
+    }
+
+    /**
+     * 更新日志模式状态显示
+     */
+    private void updateLogStatusDisplay(boolean isLogMode) {
+        if (isLogMode) {
+            binding.tvLogStatus.setText("Logcat");
+            binding.tvLogStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            binding.tvLogStatus.setText("UI print");
+            binding.tvLogStatus.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+        }
     }
 
     @Keep
@@ -99,9 +123,17 @@ public class V4PassthroughActivity extends AppCompatActivity {
                 for (int i = 0; i < passthroughData.length; i++) {
                     stringBuilder.append(String.format("%02X ", passthroughData.data[i]));
                 }
-                runOnUiThread(() -> {
-                    binding.tvRead.setText("received " + passthroughData.length + " bytes:\n" + stringBuilder);
-                });
+                final String logMessage = "received " + passthroughData.length + " bytes:\n" + stringBuilder;
+
+                if (binding.switchLogMode.isChecked()) {
+                    // Log mode: print to logcat
+                    Log.d(TAG, logMessage);
+                } else {
+                    // UI mode: display on screen
+                    runOnUiThread(() -> {
+                        binding.tvRead.setText(logMessage);
+                    });
+                }
             }
         }
 
