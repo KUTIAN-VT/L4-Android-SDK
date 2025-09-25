@@ -22,6 +22,7 @@ import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.ChanInfo8030;
 import com.fly.station.prorocol.bean.RcStatus8030;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 public class RadioTestActivity extends AppCompatActivity {
 
@@ -482,6 +483,11 @@ public class RadioTestActivity extends AppCompatActivity {
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
             // 槽位MAC回调
+        }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
+            // 吞吐率
         }
 
         @Override

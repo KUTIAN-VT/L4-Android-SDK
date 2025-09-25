@@ -85,6 +85,7 @@
             android:layout_height="32dp"
             android:layout_margin="4dp"
             android:background="@android:color/holo_blue_dark"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="SET bandwidth"
             android:textColor="@android:color/white"
@@ -96,6 +97,7 @@
             android:layout_height="32dp"
             android:layout_margin="4dp"
             android:background="@android:color/holo_blue_dark"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="RESET bandwidth"
             android:textColor="@android:color/white"
@@ -179,26 +181,95 @@
                 android:textColor="@color/white" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_set_ap_2_dev"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_margin="4dp"
-            android:background="@android:color/holo_blue_dark"
-            android:gravity="center"
-            android:text="SET frame change"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_set_ap_2_dev"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="SET frame change"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tv_set_ap_2_dev_keep_buffer"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="SET frame change keep buffer"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_reset_ap_2_dev"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="RESET frame change"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tv_reset_ap_2_dev_keep_buffer"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="RESET frame change keep buffer"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_reset_ap_2_dev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="log"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:id="@+id/sv_status"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_margin="4dp"
-            android:background="@android:color/holo_blue_dark"
-            android:gravity="center"
-            android:text="RESET frame change"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/black"
+            android:padding="8dp"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

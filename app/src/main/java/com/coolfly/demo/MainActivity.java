@@ -75,6 +75,7 @@ import com.fly.station.prorocol.bean.ChanInfo8030;
 import com.fly.station.prorocol.bean.DeviceInfo;
 import com.fly.station.prorocol.bean.RcStatus8030;
 import com.fly.station.prorocol.bean.SysInfo8030;
+import com.fly.station.prorocol.bean.Throughput8030;
 import com.fly.station.prorocol.bean.UartRx;
 import com.fly.station.prorocol.bean.UsbRx;
 import com.fly.station.prorocol.bean.WirelessInfo;
@@ -615,6 +616,9 @@ public class MainActivity extends AppCompatActivity {
                     .setItems(sides, (dialog, which) -> {
                         protocolHelper.ar8030GetSysInfo(which == 1);
                     }).create().show();
+        } else if (view == binding.btnThroughputV4) {
+            Intent intent = new Intent(this, V4ThroughputActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnStatusV4) {
             Intent intent = new Intent(this, V4StatusActivity.class);
             startActivity(intent);
@@ -967,6 +971,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSlotMac(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot, String mac) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
+            // AR8030 throughput data received
         }
 
         @Override

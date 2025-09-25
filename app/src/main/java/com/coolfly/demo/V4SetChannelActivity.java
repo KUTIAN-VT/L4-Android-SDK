@@ -18,6 +18,7 @@ import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BandInfo8030;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.ChanInfo8030;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 public class V4SetChannelActivity extends AppCompatActivity {
 
@@ -235,6 +236,11 @@ public class V4SetChannelActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+            // Now only for 8030
+        }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
             // Now only for 8030
         }
 

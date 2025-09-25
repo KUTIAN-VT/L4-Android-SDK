@@ -14,6 +14,7 @@ import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
 import com.fly.station.prorocol.bean.GetStatus8030;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 public class V4StatusActivity extends AppCompatActivity {
 
@@ -87,6 +88,9 @@ public class V4StatusActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) { }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {}
 
         @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) { }

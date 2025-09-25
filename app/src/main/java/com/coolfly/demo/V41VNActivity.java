@@ -15,6 +15,7 @@ import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 /**
  * Example for 1VN mode.
@@ -302,6 +303,11 @@ public class V41VNActivity extends AppCompatActivity {
                     binding.etMac3.setText(mac);
                     break;
             }
+        }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
+            // Now only for 8030
         }
 
         @Override

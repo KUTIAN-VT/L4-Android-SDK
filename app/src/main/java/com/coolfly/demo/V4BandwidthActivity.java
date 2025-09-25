@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +18,7 @@ import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 public class V4BandwidthActivity extends AppCompatActivity {
 
@@ -70,6 +75,20 @@ public class V4BandwidthActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvSetAp2DevKeepBuffer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                protocolHelper.ar8030SetFrameChangeKeepingBuffer();
+            }
+        });
+
+        binding.tvResetAp2DevKeepBuffer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                protocolHelper.ar8030ResetFrameChangeKeepingBuffer();
+            }
+        });
+
         protocolHelper.addListener(protocolListener);
     }
 
@@ -77,6 +96,21 @@ public class V4BandwidthActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         protocolHelper.removeListener(protocolListener);
+    }
+
+    private void appendStatus(String message) {
+        runOnUiThread(() -> {
+            // 获取当前时间并格式化
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            String timestamp = sdf.format(new Date());
+            String logMessage = "[" + timestamp + "] " + message;
+
+            String currentText = binding.tvStatus.getText().toString();
+            binding.tvStatus.setText(currentText + "\n" + logMessage);
+
+            // 滚动到底部
+            binding.svStatus.post(() -> binding.svStatus.fullScroll(View.FOCUS_DOWN));
+        });
     }
 
     @Keep
@@ -132,16 +166,23 @@ public class V4BandwidthActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
+            // Now only for 8030
+        }
+
+        @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
             switch (radioType) {
                 case BANDWIDTH:
-                    Toast.makeText(V4BandwidthActivity.this, "set bandwidth, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
+                    appendStatus("set bandwidth: " + (isSuccess ? "success" : "fail") + " - " + errMessage);
                     break;
                 case FRAME_CHANGE:
-                    Toast.makeText(V4BandwidthActivity.this, "set frame change, isSuccess = " + isSuccess + ", message = " + errMessage, Toast.LENGTH_SHORT).show();
+                    appendStatus("frame change: " + (isSuccess ? "success" : "fail") + " - " + errMessage);
                     break;
                 default:
+                    // Handle other radio types that might be added for keep buffer operations
+                    appendStatus("radio operation: " + radioType + " - " + (isSuccess ? "success" : "fail") + " - " + errMessage);
                     break;
             }
         }

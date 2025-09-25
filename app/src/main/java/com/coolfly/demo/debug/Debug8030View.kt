@@ -20,6 +20,7 @@ import com.fly.station.prorocol.RADIO_TYPE
 import com.fly.station.prorocol.bean.BaseFlyPacket
 import com.fly.station.prorocol.bean.ChanInfo8030
 import com.fly.station.prorocol.bean.RcStatus8030
+import com.fly.station.prorocol.bean.Throughput8030
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -396,6 +397,14 @@ class Debug8030View : LinearLayout {
             p0: com.fly.station.prorocol.DEVICE_TYPE?,
             p1: Int,
             p2: String?
+        ) {
+
+        }
+
+        override fun onThroughput(
+            deviceType: com.fly.station.prorocol.DEVICE_TYPE?,
+            throughput: Throughput8030?,
+            isRemote: Boolean
         ) {
 
         }

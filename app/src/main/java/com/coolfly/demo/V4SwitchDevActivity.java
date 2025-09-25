@@ -13,6 +13,7 @@ import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
+import com.fly.station.prorocol.bean.Throughput8030;
 
 /**
  * Switch dev for slot0. If you are in 1v1 mode, you can use this.
@@ -102,6 +103,11 @@ public class V4SwitchDevActivity extends AppCompatActivity {
 
         @Override
         public void onSlotMac(DEVICE_TYPE deviceType, int i, String s) {
+            // Now only for 8030
+        }
+
+        @Override
+        public void onThroughput(com.fly.station.prorocol.DEVICE_TYPE deviceType, Throughput8030 throughput, boolean isRemote) {
             // Now only for 8030
         }
 
