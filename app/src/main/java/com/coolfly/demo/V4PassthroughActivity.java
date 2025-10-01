@@ -2,6 +2,8 @@ package com.coolfly.demo;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,16 @@ public class V4PassthroughActivity extends AppCompatActivity {
 
     private ActivityV4PassthroughBinding binding;
     private final ProtocolHelper protocolHelper = ProtocolHelper.getInstance();
+
+    // Auto send related
+    private Handler autoSendHandler;
+    private Runnable autoSendRunnable;
+    private boolean isAutoSending = false;
+
+    // Auto send configuration
+    private boolean autoSendEnabled = false;
+    private int autoSendFrequency = 1; // Hz
+    private int autoSendBytes = 50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +106,17 @@ public class V4PassthroughActivity extends AppCompatActivity {
 
         // 初始化状态显示
         updateLogStatusDisplay(binding.switchLogMode.isChecked());
+
+        // 初始化自动发送
+        initAutoSend();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         protocolHelper.removeListener(protocolListener);
+        // 停止自动发送
+        stopAutoSend();
     }
 
     /**
@@ -112,6 +129,109 @@ public class V4PassthroughActivity extends AppCompatActivity {
         } else {
             binding.tvLogStatus.setText("UI print");
             binding.tvLogStatus.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+        }
+    }
+
+    /**
+     * 初始化自动发送功能
+     */
+    private void initAutoSend() {
+        // 初始化Handler
+        autoSendHandler = new Handler(Looper.getMainLooper());
+        autoSendRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isAutoSending) {
+                    sendAutoData();
+                    // 计算下一次发送的时间间隔
+                    int frequency = getAutoSendFrequency();
+                    long delayMillis = 1000 / Math.max(1, frequency); // 转换为毫秒，至少1Hz
+                    autoSendHandler.postDelayed(this, delayMillis);
+                }
+            }
+        };
+
+        // 设置开关监听器
+        binding.switchAutoSend.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            autoSendEnabled = isChecked;
+
+            if (isChecked) {
+                startAutoSend();
+            } else {
+                stopAutoSend();
+            }
+        });
+
+        // 设置UI初始状态
+        binding.switchAutoSend.setChecked(autoSendEnabled);
+        binding.etAutoSendFrequency.setText(String.valueOf(autoSendFrequency));
+        binding.etAutoSendBytes.setText(String.valueOf(autoSendBytes));
+    }
+
+    /**
+     * 开始自动发送
+     */
+    private void startAutoSend() {
+        if (!isAutoSending) {
+            isAutoSending = true;
+            // 立即发送一次，然后开始定时发送
+            sendAutoData();
+            int frequency = getAutoSendFrequency();
+            long delayMillis = 1000 / Math.max(1, frequency);
+            autoSendHandler.postDelayed(autoSendRunnable, delayMillis);
+        }
+    }
+
+    /**
+     * 停止自动发送
+     */
+    private void stopAutoSend() {
+        isAutoSending = false;
+        if (autoSendHandler != null) {
+            autoSendHandler.removeCallbacks(autoSendRunnable);
+        }
+    }
+
+    /**
+     * 发送自动数据
+     */
+    private void sendAutoData() {
+        int bytesCount = getAutoSendBytes();
+        byte[] data = new byte[bytesCount];
+        // 填充0xaa数据
+        for (int i = 0; i < bytesCount; i++) {
+            data[i] = (byte) 0xaa;
+        }
+
+        // 在后台线程发送数据
+        new Thread(() -> {
+            protocolHelper.ar8030WritePassthroughData(0, data, bytesCount);
+        }).start();
+    }
+
+    /**
+     * 获取自动发送频率
+     */
+    private int getAutoSendFrequency() {
+        try {
+            int frequency = Integer.parseInt(binding.etAutoSendFrequency.getText().toString());
+            autoSendFrequency = frequency; // 保存到内部变量
+            return Math.max(1, frequency); // 最小1Hz
+        } catch (NumberFormatException e) {
+            return 1; // 默认1Hz
+        }
+    }
+
+    /**
+     * 获取自动发送字节数量
+     */
+    private int getAutoSendBytes() {
+        try {
+            int bytes = Integer.parseInt(binding.etAutoSendBytes.getText().toString());
+            autoSendBytes = bytes; // 保存到内部变量
+            return Math.max(1, bytes); // 最小1字节
+        } catch (NumberFormatException e) {
+            return 50; // 默认50字节
         }
     }
 
