@@ -31,6 +31,9 @@ public class V4BandwidthActivity extends AppCompatActivity {
         binding = ActivityV4BandwidthBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Auto retry for 5 times
+        protocolHelper.ar8030SetAutoRetryFrameChange(true);
+
         binding.tvSetDev2Ap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,28 +67,40 @@ public class V4BandwidthActivity extends AppCompatActivity {
                     Toast.makeText(V4BandwidthActivity.this, "tx buffer size is empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                protocolHelper.ar8030SetFrameChange(Integer.parseInt(binding.etRxFramechange.getText().toString()), Integer.parseInt(binding.etTxFramechange.getText().toString()));
+                boolean res = protocolHelper.ar8030SetFrameChange(Integer.parseInt(binding.etRxFramechange.getText().toString()), Integer.parseInt(binding.etTxFramechange.getText().toString()));
+                if (!res) {
+                    appendStatus("frame change: fail - busy");
+                }
             }
         });
 
         binding.tvResetAp2Dev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                protocolHelper.ar8030ResetFrameChange();
+                boolean res = protocolHelper.ar8030ResetFrameChange();
+                if (!res) {
+                    appendStatus("frame change: fail - busy");
+                }
             }
         });
 
         binding.tvSetAp2DevKeepBuffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                protocolHelper.ar8030SetFrameChangeKeepingBuffer();
+                boolean res = protocolHelper.ar8030SetFrameChangeKeepingBuffer();
+                if (!res) {
+                    appendStatus("frame change: fail - busy");
+                }
             }
         });
 
         binding.tvResetAp2DevKeepBuffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                protocolHelper.ar8030ResetFrameChangeKeepingBuffer();
+                boolean res = protocolHelper.ar8030ResetFrameChangeKeepingBuffer();
+                if (!res) {
+                    appendStatus("frame change: fail - busy");
+                }
             }
         });
 
