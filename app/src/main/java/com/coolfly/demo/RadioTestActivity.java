@@ -26,29 +26,39 @@ import com.fly.station.prorocol.bean.Throughput8030;
 
 public class RadioTestActivity extends AppCompatActivity {
 
-    private static final String PREF_SELECTED_BAND = "radio_test_selected_band";
-    private static final String PREF_FREQUENCY_INDEX = "radio_test_frequency_index";
+    private static final String PREF_RX_SELECTED_BAND = "radio_test_rx_selected_band";
+    private static final String PREF_RX_FREQUENCY_INDEX = "radio_test_rx_frequency_index";
+    private static final String PREF_TX_SELECTED_BAND = "radio_test_tx_selected_band";
+    private static final String PREF_TX_FREQUENCY_INDEX = "radio_test_tx_frequency_index";
     private static final String PREF_POWER = "radio_test_power";
 
     private final ProtocolHelper protocolHelper = ProtocolHelper.getInstance();
     private ActivityRadioTestBinding binding;
     
     private final String[] bands = {"1G", "2G", "5G"};
-    private int selectedBandIndex = 0;
+    
+    // RX (Local) 相关变量
+    private int selectedRxBandIndex = 0;
+    private int selectedRxFrequencyIndex = 0;
+    
+    // TX (Remote) 相关变量
+    private int selectedTxBandIndex = 0;
+    private int selectedTxFrequencyIndex = 0;
     
     // 频率相关变量
     private long[] freq = null;
     private String[] frequencyOptions = null;
-    private int selectedFrequencyIndex = 0;
 
     private static final int INTERVAL = 500; // 500ms间隔
     
     // 设置操作的状态管理
     private enum SetStep {
-        SET_BAND_MODE,
-        SET_BAND,
-        SET_CHANNEL_MODE,
-        SET_CHANNEL,
+        SET_RX_BAND_MODE,
+        SET_RX_BAND,
+        SET_RX_CHANNEL_MODE,
+        SET_RX_CHANNEL,
+        SET_TX_BAND,
+        SET_TX_CHANNEL,
         SET_POWER_AUTO,
         SET_POWER,
         START_PAIR,
@@ -57,8 +67,10 @@ public class RadioTestActivity extends AppCompatActivity {
     
     // 重置操作的状态管理
     private enum ResetStep {
-        SET_BAND_MODE,
-        SET_CHANNEL_MODE,
+        SET_RX_BAND_MODE,
+        SET_RX_CHANNEL_MODE,
+        SET_TX_BAND_RESET,
+        SET_TX_CHANNEL_RESET,
         SET_POWER_AUTO,
         COMPLETED
     }
@@ -90,15 +102,31 @@ public class RadioTestActivity extends AppCompatActivity {
 
 
     private void setupSpinner() {
-        // 设置频段选择器
-        ArrayAdapter<String> bandAdapter = new ArrayAdapter<>(this, R.layout.item_select, bands);
-        bandAdapter.setDropDownViewResource(R.layout.item_dropdown);
-        binding.spBand.setAdapter(bandAdapter);
+        // 设置 RX 频段选择器
+        ArrayAdapter<String> rxBandAdapter = new ArrayAdapter<>(this, R.layout.item_select, bands);
+        rxBandAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        binding.spRxBand.setAdapter(rxBandAdapter);
         
-        binding.spBand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.spRxBand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedBandIndex = position;
+                selectedRxBandIndex = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        
+        // 设置 TX 频段选择器
+        ArrayAdapter<String> txBandAdapter = new ArrayAdapter<>(this, R.layout.item_select, bands);
+        txBandAdapter.setDropDownViewResource(R.layout.item_dropdown);
+        binding.spTxBand.setAdapter(txBandAdapter);
+        
+        binding.spTxBand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedTxBandIndex = position;
             }
 
             @Override
@@ -115,19 +143,42 @@ public class RadioTestActivity extends AppCompatActivity {
             // 如果还没有频率数据，设置空适配器
             ArrayAdapter<String> emptyAdapter = new ArrayAdapter<>(this, R.layout.item_select, new String[]{"正在加载频率信息..."});
             emptyAdapter.setDropDownViewResource(R.layout.item_dropdown);
-            binding.spFrequency.setAdapter(emptyAdapter);
-            binding.spFrequency.setEnabled(false);
-        } else {
-            // 设置频率数据
-            ArrayAdapter<String> frequencyAdapter = new ArrayAdapter<>(this, R.layout.item_select, frequencyOptions);
-            frequencyAdapter.setDropDownViewResource(R.layout.item_dropdown);
-            binding.spFrequency.setAdapter(frequencyAdapter);
-            binding.spFrequency.setEnabled(true);
             
-            binding.spFrequency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            // RX 频率选择器
+            binding.spRxFrequency.setAdapter(emptyAdapter);
+            binding.spRxFrequency.setEnabled(false);
+            
+            // TX 频率选择器
+            binding.spTxFrequency.setAdapter(emptyAdapter);
+            binding.spTxFrequency.setEnabled(false);
+        } else {
+            // 设置 RX 频率数据
+            ArrayAdapter<String> rxFrequencyAdapter = new ArrayAdapter<>(this, R.layout.item_select, frequencyOptions);
+            rxFrequencyAdapter.setDropDownViewResource(R.layout.item_dropdown);
+            binding.spRxFrequency.setAdapter(rxFrequencyAdapter);
+            binding.spRxFrequency.setEnabled(true);
+            
+            binding.spRxFrequency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    selectedFrequencyIndex = position;
+                    selectedRxFrequencyIndex = position;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+            
+            // 设置 TX 频率数据
+            ArrayAdapter<String> txFrequencyAdapter = new ArrayAdapter<>(this, R.layout.item_select, frequencyOptions);
+            txFrequencyAdapter.setDropDownViewResource(R.layout.item_dropdown);
+            binding.spTxFrequency.setAdapter(txFrequencyAdapter);
+            binding.spTxFrequency.setEnabled(true);
+            
+            binding.spTxFrequency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedTxFrequencyIndex = position;
                 }
 
                 @Override
@@ -139,11 +190,14 @@ public class RadioTestActivity extends AppCompatActivity {
 
     private void loadSavedSettings() {
         SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
-        selectedBandIndex = sp.getInt(PREF_SELECTED_BAND, 0);
-        selectedFrequencyIndex = sp.getInt(PREF_FREQUENCY_INDEX, 0);
+        selectedRxBandIndex = sp.getInt(PREF_RX_SELECTED_BAND, 0);
+        selectedRxFrequencyIndex = sp.getInt(PREF_RX_FREQUENCY_INDEX, 0);
+        selectedTxBandIndex = sp.getInt(PREF_TX_SELECTED_BAND, 0);
+        selectedTxFrequencyIndex = sp.getInt(PREF_TX_FREQUENCY_INDEX, 0);
         String power = sp.getString(PREF_POWER, "");
         
-        binding.spBand.setSelection(selectedBandIndex);
+        binding.spRxBand.setSelection(selectedRxBandIndex);
+        binding.spTxBand.setSelection(selectedTxBandIndex);
         // 频率选择器的选择将在频率数据加载后设置
         binding.etPower.setText(power);
     }
@@ -151,8 +205,10 @@ public class RadioTestActivity extends AppCompatActivity {
     private void saveSettings() {
         SharedPreferences sp = getSharedPreferences(SP_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt(PREF_SELECTED_BAND, selectedBandIndex);
-        editor.putInt(PREF_FREQUENCY_INDEX, selectedFrequencyIndex);
+        editor.putInt(PREF_RX_SELECTED_BAND, selectedRxBandIndex);
+        editor.putInt(PREF_RX_FREQUENCY_INDEX, selectedRxFrequencyIndex);
+        editor.putInt(PREF_TX_SELECTED_BAND, selectedTxBandIndex);
+        editor.putInt(PREF_TX_FREQUENCY_INDEX, selectedTxFrequencyIndex);
         editor.putString(PREF_POWER, binding.etPower.getText().toString());
         editor.apply();
     }
@@ -176,12 +232,12 @@ public class RadioTestActivity extends AppCompatActivity {
         
         // 开始设置流程
         isSettingInProgress = true;
-        currentSetStep = SetStep.SET_BAND_MODE;
+        currentSetStep = SetStep.SET_RX_BAND_MODE;
         binding.btnSet.setEnabled(false);
         binding.btnReset.setEnabled(false);
         
         appendStatus("开始设置流程...");
-        appendStatus("步骤1: 设置频段模式为手动");
+        appendStatus("步骤1: 设置RX频段模式为手动");
         
         protocolHelper.ar8030SetBandMode(false);
     }
@@ -194,12 +250,12 @@ public class RadioTestActivity extends AppCompatActivity {
         
         // 开始重置流程
         isResetInProgress = true;
-        currentResetStep = ResetStep.SET_BAND_MODE;
+        currentResetStep = ResetStep.SET_RX_BAND_MODE;
         binding.btnSet.setEnabled(false);
         binding.btnReset.setEnabled(false);
         
         appendStatus("开始重置流程...");
-        appendStatus("步骤1: 设置频段模式为自动");
+        appendStatus("步骤1: 设置RX频段模式为自动");
         
         protocolHelper.ar8030SetBandMode(true);
     }
@@ -220,7 +276,7 @@ public class RadioTestActivity extends AppCompatActivity {
         }
         
         try {
-            frequencyValue = selectedFrequencyIndex; // 使用选择的索引作为频率值
+            frequencyValue = selectedRxFrequencyIndex; // 使用RX选择的索引作为频率值
             powerValue = Integer.parseInt(powerStr);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "请输入有效的功率数字", Toast.LENGTH_SHORT).show();
@@ -256,35 +312,50 @@ public class RadioTestActivity extends AppCompatActivity {
     // 在非UI线程执行
     private void handleSetStepSuccess() throws InterruptedException {
         switch (currentSetStep) {
-            case SET_BAND_MODE:
-                appendStatus("✓ 频段模式设置成功");
+            case SET_RX_BAND_MODE:
+                appendStatus("✓ RX频段模式设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤2: 设置频段为 " + bands[selectedBandIndex]);
-                currentSetStep = SetStep.SET_BAND;
-                protocolHelper.ar8030SetBand(selectedBandIndex);
+                appendStatus("步骤2: 设置RX频段为 " + bands[selectedRxBandIndex]);
+                currentSetStep = SetStep.SET_RX_BAND;
+                protocolHelper.ar8030SetBand(selectedRxBandIndex);
                 break;
                 
-            case SET_BAND:
-                appendStatus("✓ 频段设置成功");
+            case SET_RX_BAND:
+                appendStatus("✓ RX频段设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤3: 设置信道模式为手动");
-                currentSetStep = SetStep.SET_CHANNEL_MODE;
+                appendStatus("步骤3: 设置RX信道模式为手动");
+                currentSetStep = SetStep.SET_RX_CHANNEL_MODE;
                 protocolHelper.ar8030SetChanMode(false);
                 break;
                 
-            case SET_CHANNEL_MODE:
-                appendStatus("✓ 信道模式设置成功");
+            case SET_RX_CHANNEL_MODE:
+                appendStatus("✓ RX信道模式设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤4: 设置信道频率");
-                currentSetStep = SetStep.SET_CHANNEL;
-                // 这里使用频率值作为信道索引，实际项目中可能需要转换
-                protocolHelper.ar8030SetChan(frequencyValue);
+                appendStatus("步骤4: 设置RX信道频率");
+                currentSetStep = SetStep.SET_RX_CHANNEL;
+                protocolHelper.ar8030SetChan(selectedRxFrequencyIndex);
                 break;
                 
-            case SET_CHANNEL:
-                appendStatus("✓ 信道设置成功");
+            case SET_RX_CHANNEL:
+                appendStatus("✓ RX信道设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤5: 设置功率为手动模式");
+                appendStatus("步骤5: 设置TX频段为 " + bands[selectedTxBandIndex]);
+                currentSetStep = SetStep.SET_TX_BAND;
+                protocolHelper.ar8030SetBandRemote(false, selectedTxBandIndex, 0);
+                break;
+                
+            case SET_TX_BAND:
+                appendStatus("✓ TX频段设置成功");
+                Thread.sleep(INTERVAL);
+                appendStatus("步骤6: 设置TX信道频率");
+                currentSetStep = SetStep.SET_TX_CHANNEL;
+                protocolHelper.ar8030SetChanRemote(false, selectedTxFrequencyIndex, 0);
+                break;
+                
+            case SET_TX_CHANNEL:
+                appendStatus("✓ TX信道设置成功");
+                Thread.sleep(INTERVAL);
+                appendStatus("步骤7: 设置功率为手动模式");
                 currentSetStep = SetStep.SET_POWER_AUTO;
                 protocolHelper.ar8030SetPwrAuto(false, false);
                 break;
@@ -292,7 +363,7 @@ public class RadioTestActivity extends AppCompatActivity {
             case SET_POWER_AUTO:
                 appendStatus("✓ 功率模式设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤6: 设置功率为 " + powerValue + " dBm");
+                appendStatus("步骤8: 设置功率为 " + powerValue + " dBm");
                 currentSetStep = SetStep.SET_POWER;
                 protocolHelper.ar8030SetPwr(powerValue, false);
                 break;
@@ -300,7 +371,7 @@ public class RadioTestActivity extends AppCompatActivity {
             case SET_POWER:
                 appendStatus("✓ 功率设置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤7: 检查对频状态");
+                appendStatus("步骤9: 检查对频状态");
                 
                 // 检查是否已经对频
                 if (protocolHelper.ar8030IsPaired(0)) {
@@ -326,18 +397,34 @@ public class RadioTestActivity extends AppCompatActivity {
     // 在非UI线程执行
     private void handleResetStepSuccess() throws InterruptedException {
         switch (currentResetStep) {
-            case SET_BAND_MODE:
-                appendStatus("✓ 频段模式重置成功");
+            case SET_RX_BAND_MODE:
+                appendStatus("✓ RX频段模式重置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤2: 设置信道模式为自动");
-                currentResetStep = ResetStep.SET_CHANNEL_MODE;
+                appendStatus("步骤2: 设置RX信道模式为自动");
+                currentResetStep = ResetStep.SET_RX_CHANNEL_MODE;
                 protocolHelper.ar8030SetChanMode(true);
                 break;
                 
-            case SET_CHANNEL_MODE:
-                appendStatus("✓ 信道模式重置成功");
+            case SET_RX_CHANNEL_MODE:
+                appendStatus("✓ RX信道模式重置成功");
                 Thread.sleep(INTERVAL);
-                appendStatus("步骤3: 重置功率设置为自动模式");
+                appendStatus("步骤3: 设置TX频段为自动");
+                currentResetStep = ResetStep.SET_TX_BAND_RESET;
+                protocolHelper.ar8030SetBandRemote(true, 0, 0);
+                break;
+                
+            case SET_TX_BAND_RESET:
+                appendStatus("✓ TX频段重置成功");
+                Thread.sleep(INTERVAL);
+                appendStatus("步骤4: 设置TX信道为自动");
+                currentResetStep = ResetStep.SET_TX_CHANNEL_RESET;
+                protocolHelper.ar8030SetChanRemote(true, 0, 0);
+                break;
+                
+            case SET_TX_CHANNEL_RESET:
+                appendStatus("✓ TX信道重置成功");
+                Thread.sleep(INTERVAL);
+                appendStatus("步骤5: 重置功率设置为自动模式");
                 currentResetStep = ResetStep.SET_POWER_AUTO;
                 protocolHelper.ar8030SetPwrAuto(true, false);
                 break;
@@ -408,8 +495,11 @@ public class RadioTestActivity extends AppCompatActivity {
                         setupFrequencySpinner();
                         
                         // 如果有保存的频率索引，恢复选择
-                        if (selectedFrequencyIndex < frequencyOptions.length) {
-                            binding.spFrequency.setSelection(selectedFrequencyIndex);
+                        if (selectedRxFrequencyIndex < frequencyOptions.length) {
+                            binding.spRxFrequency.setSelection(selectedRxFrequencyIndex);
+                        }
+                        if (selectedTxFrequencyIndex < frequencyOptions.length) {
+                            binding.spTxFrequency.setSelection(selectedTxFrequencyIndex);
                         }
                         
                         appendStatus("✓ 频率信息加载完成，共 " + freq.length + " 个频点");
