@@ -58,7 +58,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
                     .setTitle("set band")
                     .setItems(band, (dialog, which) -> {
                         selectedBandIndex = which;
-                        protocolHelper.ar8030SetBand(selectedBandIndex);
+                        protocolHelper.ar8030SetBand(selectedBandIndex, false);
                         // Set dev at the same time
                         protocolHelper.ar8030SetBandRemote(binding.swBandAuto.isChecked(), binding.swBandAuto.isChecked()? 0: selectedBandIndex, 0);
                     }).create().show();
@@ -81,7 +81,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
                     .setTitle("set channel")
                     .setItems(channels, (dialog, which) -> {
                         selectedChannelIndex = which;
-                        protocolHelper.ar8030SetChan(selectedChannelIndex);
+                        protocolHelper.ar8030SetChan(selectedChannelIndex, false);
                         // Set dev at the same time
                         protocolHelper.ar8030SetChanRemote(binding.swChanAuto.isChecked(), binding.swChanAuto.isChecked()? 0: selectedChannelIndex, 0);
                     }).create().show();
@@ -121,7 +121,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
     private CompoundButton.OnCheckedChangeListener onChannelCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            protocolHelper.ar8030SetChanMode(isChecked);
+            protocolHelper.ar8030SetChanMode(isChecked, false);
             // Set dev at the same time
             protocolHelper.ar8030SetChanRemote(isChecked, isChecked? 0: selectedChannelIndex, 0);
         }
@@ -130,7 +130,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
     private CompoundButton.OnCheckedChangeListener onBandCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            protocolHelper.ar8030SetBandMode(isChecked);
+            protocolHelper.ar8030SetBandMode(isChecked, false);
             // Set dev at the same time
             protocolHelper.ar8030SetBandRemote(isChecked, isChecked? 0: selectedBandIndex, 0);
         }

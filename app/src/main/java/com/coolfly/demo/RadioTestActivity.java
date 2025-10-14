@@ -239,7 +239,7 @@ public class RadioTestActivity extends AppCompatActivity {
         appendStatus("开始设置流程...");
         appendStatus("步骤1: 设置RX频段模式为手动");
         
-        protocolHelper.ar8030SetBandMode(false);
+        protocolHelper.ar8030SetBandMode(false, false);
     }
 
     private void onResetClick() {
@@ -257,7 +257,7 @@ public class RadioTestActivity extends AppCompatActivity {
         appendStatus("开始重置流程...");
         appendStatus("步骤1: 设置RX频段模式为自动");
         
-        protocolHelper.ar8030SetBandMode(true);
+        protocolHelper.ar8030SetBandMode(true, false);
     }
 
     private boolean validateInputs() {
@@ -317,7 +317,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 Thread.sleep(INTERVAL);
                 appendStatus("步骤2: 设置RX频段为 " + bands[selectedRxBandIndex]);
                 currentSetStep = SetStep.SET_RX_BAND;
-                protocolHelper.ar8030SetBand(selectedRxBandIndex);
+                protocolHelper.ar8030SetBand(selectedRxBandIndex, false);
                 break;
                 
             case SET_RX_BAND:
@@ -325,7 +325,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 Thread.sleep(INTERVAL);
                 appendStatus("步骤3: 设置RX信道模式为手动");
                 currentSetStep = SetStep.SET_RX_CHANNEL_MODE;
-                protocolHelper.ar8030SetChanMode(false);
+                protocolHelper.ar8030SetChanMode(false, false);
                 break;
                 
             case SET_RX_CHANNEL_MODE:
@@ -333,7 +333,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 Thread.sleep(INTERVAL);
                 appendStatus("步骤4: 设置RX信道频率");
                 currentSetStep = SetStep.SET_RX_CHANNEL;
-                protocolHelper.ar8030SetChan(selectedRxFrequencyIndex);
+                protocolHelper.ar8030SetChan(selectedRxFrequencyIndex, false);
                 break;
                 
             case SET_RX_CHANNEL:
@@ -402,7 +402,7 @@ public class RadioTestActivity extends AppCompatActivity {
                 Thread.sleep(INTERVAL);
                 appendStatus("步骤2: 设置RX信道模式为自动");
                 currentResetStep = ResetStep.SET_RX_CHANNEL_MODE;
-                protocolHelper.ar8030SetChanMode(true);
+                protocolHelper.ar8030SetChanMode(true, false);
                 break;
                 
             case SET_RX_CHANNEL_MODE:
