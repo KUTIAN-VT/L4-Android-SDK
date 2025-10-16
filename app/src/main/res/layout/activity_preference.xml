@@ -162,7 +162,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:inputType="number"
-                    tools:text="2500" />
+                    tools:text="2500"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:id="@+id/tv_p401_mtu_save"
                     android:layout_width="80dp"
@@ -199,7 +200,8 @@
                     android:textSize="12sp"
                     android:inputType="number"
                     android:digits="0123456789."
-                    tools:text="192.168.144.55" />
+                    tools:text="192.168.144.55"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:id="@+id/tv_p401_ip_save"
                     android:layout_width="80dp"
@@ -236,7 +238,8 @@
                     android:textSize="12sp"
                     android:inputType="number"
                     android:digits="0123456789."
-                    tools:text="255.255.255.0" />
+                    tools:text="255.255.255.0"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:id="@+id/tv_p401_subnet_mask_save"
                     android:layout_width="80dp"
@@ -297,7 +300,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:inputType="number"
-                    tools:text="60000" />
+                    tools:text="60000"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -315,7 +319,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:inputType="number"
-                    tools:text="40000" />
+                    tools:text="40000"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:id="@+id/tv_p401_buffer_port2_save"
                     android:layout_width="80dp"
@@ -351,7 +356,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:inputType="number"
-                    tools:text="60000" />
+                    tools:text="60000"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -369,7 +375,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:inputType="number"
-                    tools:text="40000" />
+                    tools:text="40000"
+                    android:imeOptions="flagNoExtractUi" />
                 <TextView
                     android:id="@+id/tv_p401_buffer_port3_save"
                     android:layout_width="80dp"

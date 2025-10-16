@@ -39,6 +39,9 @@ public class V4PassthroughActivity extends AppCompatActivity {
     private int autoSendFrequency = 1; // Hz
     private int autoSendBytes = 50;
 
+    // Display mode configuration
+    private boolean displayLengthOnly = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +107,15 @@ public class V4PassthroughActivity extends AppCompatActivity {
             updateLogStatusDisplay(isChecked);
         });
 
+        // 设置显示模式开关监听器
+        binding.switchDisplayMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            displayLengthOnly = isChecked;
+            updateDisplayStatusDisplay(isChecked);
+        });
+
         // 初始化状态显示
         updateLogStatusDisplay(binding.switchLogMode.isChecked());
+        updateDisplayStatusDisplay(binding.switchDisplayMode.isChecked());
 
         // 初始化自动发送
         initAutoSend();
@@ -129,6 +139,19 @@ public class V4PassthroughActivity extends AppCompatActivity {
         } else {
             binding.tvLogStatus.setText("UI print");
             binding.tvLogStatus.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+        }
+    }
+
+    /**
+     * 更新显示模式状态显示
+     */
+    private void updateDisplayStatusDisplay(boolean isLengthOnly) {
+        if (isLengthOnly) {
+            binding.tvDisplayStatus.setText("Length only");
+            binding.tvDisplayStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            binding.tvDisplayStatus.setText("Full content");
+            binding.tvDisplayStatus.setTextColor(getResources().getColor(android.R.color.holo_green_light));
         }
     }
 
@@ -240,11 +263,18 @@ public class V4PassthroughActivity extends AppCompatActivity {
         @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             if (baseFlyPacket instanceof PassthroughData8030 passthroughData) {
-                final StringBuilder stringBuilder = new StringBuilder(passthroughData.length * 3);
-                for (int i = 0; i < passthroughData.length; i++) {
-                    stringBuilder.append(String.format("%02X ", passthroughData.data[i]));
+                final String logMessage;
+                if (displayLengthOnly) {
+                    // Length only mode: show only the length
+                    logMessage = "received " + passthroughData.length + " bytes";
+                } else {
+                    // Full content mode: show complete data
+                    final StringBuilder stringBuilder = new StringBuilder(passthroughData.length * 3);
+                    for (int i = 0; i < passthroughData.length; i++) {
+                        stringBuilder.append(String.format("%02X ", passthroughData.data[i]));
+                    }
+                    logMessage = "received " + passthroughData.length + " bytes:\n" + stringBuilder;
                 }
-                final String logMessage = "received " + passthroughData.length + " bytes:\n" + stringBuilder;
 
                 if (binding.switchLogMode.isChecked()) {
                     // Log mode: print to logcat
