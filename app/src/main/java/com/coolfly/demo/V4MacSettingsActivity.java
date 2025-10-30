@@ -125,8 +125,8 @@ public class V4MacSettingsActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override

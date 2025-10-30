@@ -66,19 +66,43 @@ public class V41VNActivity extends AppCompatActivity {
         });
 
         binding.tvPair0.setOnClickListener(v -> {
-            protocolHelper.ar8030StartPair(0);
+            // ar8030StartPair and ar8030StopPair should be called in non-UI thread
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    protocolHelper.ar8030StartPair(0);
+                }
+            }).start();
         });
 
         binding.tvPair1.setOnClickListener(v -> {
-            protocolHelper.ar8030StartPair(1);
+            // ar8030StartPair and ar8030StopPair should be called in non-UI thread
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    protocolHelper.ar8030StartPair(1);
+                }
+            }).start();
         });
 
         binding.tvPair2.setOnClickListener(v -> {
-            protocolHelper.ar8030StartPair(2);
+            // ar8030StartPair and ar8030StopPair should be called in non-UI thread
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    protocolHelper.ar8030StartPair(2);
+                }
+            }).start();
         });
 
         binding.tvPair3.setOnClickListener(v -> {
-            protocolHelper.ar8030StartPair(3);
+            // ar8030StartPair and ar8030StopPair should be called in non-UI thread
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    protocolHelper.ar8030StartPair(3);
+                }
+            }).start();
         });
 
         binding.tvReadMac0.setOnClickListener(v -> {
@@ -247,8 +271,8 @@ public class V41VNActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override

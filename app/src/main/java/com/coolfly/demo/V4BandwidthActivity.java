@@ -56,6 +56,20 @@ public class V4BandwidthActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvSetDev2ApKeepBuffer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                protocolHelper.ar8030SetBandwidthKeepingBuffer(protocolHelper.AR8030_BANDWIDTH_40_MHZ);
+            }
+        });
+
+        binding.tvResetDev2ApKeepBuffer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                protocolHelper.ar8030ResetBandwidthKeepingBuffer();
+            }
+        });
+
         binding.tvSetAp2Dev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,8 +150,8 @@ public class V4BandwidthActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override

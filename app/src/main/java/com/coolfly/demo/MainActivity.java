@@ -576,7 +576,13 @@ public class MainActivity extends AppCompatActivity {
             }
             getUpgradeFis(REQ_OTA_V4);
         } else if (view == binding.btnPairV4) {
-            protocolHelper.ar8030StartPair();
+            // ar8030StartPair and ar8030StopPair should be called in non-UI thread
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    protocolHelper.ar8030StartPair();
+                }
+            }).start();
         } else if (view == binding.btnSetChannelInfoV4) {
             Intent intent = new Intent(this, V4SetChannelActivity.class);
             startActivity(intent);
@@ -621,6 +627,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (view == binding.btnStatusV4) {
             Intent intent = new Intent(this, V4StatusActivity.class);
+            startActivity(intent);
+        } else if (view == binding.btnSysRebootV4) {
+            Intent intent = new Intent(this, V4SysRebootActivity.class);
             startActivity(intent);
         } else if (view == binding.btnRtsp) {
             Intent intent = new Intent(this, RtspSingleActivity.class);
@@ -917,8 +926,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] data) {
-            usbDeviceHelper.writeData(data);
+        public int onWrite(byte[] data) {
+            return usbDeviceHelper.writeData(data);
         }
 
         @Override

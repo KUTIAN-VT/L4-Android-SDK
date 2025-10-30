@@ -345,8 +345,8 @@ class Debug8030View : LinearLayout {
             }
         }
 
-        override fun onWrite(p0: ByteArray?) {
-
+        override fun onWrite(p0: ByteArray?): Int {
+            return 0
         }
 
         override fun onPairTimeOut(p0: com.fly.station.prorocol.DEVICE_TYPE?, p1: Int) {

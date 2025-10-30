@@ -79,29 +79,69 @@
                 android:textColor="@color/white" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_set_dev_2_ap"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_margin="4dp"
-            android:background="@android:color/holo_blue_dark"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="SET bandwidth"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_reset_dev_2_ap"
+            <TextView
+                android:id="@+id/tv_set_dev_2_ap"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="SET bandwidth"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tv_set_dev_2_ap_keep_buffer"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="SET bandwidth keep buffer"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_margin="4dp"
-            android:background="@android:color/holo_blue_dark"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="RESET bandwidth"
-            android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_reset_dev_2_ap"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="RESET bandwidth"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tv_reset_dev_2_ap_keep_buffer"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_blue_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="RESET bandwidth keep buffer"
+                android:textColor="@android:color/white"
+                android:textSize="10sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <View

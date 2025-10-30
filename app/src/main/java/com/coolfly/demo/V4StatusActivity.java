@@ -2,6 +2,7 @@ package com.coolfly.demo;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
@@ -22,6 +23,7 @@ public class V4StatusActivity extends AppCompatActivity {
 
     private TextView tvMode;
     private TextView tvStatus;
+    private CheckBox cb14Ghz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class V4StatusActivity extends AppCompatActivity {
         Button btnGetStatus = findViewById(R.id.btn_get_status);
         tvMode = findViewById(R.id.tv_mode);
         tvStatus = findViewById(R.id.tv_status);
+        cb14Ghz = findViewById(R.id.cb_14ghz);
 
         btnGetStatus.setOnClickListener(v -> {
             try {
@@ -57,13 +60,15 @@ public class V4StatusActivity extends AppCompatActivity {
             if (baseFlyPacket instanceof GetStatus8030) {
                 tvStatus.setText(baseFlyPacket.toString());
                 // 解析 FrameMode
-                ProtocolHelper.AR8030FrameMode frameMode = ProtocolHelper.parseFrameModeFromStatus(((GetStatus8030) baseFlyPacket));
+                boolean is14Ghz = cb14Ghz.isChecked();
+                ProtocolHelper.AR8030FrameMode frameMode = ProtocolHelper.parseFrameModeFromStatus((GetStatus8030) baseFlyPacket, is14Ghz);
                 tvMode.setText("Mode: " + frameMode);
             }
         }
 
         @Override
-        public void onWrite(byte[] bytes) { }
+        public int onWrite(byte[] bytes) {
+            return 0;}
 
         @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int i) { }

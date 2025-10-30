@@ -124,8 +124,8 @@ public class V4ConfigActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override

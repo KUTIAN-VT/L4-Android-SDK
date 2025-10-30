@@ -383,6 +383,7 @@ public class RadioTestActivity extends AppCompatActivity {
                     appendStatus("未对频，开始对频...");
                     Thread.sleep(INTERVAL);
                     currentSetStep = SetStep.START_PAIR;
+                    // ar8030StartPair and ar8030StopPair should be called in non-UI thread
                     protocolHelper.ar8030StartPair();
                 }
                 break;
@@ -516,8 +517,8 @@ public class RadioTestActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-            // 数据写入回调
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override

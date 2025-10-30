@@ -78,8 +78,8 @@ public class V4PwrActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onWrite(byte[] bytes) {
-
+        public int onWrite(byte[] bytes) {
+            return 0;
         }
 
         @Override
