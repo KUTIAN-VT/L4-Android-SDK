@@ -478,6 +478,11 @@ public class RadioTestActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             if (baseFlyPacket instanceof ChanInfo8030) {
                 runOnUiThread(() -> {
@@ -620,6 +625,11 @@ public class RadioTestActivity extends AppCompatActivity {
                     finishResetOperation(false);
                 }
             }
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 }

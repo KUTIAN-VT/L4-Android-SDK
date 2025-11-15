@@ -324,11 +324,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        binding.swV4Debug.setChecked(DebugViewManager.INSTANCE.isShowing());
+        binding.swV4Debug.setChecked(DebugViewManager.INSTANCE.isShowingConnStatView());
         binding.swV4Debug.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                DebugViewManager.INSTANCE.show(isChecked, MainActivity.this);
+                if (isChecked) {
+                    DebugViewManager.INSTANCE.showConnStatView(MainActivity.this);
+                } else {
+                    DebugViewManager.INSTANCE.hideConnStatView();
+                }
+            }
+        });
+
+        binding.swV4Log.setChecked(DebugViewManager.INSTANCE.isShowingLogView());
+        binding.swV4Log.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    DebugViewManager.INSTANCE.showLogView(MainActivity.this);
+                } else {
+                    DebugViewManager.INSTANCE.hideLogView();
+                }
             }
         });
     }
@@ -849,6 +865,11 @@ public class MainActivity extends AppCompatActivity {
     @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(com.fly.station.prorocol.DEVICE_TYPE deviceType) {
+            Log.d(TAG, "Ready! : " + deviceType);
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket packet, com.fly.station.prorocol.DEVICE_TYPE deviceType, boolean isRemote) {
 //            Log.d(TAG, "onReadCmd: " + packet.getClass().getSimpleName() + "\n" + packet.toString());
             if (packet instanceof DeviceInfo) {
@@ -990,6 +1011,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onDebugMessage(com.fly.station.prorocol.DEVICE_TYPE deviceType, String s) {
+
         }
 
     };

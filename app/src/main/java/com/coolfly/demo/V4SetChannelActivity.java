@@ -145,6 +145,11 @@ public class V4SetChannelActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             if (baseFlyPacket instanceof ChanInfo8030) {
                 runOnUiThread(new Runnable() {
@@ -250,6 +255,11 @@ public class V4SetChannelActivity extends AppCompatActivity {
             binding.tvCallback.append("set radio: radioType = " + radioType + ", isSuccess = " + isSuccess + ", isRemote = " + isRemote + ", message = " + errMessage + "\n");
             // 自动滚动到底部
             binding.scrollView.fullScroll(View.FOCUS_DOWN);
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 

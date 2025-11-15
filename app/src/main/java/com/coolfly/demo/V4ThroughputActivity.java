@@ -66,6 +66,11 @@ public class V4ThroughputActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             // 处理其他packet类型，如果需要的话
         }
@@ -134,6 +139,11 @@ public class V4ThroughputActivity extends AppCompatActivity {
         @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, com.fly.station.prorocol.RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 }

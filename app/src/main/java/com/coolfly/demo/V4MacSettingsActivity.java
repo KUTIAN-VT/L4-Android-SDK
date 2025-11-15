@@ -120,6 +120,11 @@ public class V4MacSettingsActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
 
         }
@@ -198,6 +203,11 @@ public class V4MacSettingsActivity extends AppCompatActivity {
                 }
                 Toast.makeText(V4MacSettingsActivity.this, message, Toast.LENGTH_SHORT).show();
             });
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 

@@ -266,6 +266,11 @@ public class V41VNActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
 
         }
@@ -347,6 +352,11 @@ public class V41VNActivity extends AppCompatActivity {
                 default:
                     break;
             }
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 

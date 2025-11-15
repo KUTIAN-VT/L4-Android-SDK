@@ -326,6 +326,10 @@ class Debug8030View : LinearLayout {
     }
 
     private val protocolListener: ProtocolListener = object : ProtocolListener {
+        override fun onReady(p0: com.fly.station.prorocol.DEVICE_TYPE?) {
+
+        }
+
         override fun onReadCmd(
             packet: BaseFlyPacket?,
             p1: com.fly.station.prorocol.DEVICE_TYPE?,
@@ -417,6 +421,10 @@ class Debug8030View : LinearLayout {
             errMessage: String?,
             isRemote: Boolean
         ) {
+
+        }
+
+        override fun onDebugMessage(p0: com.fly.station.prorocol.DEVICE_TYPE?, p1: String?) {
 
         }
 

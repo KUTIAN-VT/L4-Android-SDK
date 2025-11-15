@@ -145,6 +145,11 @@ public class V4BandwidthActivity extends AppCompatActivity {
     @Keep
     private ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
 
         }
@@ -214,6 +219,11 @@ public class V4BandwidthActivity extends AppCompatActivity {
                     appendStatus("radio operation: " + radioType + " - " + (isSuccess ? "success" : "fail") + " - " + errMessage);
                     break;
             }
+        }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
         }
     };
 }

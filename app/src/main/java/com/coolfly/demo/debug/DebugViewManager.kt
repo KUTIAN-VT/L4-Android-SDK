@@ -18,7 +18,11 @@ object DebugViewManager {
     private var floatingView: FloatingView? = null
     private var rootView: View? = null
 
-    private fun showConnStatView(activity: Activity): Boolean {
+    // Log8030View related variables
+    private var logFloatingView: FloatingView? = null
+    private var logRootView: View? = null
+
+    fun showConnStatView(activity: Activity): Boolean {
         if (floatingView != null) {
             return true
         }
@@ -40,7 +44,7 @@ object DebugViewManager {
         return true
     }
 
-    private fun hideConnStatView() {
+    fun hideConnStatView() {
         if (floatingView != null) {
             floatingView!!.hide()
             floatingView = null
@@ -48,15 +52,42 @@ object DebugViewManager {
         }
     }
 
-    fun show(isShow: Boolean, activity: Activity) {
-        if (isShow) {
-            showConnStatView(activity)
-        } else {
-            hideConnStatView()
+    fun isShowingConnStatView(): Boolean {
+        return floatingView != null
+    }
+
+    // Functions for Log8030View
+    fun showLogView(activity: Activity): Boolean {
+        if (logFloatingView != null) {
+            return true
+        }
+        if (!OverlayUtils.checkFloatingWindowPermission(activity)) {
+            OverlayUtils.requestFloatingWindowPermission(activity)
+            return false
+        }
+        logRootView = Log8030View(activity)
+
+        val config = FloatingViewConfig.Builder()
+            .setGravity(FloatingViewConfig.GRAVITY.CENTER)
+            .build()
+        logFloatingView = FloatingView(
+            MainApplication.applicationContext,
+            logRootView,
+            config
+        )
+        logFloatingView!!.showOverlaySystem(activity)
+        return true
+    }
+
+    fun hideLogView() {
+        if (logFloatingView != null) {
+            logFloatingView!!.hide()
+            logFloatingView = null
+            logRootView = null
         }
     }
 
-    fun isShowing(): Boolean {
-        return floatingView != null
+    fun isShowingLogView(): Boolean {
+        return logFloatingView != null
     }
 }

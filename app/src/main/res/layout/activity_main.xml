@@ -169,6 +169,14 @@
                 android:background="@android:color/white"
                 android:text="V4 debug info" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/sw_v4_log"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/white"
+                android:text="V4 log info" />
+
             <Button
                 android:id="@+id/btn_upgrade_v4"
                 android:layout_width="wrap_content"

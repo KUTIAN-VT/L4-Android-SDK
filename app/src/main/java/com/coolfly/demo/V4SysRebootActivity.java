@@ -73,6 +73,11 @@ public class V4SysRebootActivity extends AppCompatActivity {
     @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(com.fly.station.prorocol.bean.BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             runOnUiThread(() -> {
                 appendLog("Protocol response received: " + baseFlyPacket.getClass().getSimpleName() +
@@ -114,5 +119,10 @@ public class V4SysRebootActivity extends AppCompatActivity {
 
         @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, com.fly.station.prorocol.RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) { }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
+        }
     };
 }

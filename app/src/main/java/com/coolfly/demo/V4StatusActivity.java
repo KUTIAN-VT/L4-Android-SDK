@@ -55,6 +55,11 @@ public class V4StatusActivity extends AppCompatActivity {
     @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
+        public void onReady(DEVICE_TYPE deviceType) {
+
+        }
+
+        @Override
         public void onReadCmd(BaseFlyPacket baseFlyPacket, DEVICE_TYPE deviceType, boolean isRemote) {
             // 仅处理新回调 GetStatus8030
             if (baseFlyPacket instanceof GetStatus8030) {
@@ -99,6 +104,11 @@ public class V4StatusActivity extends AppCompatActivity {
 
         @Override
         public void onSetRadio(com.fly.station.prorocol.DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) { }
+
+        @Override
+        public void onDebugMessage(DEVICE_TYPE deviceType, String s) {
+
+        }
     };
 }
 
