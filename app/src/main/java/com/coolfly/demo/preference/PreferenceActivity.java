@@ -259,6 +259,13 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.swP401Datagram.setChecked(ProtocolHelper.ar8030IsUseDatagram());
+        binding.swP401Datagram.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            ProtocolHelper.ar8030SetUseDatagram(isChecked);
+            preferenceObject.p401_datagram = isChecked;
+            savePreference();
+        });
+
         binding.swLogMcu.setChecked(McuManager.isShowLog);
         binding.swLogMcu.setOnCheckedChangeListener((buttonView, isChecked) -> {
             McuManager.setIsShowLog(isChecked);

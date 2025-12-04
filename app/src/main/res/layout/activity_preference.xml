@@ -28,7 +28,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -391,73 +390,107 @@
             </LinearLayout>
 
             <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_mcu"
+                android:id="@+id/sw_p401_datagram"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="MCU log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_ffmpeg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="ffmpeg log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_usb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="USB log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_chuanyun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="chuanyun protocol log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_ar8030_vpn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="AR8030 VPN log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_log_ar8030_parse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="AR8030 parse log"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_logs_file"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Write logs to file"
-                android:textColor="@android:color/white" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/sw_logs_serial"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Write logs to serial port"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:text="P401 Datagram"
                 android:textColor="@android:color/white" />
 
             <FrameLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#33000000"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.3"
+                    android:gravity="center"
+                    android:text="LOG CONFIG"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:textSize="40sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="end" >
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_mcu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="MCU log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_ffmpeg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="ffmpeg log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_usb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="USB log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_chuanyun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="chuanyun protocol log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_ar8030_vpn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="AR8030 VPN log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_ar8030_parse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="AR8030 parse log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_logs_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Write logs to file"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_logs_serial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Write logs to serial port"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginTop="8dp">
 
                 <EditText
                     android:id="@+id/et_media_config"

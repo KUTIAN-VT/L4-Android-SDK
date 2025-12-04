@@ -795,13 +795,13 @@ public class MainActivity extends AppCompatActivity {
                         case REQ_OTA_GRD:
                         case REQ_OTA_SKY:
                             upgradeHelper = new UpgradeHelper(fis);
-                            upgradeHelper.setListener(upgradeListener);
+                            upgradeHelper.setListener(upgradeListener8020);
                             upgradeHelper.startUpgradeApp(requestCode == REQ_OTA_SKY);
                             binding.btnUpgradeGnd.setEnabled(false);
                             binding.btnUpgradeSky.setEnabled(false);
                             break;
                         case REQ_OTA_V4:
-                            protocolHelper.ar8030Upgrade(fis, upgradeListener);
+                            protocolHelper.ar8030Upgrade(fis, upgradeListener8030);
                             binding.btnUpgradeV4.setEnabled(false);
                             break;
                     }
@@ -1358,7 +1358,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private final UpgradeHelper.UpgradeListener upgradeListener = new UpgradeHelper.UpgradeListener() {
+    private final UpgradeHelper.UpgradeListener8020 upgradeListener8020 = new UpgradeHelper.UpgradeListener8020() {
         @Override
         public void onStart() {
             binding.tvUpdateProcess.setText(R.string.ota_start);
@@ -1404,6 +1404,43 @@ public class MainActivity extends AppCompatActivity {
             if (usbDeviceHelper.getUsbStatus() == UsbDeviceHelper.USB_CONNECTED) {
                 usbDeviceHelper.writeData(data);
             }
+        }
+    };
+
+    private final UpgradeHelper.UpgradeListener upgradeListener8030 = new UpgradeHelper.UpgradeListener() {
+        @Override
+        public void onStart() {
+            binding.tvUpdateProcess.setText(R.string.ota_start);
+        }
+
+        @Override
+        public void onProcess(int curFrame, int totalFrame) {
+            binding.tvUpdateProcess.setText(curFrame + " / " + totalFrame);
+        }
+
+        @Override
+        public void onFlashing() {
+            binding.tvUpdateProcess.setText(R.string.ota_ing);
+        }
+
+        @Override
+        public void onComplete() {
+            binding.tvUpdateProcess.setText(R.string.ota_finish);
+
+            binding.btnUpgradeGnd.setEnabled(true);
+            binding.btnUpgradeSky.setEnabled(true);
+
+            binding.btnUpgradeV4.setEnabled(true);
+        }
+
+        @Override
+        public void onFail(String errMsg) {
+            binding.tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
+
+            binding.btnUpgradeGnd.setEnabled(true);
+            binding.btnUpgradeSky.setEnabled(true);
+
+            binding.btnUpgradeV4.setEnabled(true);
         }
     };
 

@@ -34,6 +34,7 @@ public class PreferenceObject implements Serializable {
     public Integer p401_mtu = AR8030VpnReader.MTU;
     public String p401_ip = AR8030VpnReader.IP;
     public String p401_subnet_mask = AR8030VpnReader.SubnetMask;
+    public Boolean p401_datagram = false;
 
     public Boolean show_mcu_log = McuManager.isShowLog;
     public Boolean show_ffmpeg_log = false;
