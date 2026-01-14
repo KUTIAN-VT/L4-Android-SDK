@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
     <TextView
@@ -59,6 +60,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_set" />
+
+    <Button
+        android:id="@+id/btn_get_local"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="读取本地频率列表"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_tips" />
+
+    <TextView
+        android:id="@+id/tv_local_freq_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@id/btn_get_local"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_get_local"
+        app:layout_constraintBottom_toBottomOf="@id/btn_get_local"
+        tools:text="本地频率列表" />
+
+    <Button
+        android:id="@+id/btn_get_remote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="读取远程频率列表"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_get_local" />
+
+    <TextView
+        android:id="@+id/tv_remote_freq_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@id/btn_get_remote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_get_remote"
+        app:layout_constraintBottom_toBottomOf="@id/btn_get_remote"
+        tools:text="远程频率列表" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
