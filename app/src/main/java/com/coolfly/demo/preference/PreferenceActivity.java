@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.serialport.SerialPortFinder;
 import android.view.View;
 import android.widget.Toast;
@@ -48,7 +50,10 @@ public class PreferenceActivity extends AppCompatActivity {
 
     public static void savePreference() {
         if (preferenceObject != null) {
-            sp.edit().putString(PREF_APP_CONFIG, JSON.toJSONString(preferenceObject)).apply();
+            sp.edit().putString(PREF_APP_CONFIG, JSON.toJSONString(preferenceObject)).commit();
+            Toast.makeText(MainApplication.applicationContext, "Preference saved", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainApplication.applicationContext, "Preference is null", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -181,6 +186,12 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_ip = ip;
                     PreferenceActivity.savePreference();
+                    // Delete existing tap
+                    ProtocolHelper.getInstance().ar8030CloseEth();
+                    // Restart eth for users who not restarting the application after changing the IP
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        ProtocolHelper.getInstance().ar8030OpenEth();
+                    }, 3000);
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -355,7 +366,6 @@ public class PreferenceActivity extends AppCompatActivity {
             }
             preferenceObject.mediaConfig = mediaConfig;
             savePreference();
-            Toast.makeText(PreferenceActivity.this, "save mediaConfig success", Toast.LENGTH_SHORT).show();
         });
     }
 }
