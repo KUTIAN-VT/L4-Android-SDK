@@ -614,6 +614,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (view == binding.btnFreqListV4) {
             Intent intent = new Intent(this, V4FreqListActivity.class);
             startActivity(intent);
+        } else if (view == binding.btnFreqPowerV4) {
+            Intent intent = new Intent(this, V4FreqPowerActivity.class);
+            startActivity(intent);
         } else if (view == binding.btnPwrV4) {
             Intent intent = new Intent(this, V4PwrActivity.class);
             startActivity(intent);

@@ -227,6 +227,13 @@
                 android:text="V4 Freq List" />
 
             <Button
+                android:id="@+id/btn_freq_power_v4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:onClick="onClick"
+                android:text="V4 Freq Power" />
+
+            <Button
                 android:id="@+id/btn_pwr_v4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
