@@ -527,6 +527,11 @@ public class RadioTestActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onPairOperated(DEVICE_TYPE deviceType, int slot, boolean isStart) {
+
+        }
+
+        @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
             // 配对超时
             appendStatus("❌ 对频超时 (slot: " + i + ")");

@@ -952,6 +952,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onPairOperated(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot, boolean isStart) {
+            // Now only for 8030, pair manually time out
+            if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {
+                if (isStart) {
+                    Toast.makeText(MainActivity.this, "Pair started on slot " + slot, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Pair stopped on slot " + slot, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
         public void onPairTimeOut(com.fly.station.prorocol.DEVICE_TYPE deviceType, int slot) {
             // Now only for 8030, pair manually time out
             if (deviceType == com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030) {

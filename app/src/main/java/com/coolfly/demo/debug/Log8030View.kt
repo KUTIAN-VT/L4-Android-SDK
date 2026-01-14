@@ -157,6 +157,14 @@ class Log8030View : LinearLayout {
             return 0
         }
 
+        override fun onPairOperated(
+            deviceType: DEVICE_TYPE?,
+            slot: Int,
+            isStart: Boolean
+        ) {
+
+        }
+
         override fun onPairTimeOut(p0: DEVICE_TYPE?, p1: Int) {
 
         }

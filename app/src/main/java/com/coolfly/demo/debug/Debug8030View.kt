@@ -353,6 +353,14 @@ class Debug8030View : LinearLayout {
             return 0
         }
 
+        override fun onPairOperated(
+            deviceType: com.fly.station.prorocol.DEVICE_TYPE?,
+            slot: Int,
+            isStart: Boolean
+        ) {
+
+        }
+
         override fun onPairTimeOut(p0: com.fly.station.prorocol.DEVICE_TYPE?, p1: Int) {
             pairStatus = false
             updatePair(pairStatus)

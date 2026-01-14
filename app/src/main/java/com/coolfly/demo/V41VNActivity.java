@@ -281,6 +281,11 @@ public class V41VNActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onPairOperated(DEVICE_TYPE deviceType, int slot, boolean isStart) {
+
+        }
+
+        @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int slot) {
             setPairState(slot, false);
         }

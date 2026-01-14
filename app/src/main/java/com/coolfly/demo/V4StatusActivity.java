@@ -76,6 +76,11 @@ public class V4StatusActivity extends AppCompatActivity {
             return 0;}
 
         @Override
+        public void onPairOperated(DEVICE_TYPE deviceType, int slot, boolean isStart) {
+
+        }
+
+        @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int i) { }
 
         @Override

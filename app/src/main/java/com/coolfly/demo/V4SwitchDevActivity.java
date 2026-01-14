@@ -72,6 +72,11 @@ public class V4SwitchDevActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onPairOperated(DEVICE_TYPE deviceType, int slot, boolean isStart) {
+
+        }
+
+        @Override
         public void onPairTimeOut(DEVICE_TYPE deviceType, int i) {
 
         }
