@@ -32,6 +32,26 @@ public class V4PwrActivity extends AppCompatActivity {
         EditText etPwrMax = findViewById(R.id.et_pwr_max);
         androidx.appcompat.widget.SwitchCompat swRemote = findViewById(R.id.sw_remote);
         Button btnSet = findViewById(R.id.btn_set_pwr);
+        Button btnSetHot = findViewById(R.id.btn_set_hot);
+
+        btnSetHot.setOnClickListener(v -> {
+            boolean auto = swAuto.isChecked();
+            boolean remote = swRemote.isChecked();
+            try {
+                if (!auto) {
+                    if (TextUtils.isEmpty(etPwrInit.getText())) {
+                        Toast.makeText(this, "pwrInit is empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int pwrInit = Integer.parseInt(etPwrInit.getText().toString());
+                    protocolHelper.ar8030SetPwr(pwrInit, remote);
+                }
+                protocolHelper.ar8030SetPwrAuto(auto, remote);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "format error", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btnSet.setOnClickListener(v -> {
             boolean auto = swAuto.isChecked();
