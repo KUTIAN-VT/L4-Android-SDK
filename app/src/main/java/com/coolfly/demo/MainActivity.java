@@ -47,7 +47,6 @@ import com.coolfly.demo.preference.PreferenceActivity;
 import com.coolfly.demo.utils.Constants;
 import com.coolfly.demo.utils.ImageUtils;
 import com.coolfly.demo.utils.PermissionHelper;
-import com.coolfly.demo.v3ota.V3OtaActivity;
 import com.fly.aoalibrary.DEVICE_TYPE;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.aoalibrary.host.UsbDeviceListener;
@@ -90,6 +89,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * @deprecated Outdated. Use @see {@link com.coolfly.demo.DeviceChooseActivity} instead.
+ */
+@Deprecated
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private ActivityMainBinding binding;
@@ -1030,7 +1033,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onDebugMessage(com.fly.station.prorocol.DEVICE_TYPE deviceType, String s) {
-
+            // Now only for 8030
         }
 
     };

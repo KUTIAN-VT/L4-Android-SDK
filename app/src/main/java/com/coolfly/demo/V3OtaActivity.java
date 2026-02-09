@@ -1,4 +1,4 @@
-package com.coolfly.demo.v3ota;
+package com.coolfly.demo;
 
 import android.Manifest;
 import android.app.Activity;

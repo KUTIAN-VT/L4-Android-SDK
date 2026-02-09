@@ -72,7 +72,7 @@ public class SplashActivity extends AppCompatActivity {
         mControlsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, DeviceChooseActivity.class);
                 startActivity(intent);
             }
         });

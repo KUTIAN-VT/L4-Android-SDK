@@ -7,12 +7,12 @@ def versionTime = new Date().format("yyyy-MM-dd-HH-mm")
 
 android {
     namespace 'com.coolfly.demo'
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.coolfly.demo"
         minSdk 24
-        targetSdk 34
+        targetSdk 36
         versionCode 19
         versionName "1.19.0"
         buildConfigField "String", "COMPILE_TIME", "\"$versionTime\""
@@ -32,6 +32,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
