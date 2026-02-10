@@ -270,6 +270,56 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.etP4011vnRxBufferPort2.setText(String.valueOf(preferenceObject.p401_1vn_rx_buffer_port2));
+        binding.etP4011vnTxBufferPort2.setText(String.valueOf(preferenceObject.p401_1vn_tx_buffer_port2));
+        binding.tvP4011vnBufferPort2Save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int rxBuffer = Integer.parseInt(binding.etP4011vnRxBufferPort2.getText().toString());
+                int txBuffer = Integer.parseInt(binding.etP4011vnTxBufferPort2.getText().toString());
+
+                boolean res = false;
+                for (int i = 0; i<8; i++) {
+                    res = ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, i, 2);
+                    if (!res) {
+                        break;
+                    }
+                }
+                if (res) {
+                    preferenceObject.p401_1vn_rx_buffer_port2 = rxBuffer;
+                    preferenceObject.p401_1vn_tx_buffer_port2 = txBuffer;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        binding.etP4011vnRxBufferPort3.setText(String.valueOf(preferenceObject.p401_1vn_rx_buffer_port3));
+        binding.etP4011vnTxBufferPort3.setText(String.valueOf(preferenceObject.p401_1vn_tx_buffer_port3));
+        binding.tvP4011vnBufferPort3Save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int rxBuffer = Integer.parseInt(binding.etP4011vnRxBufferPort3.getText().toString());
+                int txBuffer = Integer.parseInt(binding.etP4011vnTxBufferPort3.getText().toString());
+
+                boolean res = false;
+                for (int i = 0; i<8; i++) {
+                    res = ProtocolHelper.ar8030SetBufferSize(rxBuffer, txBuffer, i, 3);
+                    if (!res) {
+                        break;
+                    }
+                }
+                if (res) {
+                    preferenceObject.p401_1vn_rx_buffer_port3 = rxBuffer;
+                    preferenceObject.p401_1vn_tx_buffer_port3 = txBuffer;
+                    PreferenceActivity.savePreference();
+                } else {
+                    Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         binding.swP401Datagram.setChecked(ProtocolHelper.ar8030IsUseDatagram());
         binding.swP401Datagram.setOnCheckedChangeListener((buttonView, isChecked) -> {
             ProtocolHelper.ar8030SetUseDatagram(isChecked);

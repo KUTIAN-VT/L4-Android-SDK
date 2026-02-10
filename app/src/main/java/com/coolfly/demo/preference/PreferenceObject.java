@@ -31,6 +31,10 @@ public class PreferenceObject implements Serializable {
     public Integer p401_tx_buffer_slot0_port2 = 40000;
     public Integer p401_rx_buffer_slot0_port3 = 60000;
     public Integer p401_tx_buffer_slot0_port3 = 40000;
+    public Integer p401_1vn_rx_buffer_port2 = 60000;
+    public Integer p401_1vn_tx_buffer_port2 = 40000;
+    public Integer p401_1vn_rx_buffer_port3 = 60000;
+    public Integer p401_1vn_tx_buffer_port3 = 40000;
     public Integer p401_mtu = AR8030VpnReader.MTU;
     public String p401_ip = AR8030VpnReader.IP;
     public String p401_subnet_mask = AR8030VpnReader.SubnetMask;
