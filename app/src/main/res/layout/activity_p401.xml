@@ -47,6 +47,30 @@
             android:textColor="@android:color/white"
             android:text="log window" />
 
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_sys_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="8dp"
+                android:textColor="#FF66FA45"
+                android:textSize="10sp"
+                tools:text="aaa" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.3"
+                android:gravity="center"
+                android:text="SYS INFO"
+                android:textColor="@color/light_blue_A200"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </FrameLayout>
     </LinearLayout>
 
     <View
