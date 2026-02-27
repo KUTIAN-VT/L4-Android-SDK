@@ -42,11 +42,27 @@ public class V4PassthroughActivity extends AppCompatActivity {
     // Display mode configuration
     private boolean displayLengthOnly = false;
 
+    private int slot = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityV4PassthroughBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.tvP401Slot.setText(String.valueOf(slot));
+        binding.tvP401Slot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] slots = getResources().getStringArray(R.array.p401slot_value);
+                new AlertDialog.Builder(V4PassthroughActivity.this)
+                        .setTitle("slot")
+                        .setItems(slots, (dialog, which) -> {
+                            slot = Integer.parseInt(slots[which]);
+                            binding.tvP401Slot.setText(String.valueOf(slot));
+                        }).create().show();
+            }
+        });
 
         binding.tvP401PortPassthrough.setText("" + PreferenceActivity.preferenceObject.p401_port_passthrough);
         binding.tvP401PortPassthrough.setOnClickListener(new View.OnClickListener() {
@@ -68,16 +84,16 @@ public class V4PassthroughActivity extends AppCompatActivity {
         binding.tvConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Open passthrough connection for slot 0
-                protocolHelper.ar8030OpenPassthrough(0);
+                // Open passthrough connection for slot
+                protocolHelper.ar8030OpenPassthrough(slot);
             }
         });
 
         binding.tvDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Close passthrough connection for slot 0
-                protocolHelper.ar8030ClosePassthrough(0);
+                // Close passthrough connection for slot
+                protocolHelper.ar8030ClosePassthrough(slot);
             }
         });
 
@@ -90,8 +106,8 @@ public class V4PassthroughActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            // Write passthrough data to slot 0
-                            protocolHelper.ar8030WritePassthroughData(0, bytesToWrite, bytesToWrite.length);
+                            // Write passthrough data to slot
+                            protocolHelper.ar8030WritePassthroughData(slot, bytesToWrite, bytesToWrite.length);
                         }
                     }).start();
                 } else {
@@ -226,9 +242,9 @@ public class V4PassthroughActivity extends AppCompatActivity {
             data[i] = (byte) 0xaa;
         }
 
-        // 在后台线程发送数据
+        // Send data in background thread
         new Thread(() -> {
-            protocolHelper.ar8030WritePassthroughData(0, data, bytesCount);
+            protocolHelper.ar8030WritePassthroughData(slot, data, bytesCount);
         }).start();
     }
 
