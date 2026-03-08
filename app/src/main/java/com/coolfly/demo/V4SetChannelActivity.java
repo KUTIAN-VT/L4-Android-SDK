@@ -38,11 +38,11 @@ public class V4SetChannelActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.tvReadBand.setOnClickListener(v -> {
-            protocolHelper.ar8030GetBandInfo(false);
+            protocolHelper.ar8030GetBandInfo(binding.swBandRemote.isChecked());
         });
 
         binding.tvReadChannel.setOnClickListener(v -> {
-            protocolHelper.ar8030GetChannelInfo(false);
+            protocolHelper.ar8030GetChannelInfo(binding.swChanRemote.isChecked());
         });
 
         binding.tvSetBand.setOnClickListener(v -> {
@@ -58,7 +58,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
                     .setTitle("set band")
                     .setItems(band, (dialog, which) -> {
                         selectedBandIndex = which;
-                        protocolHelper.ar8030SetBand(selectedBandIndex, false);
+                        protocolHelper.ar8030SetBand(selectedBandIndex, binding.swBandRemote.isChecked());
                         // Set dev at the same time
                         protocolHelper.ar8030SetBandRemote(binding.swBandAuto.isChecked(), binding.swBandAuto.isChecked()? 0: selectedBandIndex, 0);
                     }).create().show();
@@ -81,7 +81,7 @@ public class V4SetChannelActivity extends AppCompatActivity {
                     .setTitle("set channel")
                     .setItems(channels, (dialog, which) -> {
                         selectedChannelIndex = which;
-                        protocolHelper.ar8030SetChan(selectedChannelIndex, false);
+                        protocolHelper.ar8030SetChan(selectedChannelIndex, binding.swChanRemote.isChecked());
                         // Set dev at the same time
                         protocolHelper.ar8030SetChanRemote(binding.swChanAuto.isChecked(), binding.swChanAuto.isChecked()? 0: selectedChannelIndex, 0);
                     }).create().show();
