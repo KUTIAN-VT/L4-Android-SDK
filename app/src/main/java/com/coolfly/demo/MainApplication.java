@@ -128,6 +128,16 @@ public class MainApplication extends Application {
                     }
                     if (PreferenceActivity.preferenceObject.p401_dev_count == 1) {
                         // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
+                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
+                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0, 0, 0);
+                        if (!res) {
+                            logger.d("set 1v1 buffer failed, see logcat");
+                        }
+                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
+                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1, 0, 1);
+                        if (!res) {
+                            logger.d("set 1v1 buffer failed, see logcat");
+                        }
                         res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
                                 PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2, 0, 2);
                         if (!res) {
@@ -139,6 +149,22 @@ public class MainApplication extends Application {
                             logger.d("set 1v1 buffer failed, see logcat");
                         }
                     } else {
+                        for (int i = 0; i<8; i++) {
+                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
+                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0, i, 0);
+                            if (!res) {
+                                logger.d("set 1vN buffer failed, see logcat");
+                                break;
+                            }
+                        }
+                        for (int i = 0; i<8; i++) {
+                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
+                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1, i, 1);
+                            if (!res) {
+                                logger.d("set 1vN buffer failed, see logcat");
+                                break;
+                            }
+                        }
                         for (int i = 0; i<8; i++) {
                             res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
                                     PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2, i, 2);
