@@ -675,7 +675,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PreferenceActivity.class);
             startActivity(intent);
         } else if (view == binding.btnBluetoothSpp) {
-            Intent intent = new Intent(this, BluetoothSPPActivity.class);
+            Intent intent = new Intent(this, Tty2BluetoothActivity.class);
             startActivity(intent);
         } else if (view == binding.btnUdp) {
             Intent intent = new Intent(this, Tty2UdpActivity.class);

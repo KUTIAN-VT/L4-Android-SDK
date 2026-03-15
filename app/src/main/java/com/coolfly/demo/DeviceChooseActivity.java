@@ -197,13 +197,13 @@ public class DeviceChooseActivity extends AppCompatActivity {
     private void setupFeatureEntries() {
         List<FeatureEntry> entries = new ArrayList<>();
         entries.add(new FeatureEntry("MCU", McuActivity.class));
-        entries.add(new FeatureEntry("SPP", BluetoothSPPActivity.class));
-        entries.add(new FeatureEntry("MQTT", MqttActivity.class));
+        entries.add(new FeatureEntry("TTY 2 BLUETOOTH", Tty2BluetoothActivity.class));
+        entries.add(new FeatureEntry("TTY 2 UDP", Tty2UdpActivity.class));
         entries.add(new FeatureEntry("RTSP Multi", RtspMultiActivity.class));
         entries.add(new FeatureEntry("RTSP Single", RtspSingleActivity.class));
-        entries.add(new FeatureEntry("TTY 2 UDP", Tty2UdpActivity.class));
         entries.add(new FeatureEntry("RTP Multi", UdpRtpMultiActivity.class));
         entries.add(new FeatureEntry("RTP Single", UdpRtpActivity.class));
+        entries.add(new FeatureEntry("MQTT", MqttActivity.class));
         entries.add(new FeatureEntry("Preference", PreferenceActivity.class));
 
         binding.rvFeatureEntries.setLayoutManager(new GridLayoutManager(this, 3));

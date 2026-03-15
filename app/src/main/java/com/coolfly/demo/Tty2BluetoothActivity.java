@@ -21,16 +21,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.coolfly.demo.databinding.ActivityBluetoothSppBinding;
+import com.coolfly.demo.databinding.ActivityTty2bluetoothBinding;
 import com.fly.station.bluetooth.BluetoothSppManager;
 import com.fly.station.tty.TtyManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BluetoothSPPActivity extends AppCompatActivity {
+public class Tty2BluetoothActivity extends AppCompatActivity {
 
-    private ActivityBluetoothSppBinding binding;
+    private ActivityTty2bluetoothBinding binding;
 
     private BluetoothSppManager bluetoothManager;
     private final List<BluetoothDevice> discoveredDevices = new ArrayList<>();
@@ -57,7 +57,7 @@ public class BluetoothSPPActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityBluetoothSppBinding.inflate(getLayoutInflater());
+        binding = ActivityTty2bluetoothBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // 初始化蓝牙管理器
@@ -237,7 +237,7 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         public void onConnected(@Nullable BluetoothDevice device) {
             runOnUiThread(() -> {
                 binding.tvStatus.setText("已连接到 " + getDeviceName(device));
-                Toast.makeText(BluetoothSPPActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Tty2BluetoothActivity.this, "连接成功", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -245,7 +245,7 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         public void onConnectionFailed(BluetoothDevice device, String message) {
             runOnUiThread(() -> {
                 binding.tvStatus.setText("连接失败: " + message);
-                Toast.makeText(BluetoothSPPActivity.this, "连接失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Tty2BluetoothActivity.this, "连接失败", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -288,7 +288,7 @@ public class BluetoothSPPActivity extends AppCompatActivity {
         @Override
         public void onError(String message) {
             runOnUiThread(() -> {
-                Toast.makeText(BluetoothSPPActivity.this, "错误: " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Tty2BluetoothActivity.this, "错误: " + message, Toast.LENGTH_SHORT).show();
             });
         }
 
