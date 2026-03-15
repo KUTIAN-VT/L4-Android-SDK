@@ -167,7 +167,7 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".UdpActivity"
+            android:name=".Tty2UdpActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity

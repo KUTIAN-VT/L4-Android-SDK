@@ -201,7 +201,7 @@ public class DeviceChooseActivity extends AppCompatActivity {
         entries.add(new FeatureEntry("MQTT", MqttActivity.class));
         entries.add(new FeatureEntry("RTSP Multi", RtspMultiActivity.class));
         entries.add(new FeatureEntry("RTSP Single", RtspSingleActivity.class));
-        entries.add(new FeatureEntry("UDP", UdpActivity.class));
+        entries.add(new FeatureEntry("TTY 2 UDP", Tty2UdpActivity.class));
         entries.add(new FeatureEntry("RTP Multi", UdpRtpMultiActivity.class));
         entries.add(new FeatureEntry("RTP Single", UdpRtpActivity.class));
         entries.add(new FeatureEntry("Preference", PreferenceActivity.class));

@@ -5,13 +5,13 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.coolfly.demo.databinding.ActivityUdpBinding;
+import com.coolfly.demo.databinding.ActivityTty2udpBinding;
 import com.fly.station.tty.TtyManager;
 import com.fly.station.udp.UdpController;
 
-public class UdpActivity extends AppCompatActivity {
+public class Tty2UdpActivity extends AppCompatActivity {
 
-    private ActivityUdpBinding binding;
+    private ActivityTty2udpBinding binding;
 
     private UdpController udpController;
 
@@ -21,7 +21,7 @@ public class UdpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityUdpBinding.inflate(getLayoutInflater());
+        binding = ActivityTty2udpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // 初始化UDP控制器

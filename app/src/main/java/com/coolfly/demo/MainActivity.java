@@ -678,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, BluetoothSPPActivity.class);
             startActivity(intent);
         } else if (view == binding.btnUdp) {
-            Intent intent = new Intent(this, UdpActivity.class);
+            Intent intent = new Intent(this, Tty2UdpActivity.class);
             startActivity(intent);
         } else if (view == binding.btnMqtt) {
             Intent intent = new Intent(this, MqttActivity.class);
