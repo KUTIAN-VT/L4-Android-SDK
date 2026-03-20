@@ -24,6 +24,7 @@ import com.coolfly.demo.V4ConfigActivity;
 import com.coolfly.demo.V4FreqListActivity;
 import com.coolfly.demo.V4FreqPowerActivity;
 import com.coolfly.demo.V4MacSettingsActivity;
+import com.coolfly.demo.V4Passthrough2UdpActivity;
 import com.coolfly.demo.V4PassthroughActivity;
 import com.coolfly.demo.V4PwrActivity;
 import com.coolfly.demo.V4SetChannelActivity;
@@ -111,6 +112,7 @@ public class P401Activity extends AppCompatActivity {
         addButton("Bandwidth", v -> startActivity(new Intent(this, V4BandwidthActivity.class)));
         addButton("Config", v -> startActivity(new Intent(this, V4ConfigActivity.class)));
         addButton("Passthrough", v -> startActivity(new Intent(this, V4PassthroughActivity.class)));
+        addButton("Passthrough 2 UDP", v -> startActivity(new Intent(this, V4Passthrough2UdpActivity.class)));
         addButton("Freq List", v -> startActivity(new Intent(this, V4FreqListActivity.class)));
         addButton("Freq Power", v -> startActivity(new Intent(this, V4FreqPowerActivity.class)));
         addButton("Power", v -> startActivity(new Intent(this, V4PwrActivity.class)));

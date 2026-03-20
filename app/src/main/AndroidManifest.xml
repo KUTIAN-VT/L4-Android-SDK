@@ -171,6 +171,10 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".V4Passthrough2UdpActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".RadioTestActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
