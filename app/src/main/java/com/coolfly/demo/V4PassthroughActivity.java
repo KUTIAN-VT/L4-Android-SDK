@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityV4PassthroughBinding;
-import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
@@ -43,6 +42,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
     private boolean displayLengthOnly = false;
 
     private int slot = 0;
+    private int port = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
             }
         });
 
-        binding.tvP401PortPassthrough.setText("" + PreferenceActivity.preferenceObject.p401_port_passthrough);
+        binding.tvP401PortPassthrough.setText(String.valueOf(port));
         binding.tvP401PortPassthrough.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,11 +72,8 @@ public class V4PassthroughActivity extends AppCompatActivity {
                 new AlertDialog.Builder(V4PassthroughActivity.this)
                         .setTitle("passthrough port")
                         .setItems(ports, (dialog, which) -> {
-                            int port = Integer.parseInt(ports[which]);
-                            ProtocolHelper.ar8030SetPortPassthrough(port);
-                            binding.tvP401PortPassthrough.setText(ports[which]);
-                            PreferenceActivity.preferenceObject.p401_port_passthrough = port;
-                            PreferenceActivity.savePreference();
+                            port = Integer.parseInt(ports[which]);
+                            binding.tvP401PortPassthrough.setText(String.valueOf(port));
                         }).create().show();
             }
         });
@@ -84,16 +81,16 @@ public class V4PassthroughActivity extends AppCompatActivity {
         binding.tvConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Open passthrough connection for slot
-                protocolHelper.ar8030OpenPassthrough(slot);
+                // Open passthrough connection for slot and port
+                protocolHelper.ar8030OpenPassthrough(slot, port);
             }
         });
 
         binding.tvDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Close passthrough connection for slot
-                protocolHelper.ar8030ClosePassthrough(slot);
+                // Close passthrough connection for slot and port
+                protocolHelper.ar8030ClosePassthrough(slot, port);
             }
         });
 
@@ -106,8 +103,8 @@ public class V4PassthroughActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            // Write passthrough data to slot
-                            protocolHelper.ar8030WritePassthroughData(slot, bytesToWrite, bytesToWrite.length);
+                            // Write passthrough data to slot and port
+                            protocolHelper.ar8030WritePassthroughData(slot, port, bytesToWrite, bytesToWrite.length);
                         }
                     }).start();
                 } else {
@@ -244,7 +241,7 @@ public class V4PassthroughActivity extends AppCompatActivity {
 
         // Send data in background thread
         new Thread(() -> {
-            protocolHelper.ar8030WritePassthroughData(slot, data, bytesCount);
+            protocolHelper.ar8030WritePassthroughData(slot, port, data, bytesCount);
         }).start();
     }
 
