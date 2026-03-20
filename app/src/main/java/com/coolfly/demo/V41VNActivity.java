@@ -38,13 +38,16 @@ public class V41VNActivity extends AppCompatActivity {
         binding.tv1vn.setOnClickListener(v -> {
             new AlertDialog.Builder(V41VNActivity.this)
                     .setTitle("Alert")
-                    .setMessage("Switch to 1V4 mode, must reboot Android system!")
+                    .setMessage("Switch to 1V4 mode")
                     .setPositiveButton("OK", (dialog, which) -> {
                         // >1 means 1vN mode, where N is the number of dev.
                         // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
                         PreferenceActivity.preferenceObject.p401_dev_count = 4;
                         PreferenceActivity.savePreference();
-                        Toast.makeText(V41VNActivity.this, "Please reboot Android system", Toast.LENGTH_SHORT).show();
+                        boolean res = protocolHelper.ar8030Set1VNMode(4);
+                        if (res) {
+                            Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
+                        }
                     })
                     .setNegativeButton("Cancel", null)
                     .create().show();
@@ -53,13 +56,16 @@ public class V41VNActivity extends AppCompatActivity {
         binding.tv1v1.setOnClickListener(v -> {
             new AlertDialog.Builder(V41VNActivity.this)
                     .setTitle("Alert")
-                    .setMessage("Restore to 1V1 mode, must reboot Android system!")
+                    .setMessage("Restore to 1V1 mode")
                     .setPositiveButton("OK", (dialog, which) -> {
                         // 1 means 1v1 mode.
                         // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
                         PreferenceActivity.preferenceObject.p401_dev_count = 1;
                         PreferenceActivity.savePreference();
-                        Toast.makeText(V41VNActivity.this, "Please reboot Android system", Toast.LENGTH_SHORT).show();
+                        boolean res = protocolHelper.ar8030Set1VNMode(1);
+                        if (res) {
+                            Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
+                        }
                     })
                     .setNegativeButton("Cancel", null)
                     .create().show();

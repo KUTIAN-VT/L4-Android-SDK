@@ -29,6 +29,7 @@ import com.fly.station.mcu.entity.ActiveState;
 import com.fly.station.mcu.entity.CalibrateState;
 import com.fly.station.mcu.entity.HeartBeat;
 import com.fly.station.mcu.entity.OperateMode;
+import com.fly.station.mcu.entity.SbusProtect;
 import com.fly.station.mcu.entity.Version;
 import com.fly.station.prorocol.Fly;
 import com.fly.station.wheel.Wheel;
@@ -364,6 +365,11 @@ public class McuActivity extends AppCompatActivity {
         public void onOperateMode(OperateMode operateMode) {
             binding.tvLog.setText(operateMode.toString());
             binding.spMcuSbusMode.setSelection(Arrays.asList(modeArr).indexOf(operateMode.mode));
+        }
+
+        @Override
+        public void onSbusProtect(SbusProtect sbusProtect) {
+            binding.tvLog.setText(sbusProtect.toString());
         }
 
         @Override

@@ -122,10 +122,8 @@ public class MainApplication extends Application {
                     // Initialize P401
                     // 1 means 1v1 mode. >1 means 1vN mode, where N is the number of dev.
                     // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
-                    boolean res = ProtocolHelper.ar8030Set1VNMode(PreferenceActivity.preferenceObject.p401_dev_count);
-                    if (!res) {
-                        logger.d("set 1vN mode failed, please refer to logcat");
-                    }
+                    protocolHelper.ar8030Set1VNMode(PreferenceActivity.preferenceObject.p401_dev_count);
+                    boolean res;
                     if (PreferenceActivity.preferenceObject.p401_dev_count == 1) {
                         // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
                         res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,

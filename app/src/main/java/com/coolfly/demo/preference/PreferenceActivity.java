@@ -186,12 +186,14 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_ip = ip;
                     PreferenceActivity.savePreference();
-                    // Delete existing tap
-                    ProtocolHelper.getInstance().ar8030CloseEth();
-                    // Restart eth for users who not restarting the application after changing the IP
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        ProtocolHelper.getInstance().ar8030OpenEth();
-                    }, 3000);
+                    if (preferenceObject.p401_dev_count == 1) {
+                        // Delete existing tap
+                        ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
+                        // Restart eth for users who not restarting the application after changing the IP
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            ProtocolHelper.getInstance().ar8030OpenEth(0, preferenceObject.p401_port_eth);
+                        }, 3000);
+                    }
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
