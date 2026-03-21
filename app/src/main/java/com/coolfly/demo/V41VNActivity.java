@@ -40,10 +40,11 @@ public class V41VNActivity extends AppCompatActivity {
                     .setTitle("Alert")
                     .setMessage("Switch to 1V4 mode")
                     .setPositiveButton("OK", (dialog, which) -> {
-                        // >1 means 1vN mode, where N is the number of dev.
-                        // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
                         PreferenceActivity.preferenceObject.p401_dev_count = 4;
                         PreferenceActivity.savePreference();
+
+                        // >1 means 1vN mode, where N is the number of dev.
+                        // It will take effect after rebooting the ground image transmission.
                         boolean res = protocolHelper.ar8030Set1VNMode(4);
                         if (res) {
                             Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();

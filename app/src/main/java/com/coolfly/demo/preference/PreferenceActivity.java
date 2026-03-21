@@ -225,11 +225,16 @@ public class PreferenceActivity extends AppCompatActivity {
                         .setTitle("dev count")
                         .setItems(counts, (dialog, which) -> {
                             int count = Integer.parseInt(counts[which]);
-                            // devCount不能中途更改，只能在初始化时设置一次，修改后需要重启，并在初始化的时候生效
-//                            ProtocolHelper.ar8030Set1VNMode(count);
                             binding.tvP401DevCount.setText(counts[which]);
                             preferenceObject.p401_dev_count = count;
                             PreferenceActivity.savePreference();
+
+                            // >1 means 1vN mode, where N is the number of dev.
+                            // It will take effect after rebooting the ground image transmission.
+                            boolean res = ProtocolHelper.getInstance().ar8030Set1VNMode(count);
+                            if (res) {
+                                Toast.makeText(PreferenceActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
+                            }
                         }).create().show();
             }
         });
