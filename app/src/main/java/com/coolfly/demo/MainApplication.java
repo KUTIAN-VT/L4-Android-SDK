@@ -19,13 +19,18 @@ import com.fly.fflibrary.listeners.FFListener;
 import com.fly.fflibrary.listeners.FFListenerManager;
 import com.fly.loglibrary.Loggers;
 import com.fly.medialibrary.MediaHelper;
+import com.fly.station.drv.DrvManager;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
 import com.fly.station.prorocol.bean.BaseFlyPacket;
+import com.fly.station.prorocol.bean.GetStatus8030;
 import com.fly.station.prorocol.bean.SysInfo8030;
 import com.fly.station.prorocol.bean.Throughput8030;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @Description:
@@ -38,6 +43,8 @@ public class MainApplication extends Application {
     public static Context applicationContext;
     private ProtocolHelper protocolHelper;
     private UsbDeviceHelper usbDeviceHelper;
+    // 401是否在等待Status包，判断1v1还是1vN，来调用onStartReadData
+    private boolean pendingOnReadStatus = false;
 
     @Override
     public void onCreate() {
@@ -106,6 +113,34 @@ public class MainApplication extends Application {
         }).start();
     }
 
+    private Timer read8030StatusJob = null;
+
+    private void startRead8030StatusTimer() {
+        if (read8030StatusJob == null) {
+            read8030StatusJob = new Timer();
+            read8030StatusJob.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    // 获取1vN
+                    protocolHelper.ar8030GetStatus();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }, 500);
+        }
+    }
+
+    private void stopRead8030ChannelInfoTimer() {
+        if (read8030StatusJob != null) {
+            read8030StatusJob.cancel();
+            read8030StatusJob.purge();
+            read8030StatusJob = null;
+        }
+    }
+
     @Keep
     private final UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
@@ -117,69 +152,11 @@ public class MainApplication extends Application {
         public void onStartReadData(com.fly.aoalibrary.DEVICE_TYPE deviceType) {
             switch (deviceType) {
                 case TYPE_8020:
+                    protocolHelper.onStartReadData(deviceType.name());
                     break;
                 case TYPE_8030:
                     // Initialize P401
-                    // 1 means 1v1 mode. >1 means 1vN mode, where N is the number of dev.
-                    // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
-                    protocolHelper.ar8030Set1VNMode(PreferenceActivity.preferenceObject.p401_dev_count);
-                    boolean res;
-                    if (PreferenceActivity.preferenceObject.p401_dev_count == 1) {
-                        // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
-                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
-                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0, 0, 0);
-                        if (!res) {
-                            logger.d("set 1v1 buffer failed, see logcat");
-                        }
-                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
-                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1, 0, 1);
-                        if (!res) {
-                            logger.d("set 1v1 buffer failed, see logcat");
-                        }
-                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
-                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2, 0, 2);
-                        if (!res) {
-                            logger.d("set 1v1 buffer failed, see logcat");
-                        }
-                        res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3,
-                                PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3, 0, 3);
-                        if (!res) {
-                            logger.d("set 1v1 buffer failed, see logcat");
-                        }
-                    } else {
-                        for (int i = 0; i<8; i++) {
-                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
-                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0, i, 0);
-                            if (!res) {
-                                logger.d("set 1vN buffer failed, see logcat");
-                                break;
-                            }
-                        }
-                        for (int i = 0; i<8; i++) {
-                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
-                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1, i, 1);
-                            if (!res) {
-                                logger.d("set 1vN buffer failed, see logcat");
-                                break;
-                            }
-                        }
-                        for (int i = 0; i<8; i++) {
-                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
-                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2, i, 2);
-                            if (!res) {
-                                logger.d("set 1vN buffer failed, see logcat");
-                                break;
-                            }
-                        }
-                        for (int i = 0; i<8; i++) {
-                            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3,
-                                    PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3, i, 3);
-                            if (!res) {
-                                logger.d("set 1vN buffer failed, see logcat");
-                                break;
-                            }
-                        }
-                    }
+                    // 在GetStatus8030的回调中调用 protocolHelper.onStartReadData ，因为需要从中知道是1v1还是1vN
                     // Set port for eth, default is 3.
                     ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
                     // Set port for USB passthrough, default is 2.
@@ -192,9 +169,11 @@ public class MainApplication extends Application {
                     ProtocolHelper.ar8030SetSubnetMask(PreferenceActivity.preferenceObject.p401_subnet_mask);
                     // Set whether to use datagram. Default value is false.
                     ProtocolHelper.ar8030SetUseDatagram(PreferenceActivity.preferenceObject.p401_datagram);
+
+                    pendingOnReadStatus = true;
+                    startRead8030StatusTimer();
                     break;
             }
-            protocolHelper.onStartReadData(deviceType.name());
         }
 
         @Override
@@ -230,6 +209,18 @@ public class MainApplication extends Application {
             if (packet instanceof SysInfo8030) {
                 // AR8030 system info
                 Toast.makeText(applicationContext, (isRemote? "dev: ": "ap: ") + packet, Toast.LENGTH_LONG).show();
+            } else if (packet instanceof GetStatus8030) {
+                if (pendingOnReadStatus) {
+                    pendingOnReadStatus = false;
+                    boolean isMultiSlot = ((GetStatus8030)packet).mode == 1;
+                    setAR8030BufferSize(isMultiSlot);
+                    protocolHelper.ar8030Set1VNMode(isMultiSlot);
+                    protocolHelper.onStartReadData(DEVICE_TYPE.TYPE_8030.name(), DrvManager.isDeviceAvailable());
+
+                    PreferenceActivity.preferenceObject.p401_multi_slot = isMultiSlot;
+                    PreferenceActivity.savePreference();
+                }
+                stopRead8030ChannelInfoTimer();
             }
         }
 
@@ -382,4 +373,69 @@ public class MainApplication extends Application {
             Toast.makeText(applicationContext, "code: " + code + ", msg: " + msg, Toast.LENGTH_SHORT).show();
         }
     };
+
+    /**
+     * 根据当前1vN状态设置socket buffer size
+     */
+    private void setAR8030BufferSize(boolean isMultiSlot) {
+        logger.d("Setting socket buffer size");
+
+        var res = false;
+        if (!isMultiSlot) {
+            // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
+            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
+                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0, 0, 0);
+            if (!res) {
+                logger.d("set 1v1 slot 0 port 0 buffer failed, see logcat");
+            }
+            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
+                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1, 0, 1);
+            if (!res) {
+                logger.d("set 1v1 slot 0 port 1 buffer failed, see logcat");
+            }
+            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
+                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2, 0, 2);
+            if (!res) {
+                logger.d("set 1v1 slot 0 port 2 buffer failed, see logcat");
+            }
+            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3,
+                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3, 0, 3);
+            if (!res) {
+                logger.d("set 1v1 slot 0 port 3 buffer failed, see logcat");
+            }
+        } else {
+            for (int i = 0; i < 8; i++) {
+                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0, i, 0);
+                if (!res) {
+                    logger.d("set 1vN slot $i port 0 buffer failed, see logcat");
+                    break;
+                }
+            }
+            for (int i = 0; i < 8; i++) {
+                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1, i, 1);
+                if (!res) {
+                    logger.d("set 1vN slot $i port 1 buffer failed, see logcat");
+                    break;
+                }
+            }
+            for (int i = 0; i < 8; i++) {
+                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2, i, 2);
+                if (!res) {
+                    logger.d("set 1vN slot $i port 2 buffer failed, see logcat");
+                    break;
+                }
+            }
+            for (int i = 0; i < 8; i++) {
+                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3, i, 3);
+                if (!res) {
+                    logger.d("set 1vN slot $i port 3 buffer failed, see logcat");
+                    break;
+                }
+            }
+        }
+    }
 }

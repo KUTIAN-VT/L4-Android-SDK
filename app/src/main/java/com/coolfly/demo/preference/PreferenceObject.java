@@ -26,7 +26,7 @@ public class PreferenceObject implements Serializable {
 
     public Integer p401_port_eth = 3;
     public Integer p401_port_passthrough = 2;
-    public Integer p401_dev_count = 1;
+    public Boolean p401_multi_slot = false;
     public Integer p401_rx_buffer_slot0_port0 = 60000;
     public Integer p401_tx_buffer_slot0_port0 = 40000;
     public Integer p401_rx_buffer_slot0_port1 = 60000;

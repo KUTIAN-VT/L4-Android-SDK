@@ -33,20 +33,20 @@ public class V41VNActivity extends AppCompatActivity {
         binding = ActivityV41vnBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.tvMode.setText("Current mode: 1V" + PreferenceActivity.preferenceObject.p401_dev_count);
+        binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
 
         binding.tv1vn.setOnClickListener(v -> {
             new AlertDialog.Builder(V41VNActivity.this)
                     .setTitle("Alert")
-                    .setMessage("Switch to 1V4 mode")
+                    .setMessage("Switch to 1VN mode")
                     .setPositiveButton("OK", (dialog, which) -> {
-                        PreferenceActivity.preferenceObject.p401_dev_count = 4;
+                        PreferenceActivity.preferenceObject.p401_multi_slot = true;
                         PreferenceActivity.savePreference();
 
-                        // >1 means 1vN mode, where N is the number of dev.
                         // It will take effect after rebooting the ground image transmission.
-                        boolean res = protocolHelper.ar8030Set1VNMode(4);
+                        boolean res = protocolHelper.ar8030Set1VNMode(true);
                         if (res) {
+                            binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
                             Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -59,12 +59,13 @@ public class V41VNActivity extends AppCompatActivity {
                     .setTitle("Alert")
                     .setMessage("Restore to 1V1 mode")
                     .setPositiveButton("OK", (dialog, which) -> {
-                        // 1 means 1v1 mode.
-                        // It must be set before ProtocolHelper initialized. After changed, it will take effect after rebooting the Android system.
-                        PreferenceActivity.preferenceObject.p401_dev_count = 1;
+                        PreferenceActivity.preferenceObject.p401_multi_slot = false;
                         PreferenceActivity.savePreference();
-                        boolean res = protocolHelper.ar8030Set1VNMode(1);
+
+                        // It will take effect after rebooting the ground image transmission.
+                        boolean res = protocolHelper.ar8030Set1VNMode(false);
                         if (res) {
+                            binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
                             Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
                         }
                     })

@@ -186,7 +186,7 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_ip = ip;
                     PreferenceActivity.savePreference();
-                    if (preferenceObject.p401_dev_count == 1) {
+                    if (!preferenceObject.p401_multi_slot) {
                         // Delete existing tap
                         ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
                         // Restart eth for users who not restarting the application after changing the IP
@@ -216,27 +216,21 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
-        binding.tvP401DevCount.setText(String.valueOf(preferenceObject.p401_dev_count));
-        binding.tvP401DevCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String[] counts = getResources().getStringArray(R.array.p401dev_count_value);
-                new AlertDialog.Builder(PreferenceActivity.this)
-                        .setTitle("dev count")
-                        .setItems(counts, (dialog, which) -> {
-                            int count = Integer.parseInt(counts[which]);
-                            binding.tvP401DevCount.setText(counts[which]);
-                            preferenceObject.p401_dev_count = count;
-                            PreferenceActivity.savePreference();
-
-                            // >1 means 1vN mode, where N is the number of dev.
-                            // It will take effect after rebooting the ground image transmission.
-                            boolean res = ProtocolHelper.getInstance().ar8030Set1VNMode(count);
-                            if (res) {
-                                Toast.makeText(PreferenceActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
-                            }
-                        }).create().show();
-            }
+        binding.tvP401DevCount.setText(preferenceObject.p401_multi_slot ? "1VN" : "1V1");
+        binding.tvP401DevCount.setOnClickListener(v -> {
+            String[] modes = {"1V1", "1VN"};
+            new AlertDialog.Builder(PreferenceActivity.this)
+                    .setTitle("1VN Mode")
+                    .setItems(modes, (dialog, which) -> {
+                        boolean multiSlot = (which == 1);
+                        binding.tvP401DevCount.setText(modes[which]);
+                        preferenceObject.p401_multi_slot = multiSlot;
+                        PreferenceActivity.savePreference();
+                        boolean res = ProtocolHelper.getInstance().ar8030Set1VNMode(multiSlot);
+                        if (res) {
+                            Toast.makeText(PreferenceActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
+                        }
+                    }).create().show();
         });
 
         binding.etP401RxBufferPort0.setText(String.valueOf(preferenceObject.p401_rx_buffer_slot0_port0));
