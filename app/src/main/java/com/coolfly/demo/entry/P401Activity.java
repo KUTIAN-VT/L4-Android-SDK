@@ -31,6 +31,10 @@ import com.coolfly.demo.V4SetChannelActivity;
 import com.coolfly.demo.V4StatusActivity;
 import com.coolfly.demo.V4SwitchDevActivity;
 import com.coolfly.demo.V4SysRebootActivity;
+import com.coolfly.demo.V4McsActivity;
+import com.coolfly.demo.V4UserQualityActivity;
+import com.coolfly.demo.V4CurPowerActivity;
+import com.coolfly.demo.V4PeerQualityActivity;
 import com.coolfly.demo.V4ThroughputActivity;
 import com.coolfly.demo.databinding.ActivityP401Binding;
 import com.coolfly.demo.debug.DebugViewManager;
@@ -124,6 +128,10 @@ public class P401Activity extends AppCompatActivity {
         addButton("Throughput", v -> startActivity(new Intent(this, V4ThroughputActivity.class)));
         addButton("Status", v -> startActivity(new Intent(this, V4StatusActivity.class)));
         addButton("Sys Reboot", v -> startActivity(new Intent(this, V4SysRebootActivity.class)));
+        addButton("MCS", v -> startActivity(new Intent(this, V4McsActivity.class)));
+        addButton("Cur Power", v -> startActivity(new Intent(this, V4CurPowerActivity.class)));
+        addButton("User Quality", v -> startActivity(new Intent(this, V4UserQualityActivity.class)));
+        addButton("Peer Quality", v -> startActivity(new Intent(this, V4PeerQualityActivity.class)));
     }
 
     private void addButton(String text, View.OnClickListener listener) {
