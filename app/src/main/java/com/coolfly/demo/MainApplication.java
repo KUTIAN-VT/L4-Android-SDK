@@ -19,6 +19,7 @@ import com.fly.fflibrary.listeners.FFListener;
 import com.fly.fflibrary.listeners.FFListenerManager;
 import com.fly.loglibrary.Loggers;
 import com.fly.medialibrary.MediaHelper;
+import com.fly.station.drv.DrvCallback;
 import com.fly.station.drv.DrvManager;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
@@ -43,8 +44,15 @@ public class MainApplication extends Application {
     public static Context applicationContext;
     private ProtocolHelper protocolHelper;
     private UsbDeviceHelper usbDeviceHelper;
-    // 401是否在等待Status包，判断1v1还是1vN，来调用onStartReadData
+    private DrvManager drvManager;
+    /**
+     * 401是否在等待Status包，自适应判断1v1还是1vN，来调用onStartReadData
+     */
     private boolean pendingOnReadStatus = false;
+    /**
+     * 自适应决定是否使用新驱动模式
+     */
+    private boolean isDrvMode = false;
 
     @Override
     public void onCreate() {
@@ -70,6 +78,7 @@ public class MainApplication extends Application {
                 if (!PreferenceActivity.preferenceObject.write_log_to_serial) {
                     Loggers.addToBlackList(Loggers.LOG_TYPE_SERIAL);
                 }
+                logger.d("Application create " + BuildConfig.COMPILE_TIME);
 
                 // Protocol
                 logger.d("ProtocolHelper init");
@@ -78,15 +87,23 @@ public class MainApplication extends Application {
                 // Switch log of package parsing
                 com.fly.station.prorocol.Constants.isShowAR8030ParseLog = PreferenceActivity.preferenceObject.show_ar8030_parse_log;
                 protocolHelper = ProtocolHelper.getInstance();
-                logger.d("ProtocolHelper init");
                 protocolHelper.addListener(protocolListener);
 
-                // USB
-                logger.d("UsbDeviceHelper init");
-                UsbDeviceHelper.isShowLog = PreferenceActivity.preferenceObject.show_usb_log;
-                usbDeviceHelper = UsbDeviceHelper.getInstance(applicationContext);
-                usbDeviceHelper.addListener(usbDeviceListener);
-                usbDeviceHelper.onResume();
+                if (DrvManager.isDeviceAvailable()) {
+                    // Drv mode
+                    logger.d("DrvManager init");
+                    isDrvMode = true;
+                    drvManager = DrvManager.getInstance();
+                    drvManager.setCallback(drvCallback);
+                    drvManager.connect(0);
+                } else {
+                    // USB mode
+                    logger.d("UsbDeviceHelper init");
+                    UsbDeviceHelper.isShowLog = PreferenceActivity.preferenceObject.show_usb_log;
+                    usbDeviceHelper = UsbDeviceHelper.getInstance(applicationContext);
+                    usbDeviceHelper.addListener(usbDeviceListener);
+                    usbDeviceHelper.onResume();
+                }
 
                 /*
                  * Initialize media
@@ -141,6 +158,27 @@ public class MainApplication extends Application {
         }
     }
 
+    /**
+     * init AR8030 (P401)
+     */
+    private void initAr8030() {
+        // Set port for eth, default is 3.
+        ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
+        // Set port for USB passthrough, default is 2.
+        ProtocolHelper.ar8030SetPortPassthrough(PreferenceActivity.preferenceObject.p401_port_passthrough);
+        // Set MTU for P401. Default value is 2500.
+        ProtocolHelper.ar8030SetMTU(PreferenceActivity.preferenceObject.p401_mtu);
+        // Set IP for P401. Default value is 192.168.144.55
+        ProtocolHelper.ar8030SetIP(PreferenceActivity.preferenceObject.p401_ip);
+        // Set SubnetMask for P401. Default value is 255.255.255.0
+        ProtocolHelper.ar8030SetSubnetMask(PreferenceActivity.preferenceObject.p401_subnet_mask);
+        // Set whether to use datagram. Default value is false.
+        ProtocolHelper.ar8030SetUseDatagram(PreferenceActivity.preferenceObject.p401_datagram);
+
+        pendingOnReadStatus = true;
+        startRead8030StatusTimer();
+    }
+
     @Keep
     private final UsbDeviceListener usbDeviceListener = new UsbDeviceListener() {
         @Override
@@ -156,22 +194,8 @@ public class MainApplication extends Application {
                     break;
                 case TYPE_8030:
                     // Initialize P401
-                    // 在GetStatus8030的回调中调用 protocolHelper.onStartReadData ，因为需要从中知道是1v1还是1vN
-                    // Set port for eth, default is 3.
-                    ProtocolHelper.ar8030SetPortEth(PreferenceActivity.preferenceObject.p401_port_eth);
-                    // Set port for USB passthrough, default is 2.
-                    ProtocolHelper.ar8030SetPortPassthrough(PreferenceActivity.preferenceObject.p401_port_passthrough);
-                    // Set MTU for P401. Default value is 2500.
-                    ProtocolHelper.ar8030SetMTU(PreferenceActivity.preferenceObject.p401_mtu);
-                    // Set IP for P401. Default value is 192.168.144.55
-                    ProtocolHelper.ar8030SetIP(PreferenceActivity.preferenceObject.p401_ip);
-                    // Set SubnetMask for P401. Default value is 255.255.255.0
-                    ProtocolHelper.ar8030SetSubnetMask(PreferenceActivity.preferenceObject.p401_subnet_mask);
-                    // Set whether to use datagram. Default value is false.
-                    ProtocolHelper.ar8030SetUseDatagram(PreferenceActivity.preferenceObject.p401_datagram);
-
-                    pendingOnReadStatus = true;
-                    startRead8030StatusTimer();
+                    initAr8030();
+                    // 在GetStatus8030的回调中调用 protocolHelper.onStartReadData ，因为需要从中知道是1v1还是1vN自适应
                     break;
             }
         }
@@ -198,6 +222,33 @@ public class MainApplication extends Application {
     };
 
     @Keep
+    private final DrvCallback drvCallback = new DrvCallback() {
+        @Override
+        public void onConnected(int slot) {
+            logger.d("Drv onConnected, " + slot);
+            // Initialize P401
+            initAr8030();
+        }
+
+        @Override
+        public void onDisconnected(int slot) {
+            logger.d("Drv onDisconnected, " + slot);
+            protocolHelper.onDisconnect(com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030.name());
+        }
+
+        @Override
+        public void onDataReceived(int slot, byte[] data, int length) {
+            protocolHelper.parseData(data, length, com.fly.station.prorocol.DEVICE_TYPE.TYPE_8030.name());
+        }
+
+        @Override
+        public void onError(int slot, String error) {
+            logger.d("Drv onError, " + error + ", " + slot);
+
+        }
+    };
+
+    @Keep
     private final ProtocolListener protocolListener = new ProtocolListener() {
         @Override
         public void onReady(DEVICE_TYPE deviceType) {
@@ -210,12 +261,13 @@ public class MainApplication extends Application {
                 // AR8030 system info
                 Toast.makeText(applicationContext, (isRemote? "dev: ": "ap: ") + packet, Toast.LENGTH_LONG).show();
             } else if (packet instanceof GetStatus8030) {
+                logger.d("Got GetStatus8030, start protocolHelper.onStartReadData, isDrvMode = " + isDrvMode);
                 if (pendingOnReadStatus) {
                     pendingOnReadStatus = false;
                     boolean isMultiSlot = ((GetStatus8030)packet).mode == 1;
                     setAR8030BufferSize(isMultiSlot);
                     protocolHelper.ar8030Set1VNMode(isMultiSlot);
-                    protocolHelper.onStartReadData(DEVICE_TYPE.TYPE_8030.name(), DrvManager.isDeviceAvailable());
+                    protocolHelper.onStartReadData(DEVICE_TYPE.TYPE_8030.name(), isDrvMode);
 
                     PreferenceActivity.preferenceObject.p401_multi_slot = isMultiSlot;
                     PreferenceActivity.savePreference();
@@ -226,7 +278,12 @@ public class MainApplication extends Application {
 
         @Override
         public int onWrite(byte[] data) {
-            return usbDeviceHelper.writeData(data);
+            if (drvManager != null) {
+                return drvManager.write(0, data);
+            } else if (usbDeviceHelper != null) {
+                return usbDeviceHelper.writeData(data);
+            }
+            return 0;
         }
 
         @Override
