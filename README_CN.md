@@ -129,3 +129,7 @@ dependencies {
 
 </manifest>
 ```
+
+## API
+
+https://app.cecooleye.cn/doc/sdk/API-DOC.html

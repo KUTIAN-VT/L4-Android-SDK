@@ -129,3 +129,7 @@ Add the necessary permissions to `AndroidManifest.xml`:
 
 </manifest>
 ```
+
+## API
+
+https://app.cecooleye.cn/doc/sdk/API-DOC.html

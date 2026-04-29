@@ -33,9 +33,8 @@ public class V4ThroughputActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int slot = (int) binding.spSlot.getSelectedItemId();
-                boolean isRemote = binding.swIsRemote.isChecked();
-                protocolHelper.ar8030GetThroughput(slot, isRemote);
-                appendStatus("Requesting throughput for slot " + slot + " (remote: " + isRemote + ")");
+                protocolHelper.ar8030GetThroughput(slot);
+                appendStatus("Requesting throughput for slot " + slot);
             }
         });
 

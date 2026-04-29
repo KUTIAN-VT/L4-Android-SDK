@@ -36,9 +36,8 @@ public class V4McsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int dir = (int) binding.spDir.getSelectedItemId();
                 int slot = (int) binding.spSlot.getSelectedItemId();
-                boolean isRemote = binding.swIsRemote.isChecked();
-                protocolHelper.ar8030GetMcs(dir, slot, isRemote);
-                appendStatus("Requesting MCS for dir " + dir + ", slot " + slot + " (remote: " + isRemote + ")");
+                protocolHelper.ar8030GetMcs(dir, slot);
+                appendStatus("Requesting MCS for dir " + dir + ", slot " + slot);
             }
         });
 
