@@ -46,10 +46,6 @@ public class MainApplication extends Application {
     private UsbDeviceHelper usbDeviceHelper;
     private DrvManager drvManager;
     /**
-     * 401是否在等待Status包，自适应判断1v1还是1vN，来调用onStartReadData
-     */
-    private boolean pendingOnReadStatus = false;
-    /**
      * 自适应决定是否使用新驱动模式
      */
     private boolean isDrvMode = false;
@@ -174,9 +170,37 @@ public class MainApplication extends Application {
         ProtocolHelper.ar8030SetSubnetMask(PreferenceActivity.preferenceObject.p401_subnet_mask);
         // Set whether to use datagram. Default value is false.
         ProtocolHelper.ar8030SetUseDatagram(PreferenceActivity.preferenceObject.p401_datagram);
+        // Set VPN Provider. Default value is VPN_PROVIDER.ROOT
+        ProtocolHelper.ar8030SetVpnProvider(PreferenceActivity.preferenceObject.p401_vpn_provider);
 
-        pendingOnReadStatus = true;
+        protocolHelper.ar8030SetAutoBufferSizeConfig(
+                new int[]{
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3
+                },
+                new int[]{
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0,
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1,
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2,
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3
+                },
+                new int[]{
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3
+                },
+                new int[]{
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3
+                }
+        );
         startRead8030StatusTimer();
+        protocolHelper.onStartReadData(DEVICE_TYPE.TYPE_8030.name(), isDrvMode);
     }
 
     @Keep
@@ -195,7 +219,6 @@ public class MainApplication extends Application {
                 case TYPE_8030:
                     // Initialize P401
                     initAr8030();
-                    // 在GetStatus8030的回调中调用 protocolHelper.onStartReadData ，因为需要从中知道是1v1还是1vN自适应
                     break;
             }
         }
@@ -261,17 +284,6 @@ public class MainApplication extends Application {
                 // AR8030 system info
                 Toast.makeText(applicationContext, (isRemote? "dev: ": "ap: ") + packet, Toast.LENGTH_LONG).show();
             } else if (packet instanceof GetStatus8030) {
-                logger.d("Got GetStatus8030, start protocolHelper.onStartReadData, isDrvMode = " + isDrvMode);
-                if (pendingOnReadStatus) {
-                    pendingOnReadStatus = false;
-                    boolean isMultiSlot = ((GetStatus8030)packet).mode == 1;
-                    setAR8030BufferSize(isMultiSlot);
-                    protocolHelper.ar8030Set1VNMode(isMultiSlot);
-                    protocolHelper.onStartReadData(DEVICE_TYPE.TYPE_8030.name(), isDrvMode);
-
-                    PreferenceActivity.preferenceObject.p401_multi_slot = isMultiSlot;
-                    PreferenceActivity.savePreference();
-                }
                 stopRead8030ChannelInfoTimer();
             }
         }
@@ -356,6 +368,12 @@ public class MainApplication extends Application {
         }
 
         @Override
+        public void onMultiSlotChanged(DEVICE_TYPE deviceType, boolean isMultiSlot) {
+            // Now only for 8030
+            logger.d("onMultiSlotChanged, " + isMultiSlot);
+        }
+
+        @Override
         public void onSetRadio(DEVICE_TYPE deviceType, RADIO_TYPE radioType, boolean isSuccess, int errCode, String errMessage, boolean isRemote) {
             // Now only for 8030
         }
@@ -431,68 +449,4 @@ public class MainApplication extends Application {
         }
     };
 
-    /**
-     * 根据当前1vN状态设置socket buffer size
-     */
-    private void setAR8030BufferSize(boolean isMultiSlot) {
-        logger.d("Setting socket buffer size");
-
-        var res = false;
-        if (!isMultiSlot) {
-            // Set the buffer size for each slot and port. The default value is 60000 for rx and 40000 for tx.
-            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
-                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0, 0, 0);
-            if (!res) {
-                logger.d("set 1v1 slot 0 port 0 buffer failed, see logcat");
-            }
-            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
-                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1, 0, 1);
-            if (!res) {
-                logger.d("set 1v1 slot 0 port 1 buffer failed, see logcat");
-            }
-            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
-                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2, 0, 2);
-            if (!res) {
-                logger.d("set 1v1 slot 0 port 2 buffer failed, see logcat");
-            }
-            res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3,
-                    PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3, 0, 3);
-            if (!res) {
-                logger.d("set 1v1 slot 0 port 3 buffer failed, see logcat");
-            }
-        } else {
-            for (int i = 0; i < 8; i++) {
-                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
-                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0, i, 0);
-                if (!res) {
-                    logger.d("set 1vN slot $i port 0 buffer failed, see logcat");
-                    break;
-                }
-            }
-            for (int i = 0; i < 8; i++) {
-                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
-                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1, i, 1);
-                if (!res) {
-                    logger.d("set 1vN slot $i port 1 buffer failed, see logcat");
-                    break;
-                }
-            }
-            for (int i = 0; i < 8; i++) {
-                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
-                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2, i, 2);
-                if (!res) {
-                    logger.d("set 1vN slot $i port 2 buffer failed, see logcat");
-                    break;
-                }
-            }
-            for (int i = 0; i < 8; i++) {
-                res = ProtocolHelper.ar8030SetBufferSize(PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3,
-                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3, i, 3);
-                if (!res) {
-                    logger.d("set 1vN slot $i port 3 buffer failed, see logcat");
-                    break;
-                }
-            }
-        }
-    }
 }

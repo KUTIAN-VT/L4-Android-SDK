@@ -35,44 +35,6 @@ public class V41VNActivity extends AppCompatActivity {
 
         binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
 
-        binding.tv1vn.setOnClickListener(v -> {
-            new AlertDialog.Builder(V41VNActivity.this)
-                    .setTitle("Alert")
-                    .setMessage("Switch to 1VN mode")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        PreferenceActivity.preferenceObject.p401_multi_slot = true;
-                        PreferenceActivity.savePreference();
-
-                        // It will take effect after rebooting the ground image transmission.
-                        boolean res = protocolHelper.ar8030Set1VNMode(true);
-                        if (res) {
-                            binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
-                            Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create().show();
-        });
-
-        binding.tv1v1.setOnClickListener(v -> {
-            new AlertDialog.Builder(V41VNActivity.this)
-                    .setTitle("Alert")
-                    .setMessage("Restore to 1V1 mode")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        PreferenceActivity.preferenceObject.p401_multi_slot = false;
-                        PreferenceActivity.savePreference();
-
-                        // It will take effect after rebooting the ground image transmission.
-                        boolean res = protocolHelper.ar8030Set1VNMode(false);
-                        if (res) {
-                            binding.tvMode.setText("Current mode: 1V" + (ProtocolHelper.ar8030Get1VNMode() ? "N": "1"));
-                            Toast.makeText(V41VNActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create().show();
-        });
-
         binding.tvPair0.setOnClickListener(v -> {
             // ar8030StartPair and ar8030StopPair should be called in non-UI thread
             new Thread(new Runnable() {

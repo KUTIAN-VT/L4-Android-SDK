@@ -29,6 +29,12 @@ import com.fly.station.chuanyun.SensorDevice;
 import com.fly.station.mcu.McuManager;
 import com.fly.station.prorocol.Constants;
 import com.fly.station.prorocol.ProtocolHelper;
+import com.fly.station.udp.UdpController;
+import com.fly.station.vpn.BridgeControl;
+import com.fly.station.vpn.VPN_PROVIDER;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 public class PreferenceActivity extends AppCompatActivity {
     public static PreferenceObject preferenceObject = null;
@@ -186,13 +192,30 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_ip = ip;
                     PreferenceActivity.savePreference();
-                    if (!preferenceObject.p401_multi_slot) {
+                    if (!ProtocolHelper.ar8030Get1VNMode()) {
                         // Delete existing tap
                         ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
                         // Restart eth for users who not restarting the application after changing the IP
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             ProtocolHelper.getInstance().ar8030OpenEth(0, preferenceObject.p401_port_eth);
                         }, 3000);
+                    } else {
+                        final int slotSize = ProtocolHelper.ar8030GetSlotSize();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    // Delete existing bridge
+                                    new BridgeControl().teardown(slotSize);
+                                    Thread.sleep(1000);
+                                    // Restart bridge for users who not restarting the application after changing the IP
+                                    new BridgeControl().run(slotSize);
+                                } catch (IOException | InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+
                     }
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
@@ -214,23 +237,6 @@ public class PreferenceActivity extends AppCompatActivity {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-
-        binding.tvP401DevCount.setText(preferenceObject.p401_multi_slot ? "1VN" : "1V1");
-        binding.tvP401DevCount.setOnClickListener(v -> {
-            String[] modes = {"1V1", "1VN"};
-            new AlertDialog.Builder(PreferenceActivity.this)
-                    .setTitle("1VN Mode")
-                    .setItems(modes, (dialog, which) -> {
-                        boolean multiSlot = (which == 1);
-                        binding.tvP401DevCount.setText(modes[which]);
-                        preferenceObject.p401_multi_slot = multiSlot;
-                        PreferenceActivity.savePreference();
-                        boolean res = ProtocolHelper.getInstance().ar8030Set1VNMode(multiSlot);
-                        if (res) {
-                            Toast.makeText(PreferenceActivity.this, "Please turn the ground image transmission power off and then on again", Toast.LENGTH_SHORT).show();
-                        }
-                    }).create().show();
         });
 
         binding.etP401RxBufferPort0.setText(String.valueOf(preferenceObject.p401_rx_buffer_slot0_port0));
@@ -409,6 +415,23 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvP401VpnProvider.setText(preferenceObject.p401_vpn_provider.name());
+        binding.tvP401VpnProvider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] providers = Arrays.stream(VPN_PROVIDER.values()).map(Enum::name).toArray(String[]::new);
+                new AlertDialog.Builder(PreferenceActivity.this)
+                        .setTitle("VPN Provider")
+                        .setItems(providers, (dialog, which) -> {
+                            VPN_PROVIDER provider = VPN_PROVIDER.values()[which];
+                            ProtocolHelper.ar8030SetVpnProvider(provider);
+                            binding.tvP401VpnProvider.setText(provider.name());
+                            preferenceObject.p401_vpn_provider = provider;
+                            PreferenceActivity.savePreference();
+                        }).create().show();
+            }
+        });
+
         binding.swP401Datagram.setChecked(ProtocolHelper.ar8030IsUseDatagram());
         binding.swP401Datagram.setOnCheckedChangeListener((buttonView, isChecked) -> {
             ProtocolHelper.ar8030SetUseDatagram(isChecked);
@@ -455,6 +478,13 @@ public class PreferenceActivity extends AppCompatActivity {
         binding.swLogAr8030Parse.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Constants.isShowAR8030ParseLog = isChecked;
             preferenceObject.show_ar8030_parse_log = isChecked;
+            savePreference();
+        });
+
+        binding.swLogUdp.setChecked(UdpController.isShowLog);
+        binding.swLogUdp.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            UdpController.setIsShowLog(isChecked);
+            preferenceObject.show_udp_log = isChecked;
             savePreference();
         });
 

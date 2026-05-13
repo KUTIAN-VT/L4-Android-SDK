@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityTty2udpBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.station.tty.TtyManager;
 import com.fly.station.udp.UdpController;
 
@@ -25,6 +26,7 @@ public class Tty2UdpActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // 初始化UDP控制器
+        UdpController.setIsShowLog(PreferenceActivity.preferenceObject.show_udp_log);
         udpController = new UdpController();
         udpController.addListener(udpListener);
 

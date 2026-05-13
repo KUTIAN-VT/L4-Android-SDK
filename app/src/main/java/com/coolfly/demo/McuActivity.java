@@ -30,6 +30,7 @@ import com.fly.station.mcu.entity.CalibrateState;
 import com.fly.station.mcu.entity.HeartBeat;
 import com.fly.station.mcu.entity.OperateMode;
 import com.fly.station.mcu.entity.SbusProtect;
+import com.fly.station.mcu.entity.SbusValid;
 import com.fly.station.mcu.entity.Version;
 import com.fly.station.prorocol.Fly;
 import com.fly.station.wheel.Wheel;
@@ -370,6 +371,11 @@ public class McuActivity extends AppCompatActivity {
         @Override
         public void onSbusProtect(SbusProtect sbusProtect) {
             binding.tvLog.setText(sbusProtect.toString());
+        }
+
+        @Override
+        public void onSbusValid(SbusValid sbusValid) {
+            binding.tvLog.setText(sbusValid.toString());
         }
 
         @Override

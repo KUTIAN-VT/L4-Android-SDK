@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.coolfly.demo.databinding.ActivityV4Passthrough2udpBinding;
+import com.coolfly.demo.preference.PreferenceActivity;
 import com.fly.station.prorocol.DEVICE_TYPE;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
@@ -67,6 +68,8 @@ public class V4Passthrough2UdpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityV4Passthrough2udpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        UdpController.setIsShowLog(PreferenceActivity.preferenceObject.show_udp_log);
 
         binding.btnAddChannel.setOnClickListener(v -> addChannel());
         binding.btnConnectAll.setOnClickListener(v -> connectAll());

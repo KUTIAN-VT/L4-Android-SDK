@@ -260,31 +260,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="P401 1VN"
-                    android:textColor="@android:color/white"
-                    android:layout_marginHorizontal="8dp"/>
-                <TextView
-                    android:id="@+id/tv_p401_dev_count"
-                    android:layout_width="0dp"
-                    android:layout_height="32dp"
-                    android:layout_margin="4dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_orange_light"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    tools:text="1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="P401 1v1 slot 0 port 0 rx buffer"
                     android:textColor="@android:color/white"
                     android:layout_marginHorizontal="8dp"/>
@@ -725,6 +700,31 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="P401 VPN Provider"
+                    android:textColor="@android:color/white"
+                    android:layout_marginHorizontal="8dp"/>
+                <TextView
+                    android:id="@+id/tv_p401_vpn_provider"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/holo_orange_light"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    tools:text="ROOT" />
+
+            </LinearLayout>
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sw_p401_datagram"
                 android:layout_width="wrap_content"
@@ -802,6 +802,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="AR8030 parse log"
+                        android:textColor="@android:color/white" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/sw_log_udp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="UDP log"
                         android:textColor="@android:color/white" />
 
                     <androidx.appcompat.widget.SwitchCompat
