@@ -40,6 +40,7 @@ import com.coolfly.demo.databinding.ActivityP401Binding;
 import com.coolfly.demo.debug.DebugViewManager;
 import com.fly.aoalibrary.DEVICE_TYPE;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
+import com.fly.station.drv.DrvManager;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
@@ -76,8 +77,8 @@ public class P401Activity extends AppCompatActivity {
         usbDeviceHelper = UsbDeviceHelper.getInstance(getApplicationContext());
 
         binding.btnUpgradeV4.setOnClickListener(v -> {
-            if (usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED || usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8030) {
-                Toast.makeText(this, "USB not connected", Toast.LENGTH_SHORT).show();
+            if (!DrvManager.isDeviceAvailable() && (usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8030 || usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED)) {
+                Toast.makeText(this, "P401 not connected", Toast.LENGTH_SHORT).show();
                 return;
             }
             getUpgradeFis(REQ_OTA_V4);
@@ -102,6 +103,16 @@ public class P401Activity extends AppCompatActivity {
                 DebugViewManager.INSTANCE.hideLogView();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!DrvManager.isDeviceAvailable()) {
+            // If in USB mode, not drv mode
+            // Retrieve USB permission while onResume
+            usbDeviceHelper.onResume();
+        }
     }
 
     @Override
