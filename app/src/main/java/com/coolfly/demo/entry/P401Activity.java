@@ -27,6 +27,7 @@ import com.coolfly.demo.V4MacSettingsActivity;
 import com.coolfly.demo.V4Passthrough2UdpActivity;
 import com.coolfly.demo.V4PassthroughActivity;
 import com.coolfly.demo.V4PwrActivity;
+import com.coolfly.demo.V4SbusForwardActivity;
 import com.coolfly.demo.V4SetChannelActivity;
 import com.coolfly.demo.V4StatusActivity;
 import com.coolfly.demo.V4SwitchDevActivity;
@@ -143,6 +144,7 @@ public class P401Activity extends AppCompatActivity {
         addButton("Cur Power", v -> startActivity(new Intent(this, V4CurPowerActivity.class)));
         addButton("User Quality", v -> startActivity(new Intent(this, V4UserQualityActivity.class)));
         addButton("Peer Quality", v -> startActivity(new Intent(this, V4PeerQualityActivity.class)));
+        addButton("SBUS Forward", v -> startActivity(new Intent(this, V4SbusForwardActivity.class)));
     }
 
     private void addButton(String text, View.OnClickListener listener) {
