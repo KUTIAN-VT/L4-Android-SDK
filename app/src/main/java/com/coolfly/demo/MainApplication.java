@@ -242,6 +242,11 @@ public class MainApplication extends Application {
         public void onCtrlData(byte[] data, int length, com.fly.aoalibrary.DEVICE_TYPE deviceType) {
             protocolHelper.parseData(data, length, deviceType.name());
         }
+
+        @Override
+        public void onEndpointInitFailed(com.fly.aoalibrary.DEVICE_TYPE deviceType) {
+            // Endpoint init failed after automatic retrying
+        }
     };
 
     @Keep
