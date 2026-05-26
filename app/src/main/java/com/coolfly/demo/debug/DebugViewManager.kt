@@ -30,7 +30,7 @@ object DebugViewManager {
             OverlayUtils.requestFloatingWindowPermission(activity)
             return false
         }
-        rootView = Debug8030View(activity)
+        rootView = Debug8030ViewV2(activity)
 
         val config = FloatingViewConfig.Builder()
             .setGravity(FloatingViewConfig.GRAVITY.CENTER)
