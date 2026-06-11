@@ -46,8 +46,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
 
 /**
  * @Description:
@@ -71,8 +69,9 @@ class Debug8030ViewV2 : LinearLayout {
 
     private var recordJob: Job? = null
     private var pollMultiJob: Job? = null
+    private var pollSingleJob: Job? = null
     private var getDistcTimerJob: Job? = null
-    private var refreshPairedSlotsTimer: Timer? = null
+    private var refreshPairedSlotsJob: Job? = null
 
     private var status8030: RcStatus8030? = null
     private var chanInfo8030: ChanInfo8030? = null
@@ -241,9 +240,12 @@ class Debug8030ViewV2 : LinearLayout {
 
     private fun onModeChanged() {
         applySlotVisibility()
+        stopSingleSlotPolling()
         stopMultiSlotPolling()
         if (currentIsMultiSlot) {
             startMultiSlotPolling()
+        } else {
+            startSingleSlotPolling()
         }
     }
 
@@ -404,6 +406,28 @@ class Debug8030ViewV2 : LinearLayout {
         pendingPwrDevSlot = -1
     }
 
+    private fun startSingleSlotPolling() {
+        pollSingleJob = viewScope.launch {
+            while (isActive) {
+                try {
+                    protocolHelper.ar8030GetThroughput(0)
+                    delay(300)
+                    if (protocolHelper.isAnySlotPaired && !ProtocolHelper.ar8030Get1VNMode()) {
+                        protocolHelper.ar8030Get1v1Info(false)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                delay(500)
+            }
+        }
+    }
+
+    private fun stopSingleSlotPolling() {
+        pollSingleJob?.cancel()
+        pollSingleJob = null
+    }
+
     private fun startGetDistcTimer() {
         getDistcTimerJob = viewScope.launch {
             while (isActive) {
@@ -423,27 +447,26 @@ class Debug8030ViewV2 : LinearLayout {
     }
 
     private fun startRead8030ChannelInfoTimer() {
-        if (refreshPairedSlotsTimer == null) {
-            refreshPairedSlotsTimer = Timer()
-            val task: TimerTask = object : TimerTask() {
-                override fun run() {
-                    protocolHelper.ar8030GetChannelInfo(false)
-                    if (currentIsMultiSlot) {
+        if (refreshPairedSlotsJob == null) {
+            refreshPairedSlotsJob = viewScope.launch {
+                while (isActive) {
+                    try {
+                        protocolHelper.ar8030GetChannelInfo(false)
+                        delay(10)
                         protocolHelper.ar8030GetChannelInfo(true)
+                        syncPairedSlots()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    handler.post { syncPairedSlots() }
+                    delay(1000)
                 }
             }
-            refreshPairedSlotsTimer!!.schedule(task, 2000, 2000)
         }
     }
 
     private fun stopRead8030ChannelInfoTimer() {
-        refreshPairedSlotsTimer?.let {
-            it.cancel()
-            it.purge()
-            refreshPairedSlotsTimer = null
-        }
+        refreshPairedSlotsJob?.cancel()
+        refreshPairedSlotsJob = null
     }
 
     private fun syncPairedSlots() {
@@ -470,6 +493,8 @@ class Debug8030ViewV2 : LinearLayout {
         applySlotVisibility()
         if (currentIsMultiSlot) {
             startMultiSlotPolling()
+        } else {
+            startSingleSlotPolling()
         }
         startGetDistcTimer()
         startRead8030ChannelInfoTimer()
@@ -480,6 +505,7 @@ class Debug8030ViewV2 : LinearLayout {
         usbDeviceHelper.removeListener(usbDeviceListener)
         protocolHelper.removeListener(protocolListener)
         stopRecord()
+        stopSingleSlotPolling()
         stopMultiSlotPolling()
         stopGetDistcTimer()
         stopRead8030ChannelInfoTimer()
@@ -581,6 +607,23 @@ class Debug8030ViewV2 : LinearLayout {
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun updateChanInfoUi(chanInfo: ChanInfo8030) {
+        updateChanInfoUi(
+            chanInfo,
+            binding.tvFreqAndPower24,
+            binding.tvFreqAndPower
+        )
+    }
+
+    private fun updateChanInfoSkyUi(chanInfo: ChanInfo8030) {
+        updateChanInfoUi(
+            chanInfo,
+            binding.tvFreqAndPowerSky24,
+            binding.tvFreqAndPowerSky
+        )
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun updateChanInfoUi(chanInfo: ChanInfo8030, text24: TextView, text5g: TextView) {
         val n = chanInfo.freq.size.coerceAtMost(chanInfo.chanNum)
         val list24 = mutableListOf<Pair<Long, Int?>>()
         val list5g = mutableListOf<Pair<Long, Int?>>()
@@ -593,8 +636,8 @@ class Debug8030ViewV2 : LinearLayout {
                 list5g.add(mhz to p)
             }
         }
-        binding.tvFreqAndPower24.text = formatChanInfoLines(list24)
-        binding.tvFreqAndPower.text = formatChanInfoLines(list5g)
+        text24.text = formatChanInfoLines(list24)
+        text5g.text = formatChanInfoLines(list5g)
     }
 
     private fun formatChanBlock(freq: Long, p: Int?): String {
@@ -652,13 +695,14 @@ class Debug8030ViewV2 : LinearLayout {
                     if (isRemote) {
                         chanInfo8030Sky = packet
                         handler.post {
+                            updateChanInfoSkyUi(packet)
                             if (currentIsMultiSlot) updateAllSlotsMulti()
                         }
                     } else {
                         chanInfo8030 = packet
                         handler.post {
                             updateChanInfoUi(packet)
-                            if (currentIsMultiSlot) updateAllSlotsMulti() else updateSingleSlot()
+                            if (currentIsMultiSlot) updateAllSlotsMulti()
                         }
                     }
                 }

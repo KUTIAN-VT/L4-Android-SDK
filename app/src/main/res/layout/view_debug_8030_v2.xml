@@ -103,12 +103,12 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="40dp"
+                android:layout_width="44dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="Chan:"
+                android:text="Chan(GND):"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="8sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -129,6 +129,50 @@
 
                 <TextView
                     android:id="@+id/tv_freq_and_power"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="start"
+                    android:lineSpacingExtra="0dp"
+                    android:lineSpacingMultiplier="1"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    tools:text="5101: -68  5202: -68" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="44dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="Chan(SKY):"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_freq_and_power_sky_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="start"
+                    android:lineSpacingExtra="0dp"
+                    android:lineSpacingMultiplier="1"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    tools:text="2411: -68  2422: -68" />
+
+                <TextView
+                    android:id="@+id/tv_freq_and_power_sky"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
