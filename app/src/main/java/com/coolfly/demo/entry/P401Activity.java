@@ -60,6 +60,7 @@ public class P401Activity extends AppCompatActivity {
     private UsbDeviceHelper usbDeviceHelper;
 
     private final int REQ_OTA_V4 = 3;
+    private final int REQ_OTA_V4_REMOTE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,14 @@ public class P401Activity extends AppCompatActivity {
                 return;
             }
             getUpgradeFis(REQ_OTA_V4);
+        });
+
+        binding.btnUpgradeV4Remote.setOnClickListener(v -> {
+            if (!DrvManager.isDeviceAvailable() && (usbDeviceHelper.getDeviceType() != DEVICE_TYPE.TYPE_8030 || usbDeviceHelper.getUsbStatus() != UsbDeviceHelper.USB_CONNECTED)) {
+                Toast.makeText(this, "P401 not connected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            getUpgradeFis(REQ_OTA_V4_REMOTE);
         });
 
         initButtons();
@@ -186,8 +195,9 @@ public class P401Activity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
-                    protocolHelper.ar8030Upgrade(fis, upgradeListener8030);
+                    protocolHelper.ar8030Upgrade(fis, upgradeListener8030, requestCode == REQ_OTA_V4_REMOTE);
                     binding.btnUpgradeV4.setEnabled(false);
+                    binding.btnUpgradeV4Remote.setEnabled(false);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -297,12 +307,14 @@ public class P401Activity extends AppCompatActivity {
         public void onComplete() {
             binding.tvUpdateProcess.setText(R.string.ota_finish);
             binding.btnUpgradeV4.setEnabled(true);
+            binding.btnUpgradeV4Remote.setEnabled(true);
         }
 
         @Override
         public void onFail(String errMsg) {
             binding.tvUpdateProcess.setText(R.string.ota_fail + "\n" + errMsg);
             binding.btnUpgradeV4.setEnabled(true);
+            binding.btnUpgradeV4Remote.setEnabled(true);
         }
     };
 }

@@ -14,7 +14,6 @@
     <string name="ota_ground">升级V2地面端</string>
     <string name="ota_sky">升级V2天空端</string>
     <string name="ota_v3">升级V3</string>
-    <string name="ota_v4">升级V4</string>
     <string name="pair_v4">对频V4</string>
     <string name="chaninfo_v4">频点V4</string>
     <string name="bandwidth_v4">带宽V4</string>

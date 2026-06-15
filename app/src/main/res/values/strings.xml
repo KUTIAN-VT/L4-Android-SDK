@@ -14,7 +14,6 @@
     <string name="ota_ground">V2 Gnd OTA</string>
     <string name="ota_sky">V2 Sky OTA</string>
     <string name="ota_v3">V3 OTA</string>
-    <string name="ota_v4">V4 OTA</string>
     <string name="pair_v4">V4 Pair</string>
     <string name="chaninfo_v4">V4 chaninfo</string>
     <string name="bandwidth_v4">V4 bandwidth</string>
