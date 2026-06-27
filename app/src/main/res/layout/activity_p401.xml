@@ -20,13 +20,13 @@
             android:id="@+id/btn_upgrade_v4"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="OTA" />
+            android:text="GND OTA" />
 
         <Button
             android:id="@+id/btn_upgrade_v4_remote"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="remote OTA" />
+            android:text="SKY OTA" />
 
         <TextView
             android:id="@+id/tv_update_process"
