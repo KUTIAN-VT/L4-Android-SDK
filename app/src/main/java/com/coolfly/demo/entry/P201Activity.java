@@ -307,37 +307,19 @@ public class P201Activity extends AppCompatActivity {
     public void onClick(View view) {
         if (view == binding.btnShot) {
             switch (mediaHelper.getDecodeMode()) {
-                case FF_GL_SURFACE: {
-                    String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
-                    File fileDir = new File(path);
-                    fileDir.mkdirs();
-                    File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
-                    try {
-                        file.createNewFile();
-                        // Retrieve the result via FFListener.onShotFrame
-                        FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-                case FF_DIRECT_SURFACE:
                 case MEDIACODEC_SURFACE: {
-                    // 直接渲染到Surface上的情况，无法从buffer中提取图像，只能从Surface上提取
+                    // 仅兼容性演示：非 fflibrary 直渲。生产环境请统一走下方 default（FFJNI.shotFrame）
                     Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         PixelCopy.request(
-                                binding.surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
-                                    @Override
-                                    public void onPixelCopyFinished(int copyResult) {
-                                        if (copyResult == PixelCopy.SUCCESS) {
-                                            Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
-                                                    .show();
-                                            saveBitmap(bitmap);
-                                        } else {
-                                            Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
-                                                    .show();
-                                        }
+                                binding.surface, bitmap, copyResult -> {
+                                    if (copyResult == PixelCopy.SUCCESS) {
+                                        Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
+                                                .show();
+                                        saveBitmap(bitmap);
+                                    } else {
+                                        Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
+                                                .show();
                                     }
                                 }, new Handler(Looper.getMainLooper())
                         );
@@ -348,6 +330,7 @@ public class P201Activity extends AppCompatActivity {
                 }
                 break;
                 case MEDIACODEC_TEXTURE: {
+                    // 仅兼容性演示：TextureView 取图。生产环境请统一走下方 default（FFJNI.shotFrame）
                     Bitmap bitmap = binding.texture.getBitmap();
                     if (bitmap != null) {
                         Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
@@ -356,6 +339,19 @@ public class P201Activity extends AppCompatActivity {
                     } else {
                         Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
                                 .show();
+                    }
+                }
+                break;
+                default: {
+                    String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
+                    File fileDir = new File(path);
+                    fileDir.mkdirs();
+                    File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
+                    try {
+                        file.createNewFile();
+                        FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;

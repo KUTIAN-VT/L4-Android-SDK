@@ -407,15 +407,26 @@ public class MainApplication extends Application {
 
         // Retrieving record result after calling FFJNI.stopRecord
         @Override
-        public void onRecordVideo(String path, boolean success, int handler) {
-            Toast.makeText(applicationContext, success? R.string.record_success: R.string.record_fail, Toast.LENGTH_SHORT).show();
+        public void onStartRecordVideo(String path, int handler) {
+            Toast.makeText(applicationContext, R.string.record_start, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onRecordVideo(String path, boolean success, String message, int handler) {
             if (success) {
+                Toast.makeText(applicationContext, R.string.record_success, Toast.LENGTH_SHORT).show();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         ImageUtils.save2Album(path, "fly", System.currentTimeMillis() + ".mp4", true);
                     }
                 }).start();
+            } else {
+                String tip = applicationContext.getString(R.string.record_fail);
+                if (message != null && !message.isEmpty()) {
+                    tip = tip + ": " + message;
+                }
+                Toast.makeText(applicationContext, tip, Toast.LENGTH_SHORT).show();
             }
         }
 

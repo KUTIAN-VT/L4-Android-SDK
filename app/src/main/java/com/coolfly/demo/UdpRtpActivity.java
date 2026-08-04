@@ -1,14 +1,7 @@
 package com.coolfly.demo;
 
-import static com.coolfly.demo.utils.ImageUtils.saveBitmap;
-
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.PixelCopy;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -135,26 +128,15 @@ public class UdpRtpActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         if (view == binding.btnShot) {
-            Bitmap bitmap = Bitmap.createBitmap(mediaHelper.VIDEO_WIDTH, mediaHelper.VIDEO_HEIGHT, Bitmap.Config.ARGB_8888);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                PixelCopy.request(
-                        binding.surface, bitmap, new PixelCopy.OnPixelCopyFinishedListener() {
-                            @Override
-                            public void onPixelCopyFinished(int copyResult) {
-                                if (copyResult == PixelCopy.SUCCESS) {
-                                    Toast.makeText(MainApplication.applicationContext, R.string.take_photo_success, Toast.LENGTH_SHORT)
-                                            .show();
-                                    saveBitmap(bitmap);
-                                } else {
-                                    Toast.makeText(MainApplication.applicationContext, R.string.take_photo_fail, Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            }
-                        }, new Handler(Looper.getMainLooper())
-                );
-            } else {
-                Toast.makeText(MainApplication.applicationContext, getString(R.string.take_photo_tip, mediaHelper.getDecodeMode().name()), Toast.LENGTH_SHORT)
-                        .show();
+            String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/shot";
+            File fileDir = new File(path);
+            fileDir.mkdirs();
+            File file = new File(fileDir, new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".jpg");
+            try {
+                file.createNewFile();
+                FFJNI.shotFrame(file.getAbsolutePath(), DECODE_CHANNEL);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else if (view == binding.btnStartRecord) {
             String path = MainApplication.applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/record";
