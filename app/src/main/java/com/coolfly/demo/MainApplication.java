@@ -178,25 +178,33 @@ public class MainApplication extends Application {
                         PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port0,
                         PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port1,
                         PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port2,
-                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port3,
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port4,
+                        PreferenceActivity.preferenceObject.p401_rx_buffer_slot0_port5
                 },
                 new int[]{
                         PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port0,
                         PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port1,
                         PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port2,
-                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port3,
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port4,
+                        PreferenceActivity.preferenceObject.p401_tx_buffer_slot0_port5
                 },
                 new int[]{
                         PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port0,
                         PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port1,
                         PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port2,
-                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port3,
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port4,
+                        PreferenceActivity.preferenceObject.p401_1vn_rx_buffer_port5
                 },
                 new int[]{
                         PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port0,
                         PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port1,
                         PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port2,
-                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port3,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port4,
+                        PreferenceActivity.preferenceObject.p401_1vn_tx_buffer_port5
                 }
         );
         startRead8030StatusTimer();
