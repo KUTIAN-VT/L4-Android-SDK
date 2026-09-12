@@ -77,4 +77,19 @@ Please click "Settings" - "Permissions" - open the required permissions</string>
         <item>6</item>
         <item>7</item>
     </string-array>
+
+    <string-array name="port_entries">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="socket_encrypt_mode">
+        <item>default</item>
+        <item>aes128</item>
+        <item>aes256</item>
+    </string-array>
 </resources>

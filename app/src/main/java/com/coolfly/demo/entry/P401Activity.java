@@ -27,6 +27,7 @@ import com.coolfly.demo.V4MacSettingsActivity;
 import com.coolfly.demo.V4Passthrough2UdpActivity;
 import com.coolfly.demo.V4PassthroughActivity;
 import com.coolfly.demo.V4PwrActivity;
+import com.coolfly.demo.V4SocketEncryptActivity;
 import com.coolfly.demo.V4SbusForwardActivity;
 import com.coolfly.demo.V4SetChannelActivity;
 import com.coolfly.demo.V4StatusActivity;
@@ -141,6 +142,7 @@ public class P401Activity extends AppCompatActivity {
         addButton("Freq List", v -> startActivity(new Intent(this, V4FreqListActivity.class)));
         addButton("Freq Power", v -> startActivity(new Intent(this, V4FreqPowerActivity.class)));
         addButton("Power", v -> startActivity(new Intent(this, V4PwrActivity.class)));
+        addButton("Socket Encrypt", v -> startActivity(new Intent(this, V4SocketEncryptActivity.class)));
         addButton("Radio Test", v -> startActivity(new Intent(this, RadioTestActivity.class)));
         addButton("MAC Settings", v -> startActivity(new Intent(this, V4MacSettingsActivity.class)));
         addButton("Switch Dev", v -> startActivity(new Intent(this, V4SwitchDevActivity.class)));
