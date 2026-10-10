@@ -43,6 +43,9 @@ import com.coolfly.demo.debug.DebugViewManager;
 import com.fly.aoalibrary.DEVICE_TYPE;
 import com.fly.aoalibrary.host.UsbDeviceHelper;
 import com.fly.station.drv.DrvManager;
+import com.fly.station.gpio.AoaSwitch;
+import com.fly.station.gpio.HostSwitch;
+import com.fly.station.prorocol.Fly;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.prorocol.ProtocolListener;
 import com.fly.station.prorocol.RADIO_TYPE;
@@ -62,6 +65,7 @@ public class P401Activity extends AppCompatActivity {
 
     private final int REQ_OTA_V4 = 3;
     private final int REQ_OTA_V4_REMOTE = 4;
+    private int upgradeRequestCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +201,7 @@ public class P401Activity extends AppCompatActivity {
             try {
                 InputStream fis = getContentResolver().openInputStream(uri);
                 if (fis != null) {
+                    upgradeRequestCode = requestCode;
                     protocolHelper.ar8030Upgrade(fis, upgradeListener8030, requestCode == REQ_OTA_V4_REMOTE);
                     binding.btnUpgradeV4.setEnabled(false);
                     binding.btnUpgradeV4Remote.setEnabled(false);
@@ -307,9 +312,11 @@ public class P401Activity extends AppCompatActivity {
 
         @Override
         public void onComplete() {
-            binding.tvUpdateProcess.setText(R.string.ota_finish);
-            binding.btnUpgradeV4.setEnabled(true);
-            binding.btnUpgradeV4Remote.setEnabled(true);
+            if (upgradeRequestCode == REQ_OTA_V4) {
+                rebootAfterLocalUpgrade();
+                return;
+            }
+            showUpgradeFinished();
         }
 
         @Override
@@ -319,4 +326,39 @@ public class P401Activity extends AppCompatActivity {
             binding.btnUpgradeV4Remote.setEnabled(true);
         }
     };
+
+    private void rebootAfterLocalUpgrade() {
+        binding.tvUpdateProcess.setText(R.string.ota_rebooting);
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                protocolHelper.ar8030ResetConfigJson(false);
+                Thread.sleep(2000);
+                switchPower(false);
+                Thread.sleep(3000);
+                switchPower(true);
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            runOnUiThread(this::showUpgradeFinished);
+        }).start();
+    }
+
+    private void switchPower(boolean on) {
+        if (Fly.isRk()) {
+            HostSwitch.switchPower(on);
+        } else {
+            AoaSwitch.switchPower(on);
+        }
+    }
+
+    private void showUpgradeFinished() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        binding.tvUpdateProcess.setText(R.string.ota_finish);
+        binding.btnUpgradeV4.setEnabled(true);
+        binding.btnUpgradeV4Remote.setEnabled(true);
+    }
 }

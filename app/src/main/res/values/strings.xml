@@ -43,6 +43,7 @@ Please click "Settings" - "Permissions" - open the required permissions</string>
     <string name="ota_start">Upgrade started</string>
     <string name="ota_resend">Resend: %d / %d</string>
     <string name="ota_ing">upgrading</string>
+    <string name="ota_rebooting">Rebooting</string>
     <string name="ota_finish">Update completed</string>
     <string name="ota_fail">Upgrade failed</string>
 

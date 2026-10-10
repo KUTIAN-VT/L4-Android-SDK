@@ -43,6 +43,7 @@
     <string name="ota_start">升级开始</string>
     <string name="ota_resend">重发: %d / %d</string>
     <string name="ota_ing">升级中</string>
+    <string name="ota_rebooting">重启中</string>
     <string name="ota_finish">升级完成</string>
     <string name="ota_fail">升级失败</string>
 
