@@ -29,6 +29,7 @@ import com.fly.station.prorocol.bean.ChanInfo8030
 import com.fly.station.prorocol.bean.CurPower8030
 import com.fly.station.prorocol.bean.DistcResult8030
 import com.fly.station.prorocol.bean.GetMcs8030
+import com.fly.station.prorocol.bean.GetStatus8030
 import com.fly.station.prorocol.bean.PeerQuality8030
 import com.fly.station.prorocol.bean.Quality8030
 import com.fly.station.prorocol.bean.RcStatus8030
@@ -80,6 +81,7 @@ class Debug8030ViewV2 : LinearLayout {
     private var userQuality8030: UserQuality8030? = null
     private var peerQuality8030: PeerQuality8030? = null
     private var distcResult8030: DistcResult8030? = null
+    private var getStatus8030: GetStatus8030? = null
     private var pairStatus: Boolean = false
     private var flag: Unit? = null
 
@@ -209,8 +211,9 @@ class Debug8030ViewV2 : LinearLayout {
         val tp = makeCell(context, dp(70))
         val freq = makeCell(context, dp(50))
         val disc = makeCell(context, dp(50))
-        listOf(snr, rssi, mcs, txp, err, tp, freq, disc).forEach { row.addView(it) }
-        return ValuesRow(row, snr, rssi, mcs, txp, err, tp, freq, disc)
+        val bw = makeCell(context, dp(64))
+        listOf(snr, rssi, mcs, txp, err, tp, freq, disc, bw).forEach { row.addView(it) }
+        return ValuesRow(row, snr, rssi, mcs, txp, err, tp, freq, disc, bw)
     }
 
     private fun makeCell(context: Context, width: Int): TextView {
@@ -454,6 +457,8 @@ class Debug8030ViewV2 : LinearLayout {
                         protocolHelper.ar8030GetChannelInfo(false)
                         delay(10)
                         protocolHelper.ar8030GetChannelInfo(true)
+                        delay(10)
+                        protocolHelper.ar8030GetStatus()
                         syncPairedSlots()
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -481,6 +486,7 @@ class Debug8030ViewV2 : LinearLayout {
         }
         if (changed) {
             applySlotVisibility()
+            refreshBandwidth()
         }
     }
 
@@ -539,6 +545,7 @@ class Debug8030ViewV2 : LinearLayout {
 
         row.ap.disc.text = discText(0)
         row.dev.disc.text = ""
+        applyBandwidth(row, 0)
     }
 
     private fun updateAllSlotsMulti() {
@@ -572,6 +579,43 @@ class Debug8030ViewV2 : LinearLayout {
 
         row.ap.disc.text = discText(slot)
         row.dev.disc.text = ""
+        applyBandwidth(row, slot)
+    }
+
+    private fun refreshBandwidth() {
+        if (currentIsMultiSlot) {
+            for (i in 0 until SLOT_COUNT) {
+                val row = slotRows.getOrNull(i) ?: continue
+                if (row.root.visibility != View.VISIBLE) continue
+                applyBandwidth(row, i)
+            }
+        } else {
+            slotRows.getOrNull(0)?.let { applyBandwidth(it, 0) }
+        }
+    }
+
+    private fun applyBandwidth(row: SlotRowViews, slot: Int) {
+        row.ap.bw.text = bandwidthText(slot, isAp = true)
+        row.dev.bw.text = bandwidthText(slot, isAp = false)
+    }
+
+    private fun bandwidthText(slot: Int, isAp: Boolean): String {
+        val users = getStatus8030?.userStatus ?: return ""
+        if (slot < 0 || slot >= users.size) return ""
+        val phy = if (isAp) users[slot]?.tx else users[slot]?.rx
+        return bandwidthMhz(phy?.bandwidth)
+    }
+
+    private fun bandwidthMhz(bandwidth: Int?): String {
+        return when (bandwidth) {
+            0 -> "1.25"
+            1 -> "2.5"
+            2 -> "5"
+            3 -> "10"
+            4 -> "20"
+            5 -> "40"
+            else -> ""
+        }
     }
 
     private fun discText(slot: Int): String {
@@ -756,6 +800,10 @@ class Debug8030ViewV2 : LinearLayout {
                         if (currentIsMultiSlot) updateAllSlotsMulti() else updateSingleSlot()
                     }
                 }
+                is GetStatus8030 -> {
+                    getStatus8030 = packet
+                    handler.post { refreshBandwidth() }
+                }
             }
         }
 
@@ -878,6 +926,7 @@ class Debug8030ViewV2 : LinearLayout {
         val tp: TextView,
         val freq: TextView,
         val disc: TextView,
+        val bw: TextView,
     )
 
     companion object {

@@ -89,6 +89,14 @@
                 android:text="DISC"
                 android:textColor="@color/white"
                 android:textSize="10sp" />
+
+            <TextView
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="BW(MHz)"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <LinearLayout
