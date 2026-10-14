@@ -7,19 +7,37 @@
     android:orientation="vertical"
     tools:context=".preference.PreferenceActivity">
 
-    <TextView
-        android:id="@+id/tv_apply"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
         android:layout_marginVertical="4dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_gravity="end"
-        android:background="@android:color/holo_red_light"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textSize="12sp"
-        android:paddingHorizontal="32dp"
-        android:text="APPLY and RESTART"/>
+        android:layout_marginHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/tv_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/holo_orange_dark"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:paddingHorizontal="32dp"
+            android:text="RESET"/>
+
+        <TextView
+            android:id="@+id/tv_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@android:color/holo_red_light"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:paddingHorizontal="32dp"
+            android:text="APPLY and RESTART"/>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"

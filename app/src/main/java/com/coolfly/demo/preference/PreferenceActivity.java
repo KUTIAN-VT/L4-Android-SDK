@@ -28,6 +28,7 @@ import com.fly.loglibrary.Loggers;
 import com.fly.station.chuanyun.SensorDevice;
 import com.fly.station.mcu.McuManager;
 import com.fly.station.prorocol.Constants;
+import com.fly.station.prorocol.Fly;
 import com.fly.station.prorocol.ProtocolHelper;
 import com.fly.station.udp.UdpController;
 import com.fly.station.vpn.BridgeControl;
@@ -76,6 +77,34 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
+        binding.tvReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferenceObject = new PreferenceObject();
+                preferenceObject.mcu_serial_path = defaultMcuDevicePath();
+                preferenceObject.mcu_serial_baudrate = 460800;
+                preferenceObject.p301_socket_ip = "192.168.144.100";
+                preferenceObject.p301_socket_port = 1235;
+                preferenceObject.p201_serial_path = "/dev/ttyS9";
+                preferenceObject.p201_serial_baudrate = 115200;
+                preferenceObject.p401_mtu = 2500;
+                preferenceObject.p401_ip = "192.168.144.55";
+                preferenceObject.p401_subnet_mask = "255.255.255.0";
+                preferenceObject.show_mcu_log = false;
+                preferenceObject.show_usb_log = false;
+                preferenceObject.show_chuanyun_log = false;
+                preferenceObject.show_ar8030_vpn_log = false;
+                preferenceObject.show_ar8030_parse_log = false;
+                preferenceObject.show_udp_log = false;
+                PreferenceActivity.savePreference();
+                deleteEth();
+                Toast.makeText(getApplicationContext(),
+                        "Reset done. Click APPLY and RESTART to take effect",
+                        Toast.LENGTH_LONG).show();
+                recreate();
+            }
+        });
+
         binding.tvMcuPath.setText(McuManager.DEVICE_PATH);
         binding.tvMcuPath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +117,7 @@ public class PreferenceActivity extends AppCompatActivity {
                             binding.tvMcuPath.setText(McuManager.DEVICE_PATH);
                             preferenceObject.mcu_serial_path = McuManager.DEVICE_PATH;
                             PreferenceActivity.savePreference();
+                            Toast.makeText(PreferenceActivity.this, "MCU path saved", Toast.LENGTH_SHORT).show();
                         }).create().show();
             }
         });
@@ -104,6 +134,7 @@ public class PreferenceActivity extends AppCompatActivity {
                             binding.tvMcuBaudrate.setText(McuManager.BAUDRATE);
                             preferenceObject.mcu_serial_baudrate = Integer.parseInt(McuManager.BAUDRATE);
                             PreferenceActivity.savePreference();
+                            Toast.makeText(PreferenceActivity.this, "MCU baudrate saved", Toast.LENGTH_SHORT).show();
                         }).create().show();
             }
         });
@@ -138,6 +169,7 @@ public class PreferenceActivity extends AppCompatActivity {
                                 binding.tvP401PortEth.setText(ports[which]);
                                 preferenceObject.p401_port_eth = port;
                                 PreferenceActivity.savePreference();
+                                Toast.makeText(PreferenceActivity.this, "Eth port saved", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(PreferenceActivity.this, "set eth port failed", Toast.LENGTH_SHORT).show();
                             }
@@ -159,6 +191,7 @@ public class PreferenceActivity extends AppCompatActivity {
                                 binding.tvP401PortPassthrough.setText(ports[which]);
                                 preferenceObject.p401_port_passthrough = port;
                                 PreferenceActivity.savePreference();
+                                Toast.makeText(PreferenceActivity.this, "Passthrough port saved", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(PreferenceActivity.this, "set passthrough port failed", Toast.LENGTH_SHORT).show();
                             }
@@ -176,6 +209,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_mtu = mtu;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "MTU saved", Toast.LENGTH_SHORT).show();
+                    restartNetworkAfterEthChange();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -192,31 +227,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_ip = ip;
                     PreferenceActivity.savePreference();
-                    if (!ProtocolHelper.ar8030Get1VNMode()) {
-                        // Delete existing tap
-                        ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
-                        // Restart eth for users who not restarting the application after changing the IP
-                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            ProtocolHelper.getInstance().ar8030OpenEth(0, preferenceObject.p401_port_eth);
-                        }, 3000);
-                    } else {
-                        final int slotSize = ProtocolHelper.ar8030GetSlotSize();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    // Delete existing bridge
-                                    new BridgeControl().teardown(slotSize);
-                                    Thread.sleep(1000);
-                                    // Restart bridge for users who not restarting the application after changing the IP
-                                    new BridgeControl().run(slotSize);
-                                } catch (IOException | InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-
-                    }
+                    Toast.makeText(PreferenceActivity.this, "IP saved", Toast.LENGTH_SHORT).show();
+                    restartNetworkAfterEthChange();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -233,6 +245,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 if (res) {
                     preferenceObject.p401_subnet_mask = subnetMask;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Subnet mask saved", Toast.LENGTH_SHORT).show();
+                    restartNetworkAfterEthChange();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -252,6 +266,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port0 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port0 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 0 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -271,6 +286,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port1 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port1 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 1 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -290,6 +306,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port2 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port2 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 2 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -309,6 +326,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port3 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port3 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 3 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -328,6 +346,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port4 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port4 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 4 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -347,6 +366,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_rx_buffer_slot0_port5 = rxBuffer;
                     preferenceObject.p401_tx_buffer_slot0_port5 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "Buffer port 5 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -372,6 +392,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port0 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port0 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 0 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -397,6 +418,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port1 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port1 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 1 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -422,6 +444,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port2 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port2 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 2 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -447,6 +470,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port3 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port3 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 3 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -472,6 +496,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port4 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port4 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 4 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -497,6 +522,7 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceObject.p401_1vn_rx_buffer_port5 = rxBuffer;
                     preferenceObject.p401_1vn_tx_buffer_port5 = txBuffer;
                     PreferenceActivity.savePreference();
+                    Toast.makeText(PreferenceActivity.this, "1vN buffer port 5 saved", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PreferenceActivity.this, "Error! See logcat", Toast.LENGTH_SHORT).show();
                 }
@@ -516,6 +542,7 @@ public class PreferenceActivity extends AppCompatActivity {
                             binding.tvP401VpnProvider.setText(provider.name());
                             preferenceObject.p401_vpn_provider = provider;
                             PreferenceActivity.savePreference();
+                            Toast.makeText(PreferenceActivity.this, "VPN provider saved", Toast.LENGTH_SHORT).show();
                         }).create().show();
             }
         });
@@ -623,6 +650,58 @@ public class PreferenceActivity extends AppCompatActivity {
             }
             preferenceObject.mediaConfig = mediaConfig;
             savePreference();
+            Toast.makeText(PreferenceActivity.this, "Media config saved", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private static String defaultMcuDevicePath() {
+        if (Fly.isRk()) {
+            return "/dev/ttyS4";
+        }
+        if (Fly.getSocModel().equalsIgnoreCase("SM6125")) {
+            return "/dev/ttyHS3";
+        }
+        return "/dev/ttyHS0";
+    }
+
+    private void deleteEth() {
+        if (!ProtocolHelper.ar8030Get1VNMode()) {
+            // Delete existing tap
+            ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
+        } else {
+            final int slotSize = ProtocolHelper.ar8030GetSlotSize();
+            new Thread(() -> {
+                try {
+                    // Delete existing bridge
+                    new BridgeControl().teardown(slotSize);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
+
+    public static void restartNetworkAfterEthChange() {
+        if (!ProtocolHelper.ar8030Get1VNMode()) {
+            // Delete existing tap
+            ProtocolHelper.getInstance().ar8030CloseEth(0, preferenceObject.p401_port_eth);
+            // Restart eth for users who not restarting the application after changing the IP
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                ProtocolHelper.getInstance().ar8030OpenEth(0, preferenceObject.p401_port_eth);
+            }, 3000);
+        } else {
+            final int slotSize = ProtocolHelper.ar8030GetSlotSize();
+            new Thread(() -> {
+                try {
+                    // Delete existing bridge
+                    new BridgeControl().teardown(slotSize);
+                    Thread.sleep(1000);
+                    // Restart bridge for users who not restarting the application after changing the IP
+                    new BridgeControl().run(slotSize);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
     }
 }
