@@ -312,8 +312,8 @@ public class P401Activity extends AppCompatActivity {
 
         @Override
         public void onComplete() {
-            if (upgradeRequestCode == REQ_OTA_V4) {
-                rebootAfterLocalUpgrade();
+            if (upgradeRequestCode == REQ_OTA_V4 || upgradeRequestCode == REQ_OTA_V4_REMOTE) {
+                rebootAfterUpgrade(upgradeRequestCode == REQ_OTA_V4_REMOTE);
                 return;
             }
             showUpgradeFinished();
@@ -327,16 +327,20 @@ public class P401Activity extends AppCompatActivity {
         }
     };
 
-    private void rebootAfterLocalUpgrade() {
+    private void rebootAfterUpgrade(boolean isRemote) {
         binding.tvUpdateProcess.setText(R.string.ota_rebooting);
         new Thread(() -> {
             try {
                 Thread.sleep(2000);
-                protocolHelper.ar8030ResetConfigJson(false);
+                protocolHelper.ar8030ResetConfigJson(isRemote);
                 Thread.sleep(2000);
-                switchPower(false);
-                Thread.sleep(3000);
-                switchPower(true);
+                if (isRemote) {
+                    protocolHelper.ar8030SysReboot(true);
+                } else {
+                    switchPower(false);
+                    Thread.sleep(3000);
+                    switchPower(true);
+                }
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
